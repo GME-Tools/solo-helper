@@ -4,6 +4,7 @@ import { CssBaseline } from "@mui/material";
 
 import { useAuth } from "context/UserContext";
 
+import HelpersList from "components/HelpersList/HelpersList";
 import SignIn from "components/SignIn/SignIn";
 
 import './App.css';
@@ -12,25 +13,25 @@ import './App.css';
 function SignInRoute() {
   const auth = useAuth();
   if (auth.authUser) {
-    return <Navigate to="/campaign" replace />
+    return <Navigate to="/list" replace />
   }
   return <SignIn />
 }
 
-function CampaignRoute() {
+function HelpersRoute() {
   let auth = useAuth();
   if (!auth.authUser) {
     return <Navigate to="/" replace />;
   }
 
-  return <div>Campagnes</div>
+  return <HelpersList />
 }
 
 function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<SignInRoute />} />
-      <Route path="/campaign" element={<CampaignRoute />} />
+      <Route path="/list" element={<HelpersRoute />} />
     </Routes>
   )
 }
