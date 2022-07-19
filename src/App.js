@@ -5,6 +5,7 @@ import { CssBaseline } from "@mui/material";
 import { useAuth } from "context/UserContext";
 
 import HelpersList from "components/HelpersList/HelpersList";
+import Helper from "components/Helper/Helper";
 import SignIn from "components/SignIn/SignIn";
 
 import './App.css';
@@ -32,6 +33,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<SignInRoute />} />
       <Route path="/list" element={<HelpersRoute />} />
+      <Route path="/:id/:token" element={<Helper />} />
     </Routes>
   )
 }

@@ -1,10 +1,12 @@
 import { useFirebase } from "context/FirebaseContext";
 import { useEffect, useState } from "react";
+import { Button, Card, Container, Typography } from "@mui/material"
 import { List, ListItem, ListItemText } from "@mui/material";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function HelpersList() {
   const firebase = useFirebase();
-  const [helpers, setHelpers] = useState(null);
+  const [helpers, setHelpers] = useState([]);
 
   useEffect(() => {
     firebase.getCurrentUser().then(doc => {
@@ -16,23 +18,33 @@ export default function HelpersList() {
       }
     })
     .catch(err => {
-      firebase.setCurrentUserData([])
+      firebase.setCurrentUserData({helpers: []})
     });
   }, [firebase]);
-
+  
+  const handleNew = () => {
+    const uid = uuidv4();
+    const data = [...helpers, uid]
+    setHelpers(data);
+    firebase.setCurrentUserData({helpers: data})
+    alert('Nouveau Helper : https://solo-helper.web.app/'+uid+'/'+firebase.authUser().uid);
+  }
 
   return (
-    <div className="container">
-        <h4>Solo Helpers</h4>
+    <Container>
+      <Typography variant="h5">Solo Helpers</Typography>
+      <Button onClick={handleNew}>Nouveau</Button>
+      <Card>
         <List>
         {
-          helpers.map((key,idx) => (
-            <ListItem>
-              <ListItemText></ListItemText>
+          helpers.map(elem => (
+            <ListItem key={elem}>
+              <ListItemText>{elem}</ListItemText>
             </ListItem>
           ))
         }
         </List>
-    </div>
+      </Card>
+    </Container>
   )
 }
