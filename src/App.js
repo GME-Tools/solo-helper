@@ -33,6 +33,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<SignInRoute />} />
       <Route path="/list" element={<HelpersRoute />} />
+      <Route path="/:id" element={<Helper />} />
       <Route path="/:id/:token" element={<Helper />} />
     </Routes>
   )
