@@ -11,7 +11,7 @@ export default function SignIn() {
   const handleSubmit = event => {
     firebase.doSignIn()
         .then(() => {
-          navigate('/campaign');
+          navigate('/list');
         })
         .catch(err => {});
     event.preventDefault();
