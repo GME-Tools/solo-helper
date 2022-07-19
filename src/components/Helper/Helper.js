@@ -20,6 +20,8 @@ export default function Helper() {
       setIsAuth(false);
     }
   }, [firebase,id,token])
+
+  console.log(data);
   
   return (
     <Container>
