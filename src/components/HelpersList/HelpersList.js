@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function HelpersList() {
+  const baseUrl = `${process.env.REACT_APP_HOSTING_URL}`;
   const firebase = useFirebase();
   const [helpers, setHelpers] = useState([]);
   const [open, setOpen] = useState(false);
@@ -46,7 +47,7 @@ export default function HelpersList() {
   }
 
   const handleClickList = elem => {
-    navigator.clipboard.writeText("https://solo-helper.web.app/"+elem+'/'+firebase.authUser().uid)
+    navigator.clipboard.writeText(baseUrl+"/"+elem+'/'+firebase.authUser().uid)
     setOpenSnack(true);
   }
 
@@ -89,8 +90,8 @@ export default function HelpersList() {
         <DialogTitle>{"Nouveau Solo Helper"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            <Typography variant="body1"><b>Edition :</b> https://solo-helper.web.app/{newUuid}/{firebase.authUser().uid}</Typography>
-            <Typography variant="body1"><b>Lecture seule :</b> https://solo-helper.web.app/{newUuid}</Typography>
+            <Typography variant="body1"><b>Edition :</b> {baseUrl}/{newUuid}/{firebase.authUser().uid}</Typography>
+            <Typography variant="body1"><b>Lecture seule :</b> {baseUrl}/{newUuid}</Typography>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
