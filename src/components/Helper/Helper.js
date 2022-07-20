@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Typography, Select, FormControl, InputLabel, MenuItem } from "@mui/material";
+import { Container, Select, FormControl, InputLabel, MenuItem } from "@mui/material";
 import { useFirebase } from "context/FirebaseContext";
 
 export default function Helper() {
@@ -22,6 +22,7 @@ export default function Helper() {
   }, [firebase,id,token])
 
   console.log(data);
+  console.log(isAuth);
   
   return (
     <Container>
