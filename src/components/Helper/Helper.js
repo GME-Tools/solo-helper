@@ -1,6 +1,6 @@
 import { useState, useEffect, MouseEvent } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, MenuItem } from "@mui/material";
+import { Container, Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
 import { useFirebase } from "context/FirebaseContext";
 
@@ -27,10 +27,10 @@ const odds = [
   'Comme ça doit être'
 ];
 
-const yesOrNo = [
+/* const yesOrNo = [
   'Oui',
   'Non'
-]
+] */
 
 const ITEM_HEIGHT = 48;
 
@@ -180,7 +180,7 @@ export default function Helper() {
         <TextField {...params} />}
       /> : null}
 
-      {!hidden ? <Autocomplete
+      {!hidden ? /* <Autocomplete
         autoComplete
         autoSelect
         disablePortal
@@ -193,14 +193,25 @@ export default function Helper() {
             }}
         renderInput={(params) =>
         <TextField {...params} />}
-      /> : null}
+      /> */
+      <FormControl>
+        <RadioGroup
+          name="radio-buttons-group-yesorno"
+          // defaultValue="Yes"
+          onChange={(event, inputValue) => {
+            setYesOrNoSelected(inputValue);
+          }} >
+          <FormControlLabel value="Yes" control={<Radio />} label="Oui" />
+          <FormControlLabel value="No" control={<Radio />} label="Non" />
+        </RadioGroup>
+      </FormControl> : null}
 
       <Button
         variant="contained"
         onClick={()=>
           {
             let odd = "";
-            let yesOrNo = "";
+            // let yesOrNo = "";
             
             if (functionSelected === "Fate") {
               if (oddSelected === "Impossible") {
@@ -223,18 +234,19 @@ export default function Helper() {
                 odd = "HB";
               }
 
-              if (yesOrNoSelected === "Oui") {
+             /* if (yesOrNoSelected === "Oui") {
                 yesOrNo = "Yes";
               } else {
                 yesOrNo = "No";
-              }
+              } */
               
               axios({
                 method: 'post',
                 url: 'https://GMEEngine.labonneauberge.repl.co/fate',
                 data: {
                   odd: odd,
-                  yesorno: yesOrNo,
+                  // yesorno: yesOrNo,
+                  yesorno: yesOrNoSelected,
                   campaignID: "REACT"
                 }
             })
