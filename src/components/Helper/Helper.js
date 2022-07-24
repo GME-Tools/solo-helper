@@ -15,11 +15,24 @@ const options = [
   'Custom'
 ];
 
+const odds = [
+  'Impossible',
+  'Certainement pas',
+  'Très improbable',
+  'Improbable',
+  '50/50 ou Pas sûr',
+  'Probable',
+  'Très probable',
+  'Chose sûre',
+  'Comme ça doit être'
+];
+
 const ITEM_HEIGHT = 48;
 
-/* function onClickFunctions(event) {
-    console.log("test");
-} */
+const functions = [
+  { label: 'Fate', id: 1 },
+  { label: 'Event', id: 2 },
+];
 
 export default function Helper() {
   const firebase = useFirebase();
@@ -29,10 +42,8 @@ export default function Helper() {
   const [data, setData] = useState({})
   const [tfValue, setTFValue] = useState("");
   const [functionSelected, setFunctionSelected] = useState("");
-  const functions = [
-  { label: 'Fate', id: 1 },
-  { label: 'Event', id: 2 },
-];
+  const [oddSelected, setOddSelected] = useState("");
+  const [hidden, setHidden] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -131,8 +142,15 @@ export default function Helper() {
             id="combo-box-functions"
             options={functions}
             defaultValue="Functions"
-            onInputChange={(event, inputValue) => // setTFValue(inputValue);
-              setFunctionSelected(inputValue)}
+            onInputChange={(event, inputValue) => {
+              setFunctionSelected(inputValue);
+              
+              if (inputValue === "Fate") {
+                setHidden(false);
+              } else {
+                setHidden(true);
+              }
+            }} 
             sx={{ width: 300 }}
             renderInput={(params) =>
               <TextField {...params} // label="Functions"
@@ -141,16 +159,67 @@ export default function Helper() {
         </Toolbar>
       </AppBar>
 
+      {!hidden ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-odds"
+        options={odds}
+        defaultValue="Odds"
+        sx={{ width: 300 }}
+        onInputChange={(event, inputValue) => {
+              setOddSelected(inputValue);
+            }}
+        renderInput={(params) =>
+        <TextField {...params} />}
+      /> : null}
+
       <Button
         variant="contained"
         onClick={()=>
-          { let random = Math.floor(Math.random() * 20 + 1);
-            if(functionSelected === "Fate") {
-            if (random > 10) {
-              setTFValue("Oui (" + random + ")")
-            } else {
-              setTFValue("Non (" + random + ")")
-            }
+          {
+            let odd = "";
+            
+            if (functionSelected === "Fate") {
+              if (oddSelected === "Impossible") {
+                odd = "IM";
+              } else if (oddSelected === "Certainement pas") {
+                odd = "NW";
+              } else if (oddSelected === "Très improbable") {
+                odd = "VU";
+              } else if (oddSelected === "Improbable") {
+                odd = "UL";
+              } else if (oddSelected === "50/50 ou Pas sûr") {
+                odd = "NS";
+               } else if (oddSelected === "Probable") {
+                odd = "LI";
+              } else if (oddSelected === "Très probable") {
+                odd = "VL";
+              } else if (oddSelected === "Chose sûre") {
+                odd = "ST";
+              } else if (oddSelected === "Comme ça doit être") {
+                odd = "HB";
+              }
+              
+              axios({
+                method: 'post',
+                url: 'https://GMEEngine.labonneauberge.repl.co/fate',
+                data: {
+                  odd: odd,
+                  yesorno: "y",
+                  campaignId: "REACT"
+                }
+            })
+            .then(function (response) {
+              let yesno = "";
+              
+              if (response.data.isYes === true) {
+                yesno = "OUI";
+              } else {
+                yesno = "NON"
+              }
+              setTFValue(response.data.dice[0] + " + " + response.data.dice[1] + " + " + response.data.mods[0] + " => " + yesno);
+            });
           } else {
             axios({
               method: 'get',
@@ -160,7 +229,6 @@ export default function Helper() {
               setTFValue(response.data.eventFocusName + " (" + response.data.eventFocusDescription + ")\n\n" + response.data.eventAction + " / " + response.data.eventSubject);
             });
           }}}
-        //onClick={onClickFunctions}
         >Dice
       </Button>
 
