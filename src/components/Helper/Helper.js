@@ -27,6 +27,11 @@ const odds = [
   'Comme ça doit être'
 ];
 
+const yesOrNo = [
+  'Oui',
+  'Non'
+]
+
 const ITEM_HEIGHT = 48;
 
 const functions = [
@@ -43,6 +48,7 @@ export default function Helper() {
   const [tfValue, setTFValue] = useState("");
   const [functionSelected, setFunctionSelected] = useState("");
   const [oddSelected, setOddSelected] = useState("");
+  const [yesOrNoSelected, setYesOrNoSelected] = useState("");
   const [hidden, setHidden] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -174,11 +180,27 @@ export default function Helper() {
         <TextField {...params} />}
       /> : null}
 
+      {!hidden ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-yesorno"
+        options={yesOrNo}
+        defaultValue="Yes or No"
+        sx={{ width: 300 }}
+        onInputChange={(event, inputValue) => {
+              setYesOrNoSelected(inputValue);
+            }}
+        renderInput={(params) =>
+        <TextField {...params} />}
+      /> : null}
+
       <Button
         variant="contained"
         onClick={()=>
           {
             let odd = "";
+            let yesOrNo = "";
             
             if (functionSelected === "Fate") {
               if (oddSelected === "Impossible") {
@@ -200,14 +222,20 @@ export default function Helper() {
               } else if (oddSelected === "Comme ça doit être") {
                 odd = "HB";
               }
+
+              if (yesOrNoSelected === "Oui") {
+                yesOrNo = "Yes";
+              } else {
+                yesOrNo = "No";
+              }
               
               axios({
                 method: 'post',
                 url: 'https://GMEEngine.labonneauberge.repl.co/fate',
                 data: {
                   odd: odd,
-                  yesorno: "y",
-                  campaignId: "REACT"
+                  yesorno: yesOrNo,
+                  campaignID: "REACT"
                 }
             })
             .then(function (response) {
