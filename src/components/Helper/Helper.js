@@ -89,6 +89,13 @@ export default function Helper() {
   }; 
 
   useEffect(() => {
+    axios({
+      method: 'post',
+      url: 'https://GMEEngine.labonneauberge.repl.co/campaign/create',
+      data: {
+        campaignID: id
+      }
+    })
     firebase.getDocument("helpers",id).then(doc => setData(doc.data()));
     if (token) {
       firebase.getDocument("users",token).then(doc => {
@@ -247,7 +254,7 @@ export default function Helper() {
                   odd: odd,
                   // yesorno: yesOrNo,
                   yesorno: yesOrNoSelected,
-                  campaignID: "REACT"
+                  campaignID: id
                 }
             })
             .then(function (response) {
@@ -258,7 +265,7 @@ export default function Helper() {
               } else {
                 yesno = "NON"
               }
-              setTFValue(response.data.dice[0] + " + " + response.data.dice[1] + " + " + response.data.mods[0] + " => " + yesno);
+              setTFValue(response.data.dice[0] + " + " + response.data.dice[1] + " + " + response.data.mods[0] + " + " + response.data.mods[1] + " => " + yesno);
             });
           } else {
             axios({
