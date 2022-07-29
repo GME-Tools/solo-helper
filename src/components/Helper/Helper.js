@@ -31,8 +31,9 @@ const ITEM_HEIGHT = 48;
 
 const functions = [
   { label: 'Action', id: 1 },
-  { label: 'Event', id: 2 },
-  { label: 'Fate', id: 3 }
+  { label: 'Description', id: 2 },
+  { label: 'Event', id: 3 },
+  { label: 'Fate', id: 4 }
 ];
 
 export default function Helper() {
@@ -112,6 +113,14 @@ export default function Helper() {
       .then(function (response) {
         setTFValue(response.data.action + " / " + response.data.subject);
       });
+    } else if (functionSelected === "Description") {
+      axios({
+        method: 'get',
+        url: 'https://GMEEngine.labonneauberge.repl.co/description'
+      })
+      .then(function (response) {
+        setTFValue(response.data.description1 + " / " + response.data.description2);
+      });
     } else if (functionSelected === "Event") {
       axios({
         method: 'get',
@@ -158,7 +167,22 @@ export default function Helper() {
         } else {
           yesno = "NON"
         }
-        setTFValue(response.data.dice[0] + " + " + response.data.dice[1] + " + " + response.data.mods[0] + " + " + response.data.mods[1] + " => " + yesno);
+
+        if (response.data.isExceptional === true) {
+          yesno = yesno + " Exceptionnel"
+        }
+
+        if (response.data.randomEvent === true) {
+          axios({
+            method: 'get',
+            url: 'https://GMEEngine.labonneauberge.repl.co/event'
+          })
+          .then(function (responseEvent) {
+            setTFValue(response.data.dice[0] + " + " + response.data.dice[1] + " + " + response.data.mods[0] + " + " + response.data.mods[1] + " => " + yesno + "\n\n\nEVENEMENT ALEATOIRE\n\n" + responseEvent.data.eventFocusName + " (" + responseEvent.data.eventFocusDescription + ")\n\n" + responseEvent.data.eventAction + " / " + responseEvent.data.eventSubject);
+          });
+        } else {
+          setTFValue(response.data.dice[0] + " + " + response.data.dice[1] + " + " + response.data.mods[0] + " + " + response.data.mods[1] + " => " + yesno);
+        }
       });
     }
   };
