@@ -27,16 +27,12 @@ const odds = [
   'Comme ça doit être'
 ];
 
-/* const yesOrNo = [
-  'Oui',
-  'Non'
-] */
-
 const ITEM_HEIGHT = 48;
 
 const functions = [
-  { label: 'Fate', id: 1 },
+  { label: 'Action', id: 1 },
   { label: 'Event', id: 2 },
+  { label: 'Fate', id: 3 }
 ];
 
 export default function Helper() {
@@ -66,27 +62,106 @@ export default function Helper() {
 
     if (index === 0) {
       let random = Math.floor(Math.random() * 4 + 1);
-      setTFValue("1d4 => " + random)
+      setTFValue("1d4 => " + random);
     } else if (index === 1) {
       let random = Math.floor(Math.random() * 6 + 1);
-      setTFValue("1d6 => " + random)
+      setTFValue("1d6 => " + random);
     } else if (index === 2) {
       let random = Math.floor(Math.random() * 8 + 1);
-      setTFValue("1d8 => " + random)
+      setTFValue("1d8 => " + random);
     } else if (index === 3) {
       let random = Math.floor(Math.random() * 10 + 1);
-      setTFValue("1d10 => " + random)
+      setTFValue("1d10 => " + random);
     } else if (index === 4) {
       let random = Math.floor(Math.random() * 12 + 1);
-      setTFValue("1d12 => " + random)
+      setTFValue("1d12 => " + random);
     } else if (index === 5) {
       let random = Math.floor(Math.random() * 20 + 1);
-      setTFValue("1d20 => " + random)
+      setTFValue("1d20 => " + random);
     } else if (index === 6) {
       let random = Math.floor(Math.random() * 100 + 1);
-      setTFValue("1d100 => " + random)
+      setTFValue("1d100 => " + random);
     }
-  }; 
+  };
+  const changeFunctions = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+    setFunctionSelected(inputValue);
+              
+    if (inputValue === "Fate") {
+      setHidden(false);
+    } else {
+      setHidden(true);
+    }
+  };
+  const changeOdds = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+    setOddSelected(inputValue);
+  };
+  const changeYesNo = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+    setYesOrNoSelected(inputValue);
+  };
+  const changeTextField = (newValue: String) => {
+    setTFValue(newValue.target.value);
+  };
+  const clickDice = () => {
+    let odd = "";
+
+    if (functionSelected === "Action") {
+      axios({
+        method: 'get',
+        url: 'https://GMEEngine.labonneauberge.repl.co/action'
+      })
+      .then(function (response) {
+        setTFValue(response.data.action + " / " + response.data.subject);
+      });
+    } else if (functionSelected === "Event") {
+      axios({
+        method: 'get',
+        url: 'https://GMEEngine.labonneauberge.repl.co/event'
+      })
+      .then(function (response) {
+        setTFValue(response.data.eventFocusName + " (" + response.data.eventFocusDescription + ")\n\n" + response.data.eventAction + " / " + response.data.eventSubject);
+      });
+    } else if (functionSelected === "Fate") {
+      if (oddSelected === "Impossible") {
+        odd = "IM";
+      } else if (oddSelected === "Certainement pas") {
+        odd = "NW";
+      } else if (oddSelected === "Très improbable") {
+        odd = "VU";
+      } else if (oddSelected === "Improbable") {
+        odd = "UL";
+      } else if (oddSelected === "50/50 ou Pas sûr") {
+        odd = "NS";
+      } else if (oddSelected === "Probable") {
+        odd = "LI";
+      } else if (oddSelected === "Très probable") {
+        odd = "VL";
+      } else if (oddSelected === "Chose sûre") {
+        odd = "ST";
+      } else if (oddSelected === "Comme ça doit être") {
+        odd = "HB";
+      }
+      
+      axios({
+        method: 'post',
+        url: 'https://GMEEngine.labonneauberge.repl.co/fate',
+        data: {
+          odd: odd,
+          yesorno: yesOrNoSelected,
+          campaignID: id
+        }
+      })
+      .then(function (response) {
+        let yesno = "";
+        
+        if (response.data.isYes === true) {
+          yesno = "OUI";
+        } else {
+          yesno = "NON"
+        }
+        setTFValue(response.data.dice[0] + " + " + response.data.dice[1] + " + " + response.data.mods[0] + " + " + response.data.mods[1] + " => " + yesno);
+      });
+    }
+  };
 
   useEffect(() => {
     axios({
@@ -105,7 +180,7 @@ export default function Helper() {
     else {
       setIsAuth(false);
     }
-  }, [firebase,id,token])
+  }, [firebase,id,token,axios])
 
   console.log(data);
   console.log(isAuth);
@@ -117,9 +192,9 @@ export default function Helper() {
           <IconButton
             edge="start"
             color="inherit"
-            id="positioned-button"
+            id="dices-button"
             aria-label="menu"
-            aria-controls={open ? 'positioned-menu' : undefined}
+            aria-controls={open ? 'dices-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
             sx={{ mr: 2 }}
@@ -128,9 +203,9 @@ export default function Helper() {
             <CasinoIcon />
           </IconButton>
           <Menu
-            id="positioned-menu"
+            id="dices-menu"
             MenuListProps={{
-              'aria-labelledby': 'long-button',
+              'aria-labelledby': 'dices-button',
             }}
             anchorEl={anchorEl}
             open={open}
@@ -155,18 +230,10 @@ export default function Helper() {
             id="combo-box-functions"
             options={functions}
             defaultValue="Functions"
-            onInputChange={(event, inputValue) => {
-              setFunctionSelected(inputValue);
-              
-              if (inputValue === "Fate") {
-                setHidden(false);
-              } else {
-                setHidden(true);
-              }
-            }} 
+            onInputChange={changeFunctions}
             sx={{ width: 300 }}
             renderInput={(params) =>
-              <TextField {...params} // label="Functions"
+              <TextField {...params}
               />}
           />
         </Toolbar>
@@ -180,34 +247,15 @@ export default function Helper() {
         options={odds}
         defaultValue="Odds"
         sx={{ width: 300 }}
-        onInputChange={(event, inputValue) => {
-              setOddSelected(inputValue);
-            }}
+        onInputChange={changeOdds}
         renderInput={(params) =>
         <TextField {...params} />}
       /> : null}
 
-      {!hidden ? /* <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-yesorno"
-        options={yesOrNo}
-        defaultValue="Yes or No"
-        sx={{ width: 300 }}
-        onInputChange={(event, inputValue) => {
-              setYesOrNoSelected(inputValue);
-            }}
-        renderInput={(params) =>
-        <TextField {...params} />}
-      /> */
-      <FormControl>
+      {!hidden ? <FormControl>
         <RadioGroup
           name="radio-buttons-group-yesorno"
-          // defaultValue="Yes"
-          onChange={(event, inputValue) => {
-            setYesOrNoSelected(inputValue);
-          }} >
+          onChange={changeYesNo}>
           <FormControlLabel value="Yes" control={<Radio />} label="Oui" />
           <FormControlLabel value="No" control={<Radio />} label="Non" />
         </RadioGroup>
@@ -215,68 +263,8 @@ export default function Helper() {
 
       <Button
         variant="contained"
-        onClick={()=>
-          {
-            let odd = "";
-            // let yesOrNo = "";
-            
-            if (functionSelected === "Fate") {
-              if (oddSelected === "Impossible") {
-                odd = "IM";
-              } else if (oddSelected === "Certainement pas") {
-                odd = "NW";
-              } else if (oddSelected === "Très improbable") {
-                odd = "VU";
-              } else if (oddSelected === "Improbable") {
-                odd = "UL";
-              } else if (oddSelected === "50/50 ou Pas sûr") {
-                odd = "NS";
-               } else if (oddSelected === "Probable") {
-                odd = "LI";
-              } else if (oddSelected === "Très probable") {
-                odd = "VL";
-              } else if (oddSelected === "Chose sûre") {
-                odd = "ST";
-              } else if (oddSelected === "Comme ça doit être") {
-                odd = "HB";
-              }
-
-             /* if (yesOrNoSelected === "Oui") {
-                yesOrNo = "Yes";
-              } else {
-                yesOrNo = "No";
-              } */
-              
-              axios({
-                method: 'post',
-                url: 'https://GMEEngine.labonneauberge.repl.co/fate',
-                data: {
-                  odd: odd,
-                  // yesorno: yesOrNo,
-                  yesorno: yesOrNoSelected,
-                  campaignID: id
-                }
-            })
-            .then(function (response) {
-              let yesno = "";
-              
-              if (response.data.isYes === true) {
-                yesno = "OUI";
-              } else {
-                yesno = "NON"
-              }
-              setTFValue(response.data.dice[0] + " + " + response.data.dice[1] + " + " + response.data.mods[0] + " + " + response.data.mods[1] + " => " + yesno);
-            });
-          } else {
-            axios({
-              method: 'get',
-              url: 'https://GMEEngine.labonneauberge.repl.co/event'
-            })
-            .then(function (response) {
-              setTFValue(response.data.eventFocusName + " (" + response.data.eventFocusDescription + ")\n\n" + response.data.eventAction + " / " + response.data.eventSubject);
-            });
-          }}}
-        >Dice
+        onClick={clickDice}
+      >Dice
       </Button>
 
       <TextField
@@ -285,7 +273,7 @@ export default function Helper() {
         id="outlined-functions"
         variant="outlined"
         value={tfValue}
-        onChange={(newValue) => setTFValue(newValue.target.value)}
+        onChange={changeTextField}
         InputProps={{
           readOnly: true,
         }} />
