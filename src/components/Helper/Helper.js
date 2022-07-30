@@ -33,7 +33,17 @@ const functions = [
   { label: 'Action', id: 1 },
   { label: 'Description', id: 2 },
   { label: 'Event', id: 3 },
-  { label: 'Fate', id: 4 }
+  { label: 'Fate', id: 4 }, 
+  { label: 'Loot', id: 5}
+];
+
+const bodies = [
+  { label: 'Humanoïde non-aventurier sans sac, poches ...', value: 'no'}, 
+  { label: 'Humanoïde non-aventurier avec un sac, des poches ...', value: 'nw'},
+  { label: 'Humanoïde aventurier sans sac, poches ...', value: 'ao'},
+  { label: 'Humanoïde aventurier avec un sac, des poches ...', value: 'aw'},
+  { label: 'Animaux sauvages', value: 'wa'},
+  { label: 'Loot', value: 'lo'},
 ];
 
 export default function Helper() {
@@ -46,7 +56,10 @@ export default function Helper() {
   const [functionSelected, setFunctionSelected] = useState("");
   const [oddSelected, setOddSelected] = useState("");
   const [yesOrNoSelected, setYesOrNoSelected] = useState("");
-  const [hidden, setHidden] = useState(true);
+  const [hiddenFate, setHiddenFate] = useState(true);
+  const [bodiesSelected, setBodiesSelected] = useState("");
+  const [placesSelected, setPlacesSelected] = useState("");
+  const [hiddenLoot, setHiddenLoot] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -88,9 +101,14 @@ export default function Helper() {
     setFunctionSelected(inputValue);
               
     if (inputValue === "Fate") {
-      setHidden(false);
+      setHiddenFate(false);
+      setHiddenLoot(true);
+    } else if (inputValue === "Loot") {
+      setHiddenFate(true);
+      setHiddenLoot(false);
     } else {
-      setHidden(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
     }
   };
   const changeOdds = (event: MouseEvent<HTMLElement>, inputValue: String) => {
@@ -98,6 +116,12 @@ export default function Helper() {
   };
   const changeYesNo = (event: MouseEvent<HTMLElement>, inputValue: String) => {
     setYesOrNoSelected(inputValue);
+  };
+  const changeBodies = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+    setBodiesSelected(inputValue);
+  };
+  const changePlaces = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+    setPlacesSelected(inputValue);
   };
   const changeTextField = (newValue: String) => {
     setTFValue(newValue.target.value);
@@ -184,6 +208,33 @@ export default function Helper() {
           setTFValue(response.data.dice[0] + " + " + response.data.dice[1] + " + " + response.data.mods[0] + " + " + response.data.mods[1] + " => " + yesno);
         }
       });
+    } else if (functionSelected === "Loot") {
+      axios({
+        method: 'post',
+        url: 'https://GMEEngine.labonneauberge.repl.co/fantasyloot',
+        data: {
+          campaignID: id,
+          lootBody: bodiesSelected,
+          lootPlace: placesSelected
+        }
+      })
+      .then(function (response) {
+        let responseText = "";
+
+        if (response.data.number === 0) {
+          setTFValue("Vous n'avez rien looté");
+        } else {
+          for (let i = 0 ; i < response.data.number ; i++) {
+            responseText = responseText + response.data.categories[i] + " => " + response.data.items[i];
+  
+            if (i < response.data.number - 1) {
+              responseText = responseText + "\n\n";
+            }
+          }
+  
+          setTFValue(responseText);
+        }
+      });
     }
   };
 
@@ -263,7 +314,7 @@ export default function Helper() {
         </Toolbar>
       </AppBar>
 
-      {!hidden ? <Autocomplete
+      {!hiddenFate ? <Autocomplete
         autoComplete
         autoSelect
         disablePortal
@@ -276,12 +327,35 @@ export default function Helper() {
         <TextField {...params} />}
       /> : null}
 
-      {!hidden ? <FormControl>
+      {!hiddenFate ? <FormControl>
         <RadioGroup
           name="radio-buttons-group-yesorno"
           onChange={changeYesNo}>
           <FormControlLabel value="Yes" control={<Radio />} label="Oui" />
           <FormControlLabel value="No" control={<Radio />} label="Non" />
+        </RadioGroup>
+      </FormControl> : null}
+
+      {!hiddenLoot ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-bodies"
+        options={bodies}
+        defaultValue="Bodies"
+        sx={{ width: 300 }}
+        onInputChange={changeBodies}
+        renderInput={(params) =>
+        <TextField {...params} />}
+      /> : null}
+
+      {!hiddenLoot ? <FormControl>
+        <RadioGroup
+          name="radio-buttons-group-places"
+          onChange={changePlaces}>
+          <FormControlLabel value="valueCommon" control={<Radio />} label="Commun" />
+          <FormControlLabel value="valueMilitary" control={<Radio />} label="Militaire" />
+          <FormControlLabel value="valueDungeon" control={<Radio />} label="Donjon" />
         </RadioGroup>
       </FormControl> : null}
 
