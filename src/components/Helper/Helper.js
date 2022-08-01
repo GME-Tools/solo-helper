@@ -62,16 +62,13 @@ export default function Helper() {
   const [hiddenLoot, setHiddenLoot] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: MouseEvent<HTMLElement>) => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleClickDices = (
-    event: React.MouseEvent<HTMLElement>,
-    index: number,
-  ) => {
+  const handleClickDices = (event, index) => {
     setAnchorEl(null);
 
     if (index === 0) {
@@ -97,7 +94,7 @@ export default function Helper() {
       setTFValue("1d100 => " + random);
     }
   };
-  const changeFunctions = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+  const changeFunctions = (event, inputValue) => {
     setFunctionSelected(inputValue);
               
     if (inputValue === "Fate") {
@@ -111,19 +108,19 @@ export default function Helper() {
       setHiddenLoot(true);
     }
   };
-  const changeOdds = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+  const changeOdds = (event, inputValue) => {
     setOddSelected(inputValue);
   };
-  const changeYesNo = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+  const changeYesNo = (event, inputValue) => {
     setYesOrNoSelected(inputValue);
   };
-  const changeBodies = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+  const changeBodies = (event, inputValue) => {
     setBodiesSelected(inputValue);
   };
-  const changePlaces = (event: MouseEvent<HTMLElement>, inputValue: String) => {
+  const changePlaces = (event, inputValue) => {
     setPlacesSelected(inputValue);
   };
-  const changeTextField = (newValue: String) => {
+  const changeTextField = (newValue) => {
     setTFValue(newValue.target.value);
   };
   const clickDice = () => {
