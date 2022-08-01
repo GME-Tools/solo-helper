@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
-import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot } from "context/HistoryContext";
+import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
 
 const options = [
@@ -178,7 +178,7 @@ export default function Helper() {
           let responseText = "";
 
           if (response.data.names.length === 0) {
-            setTFValue("La liste de personnages est vide.");
+            setHistory(h => ([...h, logCharacter("La liste de personnages est vide.")]));
           } else {
             for (let i = 0 ; i < response.data.names.length ; i++) {
               responseText = responseText + (i + 1) + "- " + response.data.names[i];
@@ -188,7 +188,7 @@ export default function Helper() {
               }
             }
 
-            setTFValue(responseText);
+            setHistory(h => ([...h, logCharacter(responseText)]));
           }
         });
       }

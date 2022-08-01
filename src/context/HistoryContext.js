@@ -31,6 +31,12 @@ export const logLoot = (result) => ({
   result: result
 });
 
+export const logCharacter = (result) => ({
+  emoji: <span style={{lineHeight: 1}}>🧑</span>,
+  command: "Personnage",
+  result: result
+});
+
 const data = [
   {
     emoji: <span style={{lineHeight: 1}}>🎲</span>,
