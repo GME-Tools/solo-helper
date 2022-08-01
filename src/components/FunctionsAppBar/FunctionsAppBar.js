@@ -32,10 +32,11 @@ const ITEM_HEIGHT = 48;
 
 const functions = [
   { label: 'Action', id: 1 },
-  { label: 'Description', id: 2 },
-  { label: 'Event', id: 3 },
-  { label: 'Fate', id: 4 }, 
-  { label: 'Loot', id: 5}
+  { label: 'Character', id: 2 },
+  { label: 'Description', id: 3 },
+  { label: 'Event', id: 4 },
+  { label: 'Fate', id: 5 }, 
+  { label: 'Loot', id: 6 }
 ];
 
 const bodies = [
@@ -45,6 +46,17 @@ const bodies = [
   { label: 'Humanoïde aventurier avec un sac, des poches ...', value: 'aw'},
   { label: 'Animaux sauvages', value: 'wa'},
   { label: 'Loot', value: 'lo'},
+];
+
+const subfonctionsCharacters = [
+  { label: 'Créer un personnage', value: 'creation' },
+  { label: 'Information sur un personnage', value: 'information' },
+  { label: 'Liste de personnages', value: 'list' },
+  { label: 'Modifier un personnage', value: 'update' },
+  { label: 'Sélectionner aléatoirement un Joueur', value: 'randomPlayer' },
+  { label: 'Sélectionner aléatoirement un personnage (Joueur ou PNJ)', value: 'randomAll' },
+  { label: 'Sélectionner aléatoirement un PNJ', value: 'randomNPC' },
+  { label: "Suppression d'un personnage", value: 'delete' }
 ];
 
 export default function Helper() {
@@ -61,14 +73,19 @@ export default function Helper() {
   const [bodiesSelected, setBodiesSelected] = useState("");
   const [placesSelected, setPlacesSelected] = useState("");
   const [hiddenLoot, setHiddenLoot] = useState(true);
+  const [subfonctionsCharactersSelected, setSubfonctionsCharactersSelected] = useState("");
+  const [hiddenCharacter, setHiddenCharacter] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleClickDices = (event, index) => {
     setAnchorEl(null);
 
@@ -95,35 +112,50 @@ export default function Helper() {
       setHistory(h => ([...h, logDieRoll("1d100",random)]));
     }
   };
+
   const changeFunctions = (event, inputValue) => {
     setFunctionSelected(inputValue);
               
-    if (inputValue === "Fate") {
+    if (inputValue === "Character") {
+      setHiddenCharacter(false);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+    } else if (inputValue === "Fate") {
+      setHiddenCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
     } else if (inputValue === "Loot") {
+      setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
     } else {
+      setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
     }
   };
+
   const changeOdds = (event, inputValue) => {
     setOddSelected(inputValue);
   };
+
   const changeYesNo = (event, inputValue) => {
     setYesOrNoSelected(inputValue);
   };
+  
   const changeBodies = (event, inputValue) => {
     setBodiesSelected(inputValue);
   };
+
   const changePlaces = (event, inputValue) => {
     setPlacesSelected(inputValue);
   };
-  const clickDice = () => {
-    let odd = "";
 
+  const changeSubfonctionsCharacters = (event, inputValue) => {
+    setSubfonctionsCharactersSelected(inputValue);
+  };
+
+  const clickDice = () => {
     if (functionSelected === "Action") {
       axios({
         method: 'get',
@@ -132,6 +164,34 @@ export default function Helper() {
       .then(function (response) {
         setHistory(h => ([...h, logMeaning("Action", response.data.action + " / " + response.data.subject)]));
       });
+    } else if (functionSelected === "Character") {
+      if (subfonctionsCharactersSelected === "list" || subfonctionsCharactersSelected === "Liste de personnages") {
+        axios({
+          method: 'post',
+          url: 'https://GMEEngine.labonneauberge.repl.co/character/post',
+          data: {
+            campaignID: id,
+            action: "characters"
+          }
+        })
+        .then(function (response) {
+          let responseText = "";
+
+          if (response.data.names.length === 0) {
+            setTFValue("La liste de personnages est vide.");
+          } else {
+            for (let i = 0 ; i < response.data.names.length ; i++) {
+              responseText = responseText + (i + 1) + "- " + response.data.names[i];
+
+              if (i < response.data.names.length - 1) {
+                responseText = responseText + "\n";
+              }
+            }
+
+            setTFValue(responseText);
+          }
+        });
+      }
     } else if (functionSelected === "Description") {
       axios({
         method: 'get',
@@ -149,6 +209,8 @@ export default function Helper() {
         setHistory(h => ([...h, logRandomEvent(response.data.eventFocusName + " (" + response.data.eventFocusDescription + ")\n\n" + response.data.eventAction + " / " + response.data.eventSubject)]));
       });
     } else if (functionSelected === "Fate") {
+      let odd = "";
+
       if (oddSelected === "Impossible") {
         odd = "IM";
       } else if (oddSelected === "Certainement pas") {
@@ -204,12 +266,28 @@ export default function Helper() {
         }
       });
     } else if (functionSelected === "Loot") {
+      let body = "";
+
+      if (bodiesSelected === "Humanoïde non-aventurier sans sac, poches ...") {
+        body = "no";
+      } else if (oddSelected === "Humanoïde non-aventurier avec un sac, des poches ...") {
+        body = "nw";
+      } else if (oddSelected === "Humanoïde aventurier sans sac, poches ...") {
+        body = "ao";
+      } else if (oddSelected === "Humanoïde aventurier avec un sac, des poches ...") {
+        body = "aw";
+      } else if (oddSelected === "Animaux sauvages") {
+        body = "wa";
+      } else if (oddSelected === "Loot") {
+        body = "lo";
+      }
+
       axios({
         method: 'post',
         url: 'https://GMEEngine.labonneauberge.repl.co/fantasyloot',
         data: {
           campaignID: id,
-          lootBody: bodiesSelected,
+          lootBody: body,
           lootPlace: placesSelected
         }
       })
@@ -299,12 +377,12 @@ export default function Helper() {
             disablePortal
             id="combo-box-functions"
             options={functions}
-            defaultValue="Functions"
+            getOptionLabel={(option) => option.label}
             onInputChange={changeFunctions}
             sx={{ width: 300 }}
             renderInput={(params) =>
               <TextField {...params}
-              />}
+                label="Choose a Function"/>}
           />
         </Toolbar>
       </AppBar>
@@ -319,7 +397,8 @@ export default function Helper() {
         sx={{ width: 300 }}
         onInputChange={changeOdds}
         renderInput={(params) =>
-        <TextField {...params} />}
+          <TextField {...params}
+          label="Choose an Odd"/>}
       /> : null}
 
       {!hiddenFate ? <FormControl>
@@ -337,11 +416,12 @@ export default function Helper() {
         disablePortal
         id="combo-box-bodies"
         options={bodies}
-        defaultValue="Bodies"
+        getOptionLabel={(option) => option.label}
         sx={{ width: 300 }}
         onInputChange={changeBodies}
         renderInput={(params) =>
-        <TextField {...params} />}
+          <TextField {...params}
+          label="Choose a Body"/>}
       /> : null}
 
       {!hiddenLoot ? <FormControl>
@@ -353,6 +433,20 @@ export default function Helper() {
           <FormControlLabel value="valueDungeon" control={<Radio />} label="Donjon" />
         </RadioGroup>
       </FormControl> : null}
+
+      {!hiddenCharacter ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-characters"
+        options={subfonctionsCharacters}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsCharacters}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a subfonction"/>}
+      /> : null}
 
       <Button
         variant="contained"
