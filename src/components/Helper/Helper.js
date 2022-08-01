@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Container, Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
 import { useFirebase } from "context/FirebaseContext";
+import Display from 'components/Display/Display';
 
 const options = [
   'd4',
@@ -362,16 +363,8 @@ export default function Helper() {
       >Dice
       </Button>
 
-      <TextField
-        multiline
-        margin="normal"
-        id="outlined-functions"
-        variant="outlined"
-        value={tfValue}
-        onChange={changeTextField}
-        InputProps={{
-          readOnly: true,
-        }} />
+      <Display />
+
     </Container>
   )
 }
