@@ -8,6 +8,18 @@ export default makeStyles(theme => ({
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        gap: "2px"
+        gap: "10px"
+    },
+
+    displaychip: {
+        height: "100%",
+        textAlign: "left",
+        padding: "5px"
+    },
+    displaytitle: {
+        fontWeight: "800"
+    },
+    reactEmoji: {
+        lineHeight: 1
     }
 }));
