@@ -177,7 +177,7 @@ export default function Helper() {
         .then(function (response) {
           let responseText = "";
 
-          if (response.data.names.length === 0) {
+          if (response.data.isExisted === false) {
             setHistory(h => ([...h, logCharacter("La liste de personnages est vide.")]));
           } else {
             for (let i = 0 ; i < response.data.names.length ; i++) {
@@ -189,6 +189,22 @@ export default function Helper() {
             }
 
             setHistory(h => ([...h, logCharacter(responseText)]));
+          }
+        });
+      } else if (subfonctionsCharactersSelected === "randomAll" || subfonctionsCharactersSelected === "Sélectionner aléatoirement un personnage (Joueur ou PNJ)") {
+        axios({
+          method: 'post',
+          url: 'https://GMEEngine.labonneauberge.repl.co/character/post',
+          data: {
+            campaignID: id,
+            action: "randomAll"
+          }
+        })
+        .then(function (response) {
+          if (response.data.isExisted === false) {
+            setHistory(h => ([...h, logCharacter("La liste de personnages est vide.")]));
+          } else {
+            setHistory(h => ([...h, logCharacter(response.data.name)]));
           }
         });
       }
