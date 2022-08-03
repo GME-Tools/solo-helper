@@ -19,10 +19,10 @@ export const logRandomEvent = result => ({
   result: result
 });
 
-export const logFate = (odd,cf,yesno, result) => ({
+export const logFate = (odd, cf, yesno, result) => ({
   emoji: <span style={{lineHeight: 1}}>🔮</span>,
   command: "Oracle ("+odd+', CF'+ cf + ')',
-  result: result
+  result: <div><Typography>{yesno}</Typography></div>
 });
 
 export const logLoot = (result) => ({

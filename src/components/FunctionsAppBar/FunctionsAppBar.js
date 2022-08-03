@@ -4,6 +4,7 @@ import { Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, Men
 import CasinoIcon from '@mui/icons-material/Casino';
 import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
+import fateCheck from "functions/mythic/fateCheck";
 
 const options = [
   'd4',
@@ -74,6 +75,8 @@ export default function Helper() {
   const [placesSelected, setPlacesSelected] = useState("");
   const [hiddenLoot, setHiddenLoot] = useState(true);
   const [subfonctionsCharactersSelected, setSubfonctionsCharactersSelected] = useState("");
+  const [, setCharacterNameSelected] = useState("");
+  const [, setCharacterPlayerNPCSelected] = useState("");    
   const [hiddenCharacter, setHiddenCharacter] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -153,6 +156,14 @@ export default function Helper() {
 
   const changeSubfonctionsCharacters = (event, inputValue) => {
     setSubfonctionsCharactersSelected(inputValue);
+  };
+
+  const changeCharacterName = (event, inputValue) => {
+    setCharacterNameSelected(inputValue);
+  };
+
+  const changeCharacterPlayerNPC = (event, inputValue) => {
+    setCharacterPlayerNPCSelected(inputValue);
   };
 
   const clickDice = () => {
@@ -246,8 +257,24 @@ export default function Helper() {
       } else if (oddSelected === "Comme ça doit être") {
         odd = "HB";
       }
+
+      let fateResponse = fateCheck(4, odd, yesOrNoSelected);
+
+      let yesno = "";
+        
+      if (fateResponse.isYes === true) {
+        yesno = "OUI";
+      } else {
+        yesno = "NON"
+      }
+
+      if (fateResponse.isExceptional === true) {
+        yesno = yesno + " EXCEPTIONNEL"
+      }
+
+      setHistory(h => ([...h, logFate(odd, 4, yesno)]));
       
-      axios({
+      /* axios({
         method: 'post',
         url: 'https://GMEEngine.labonneauberge.repl.co/fate',
         data: {
@@ -280,7 +307,7 @@ export default function Helper() {
         } else {
           setHistory(h => ([...h, logFate(odd,4,yesno)]));
         }
-      });
+      }); */
     } else if (functionSelected === "Loot") {
       let body = "";
 
@@ -463,6 +490,19 @@ export default function Helper() {
         <TextField {...params}
           label="Choose a subfonction"/>}
       /> : null}
+
+      {!hiddenCharacter ?
+          <TextField id="tf-characterName" label="Name" variant="outlined" onChange={changeCharacterName} />
+      : null}
+
+      {!hiddenCharacter ? <FormControl>
+        <RadioGroup
+          name="radio-buttons-group-characterPlayerNPC"
+          onChange={changeCharacterPlayerNPC}>
+          <FormControlLabel value="Player" control={<Radio />} label="Joueur" />
+          <FormControlLabel value="NPC" control={<Radio />} label="PNJ" />
+        </RadioGroup>
+      </FormControl> : null}
 
       <Button
         variant="contained"
