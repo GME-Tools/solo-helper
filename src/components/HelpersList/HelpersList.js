@@ -44,7 +44,8 @@ export default function HelpersList() {
     firebase.setCurrentUserData({helpers: data});
     firebase.setDocument("helpers", uid, {
       campaignID: uid,
-      chaosFactor: 4
+      chaosFactor: 4,
+      inventory: []
     });
     setNewUuid(uid);
   }

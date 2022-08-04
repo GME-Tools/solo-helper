@@ -6,6 +6,9 @@ import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, l
 import { useFirebase } from "context/FirebaseContext";
 import eventCheck from "functions/mythic/eventCheck";
 import fateCheck from "functions/mythic/fateCheck";
+import actionRoll from "functions/mythic/actionRoll";
+import descriptionRoll from "functions/mythic/descriptionRoll";
+import fantasyLootGenerator from "functions/tables/fantasyLootGenerator";
 
 const options = [
   'd4',
@@ -37,8 +40,8 @@ const functions = [
   { label: 'Character', id: 2 },
   { label: 'Description', id: 3 },
   { label: 'Event', id: 4 },
-  { label: 'Fate', id: 5 }, 
-  { label: 'Loot', id: 6 }
+  { label: 'Fantasy Loot', id: 5 },
+  { label: 'Fate', id: 6 }
 ];
 
 const bodies = [
@@ -128,7 +131,7 @@ export default function Helper() {
       setHiddenCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
-    } else if (inputValue === "Loot") {
+    } else if (inputValue === "Fantasy Loot") {
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
@@ -169,13 +172,9 @@ export default function Helper() {
 
   const clickDice = () => {
     if (functionSelected === "Action") {
-      axios({
-        method: 'get',
-        url: 'https://GMEEngine.labonneauberge.repl.co/action'
-      })
-      .then(function (response) {
-        setHistory(h => ([...h, logMeaning("Action", response.data.action + " / " + response.data.subject)]));
-      });
+      let actionResponse = actionRoll();
+      
+      setHistory(h => ([...h, logMeaning("Action", actionResponse.action + " / " + actionResponse.subject)]));
     } else if (functionSelected === "Character") {
       if (subfonctionsCharactersSelected === "list" || subfonctionsCharactersSelected === "Liste de personnages") {
         axios({
@@ -221,17 +220,60 @@ export default function Helper() {
         });
       }
     } else if (functionSelected === "Description") {
-      axios({
-        method: 'get',
-        url: 'https://GMEEngine.labonneauberge.repl.co/description'
-      })
-      .then(function (response) {
-        setHistory(h => ([...h, logMeaning("Description", response.data.description1 + " / " + response.data.description2)]));
-      });
+      let descriptionResponse = descriptionRoll();
+
+      setHistory(h => ([...h, logMeaning("Description", descriptionResponse.description1 + " / " + descriptionResponse.description2)]));
     } else if (functionSelected === "Event") {
       let eventResponse = eventCheck();
 
       setHistory(h => ([...h, logRandomEvent(eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
+    } else if (functionSelected === "Fantasy Loot") {
+      let body = "";
+
+      if (bodiesSelected === "Humanoïde non-aventurier sans sac, poches ...") {
+        body = "no";
+      } else if (bodiesSelected === "Humanoïde non-aventurier avec un sac, des poches ...") {
+        body = "nw";
+      } else if (bodiesSelected === "Humanoïde aventurier sans sac, poches ...") {
+        body = "ao";
+      } else if (bodiesSelected === "Humanoïde aventurier avec un sac, des poches ...") {
+        body = "aw";
+      } else if (bodiesSelected === "Animaux sauvages") {
+        body = "wa";
+      } else if (bodiesSelected === "Loot") {
+        body = "lo";
+      }
+
+      let fantasyLootResponse = fantasyLootGenerator(body, placesSelected);
+
+      let fantasyLootData = data.inventory;
+
+      for (let i = 0 ; i < fantasyLootResponse.number ; i++) {
+        fantasyLootData.push({
+          "lootItem": fantasyLootResponse.items[i],
+          "lootCategory": fantasyLootResponse.categories[i]
+        });
+      }
+
+      firebase.updateDocument("helpers", id, {
+        "inventory": fantasyLootData
+      });
+
+      let responseText = "";
+
+      if (fantasyLootResponse.number === 0) {
+        setHistory(h => ([...h, logLoot("Vous n'avez rien looté")]));
+      } else {
+        for (let i = 0 ; i < fantasyLootResponse.number ; i++) {
+          responseText = responseText + fantasyLootResponse.categories[i] + " => " + fantasyLootResponse.items[i];
+
+          if (i < fantasyLootResponse.number - 1) {
+            responseText = responseText + "\n\n";
+          }
+        }
+        
+        setHistory(h => ([...h, logLoot(responseText)]));
+      }
     } else if (functionSelected === "Fate") {
       let odd = "";
 
@@ -276,59 +318,16 @@ export default function Helper() {
       } else {
         setHistory(h => ([...h, logFate(odd, data.chaosFactor, yesno)]));
       }
-    } else if (functionSelected === "Loot") {
-      let body = "";
-
-      if (bodiesSelected === "Humanoïde non-aventurier sans sac, poches ...") {
-        body = "no";
-      } else if (oddSelected === "Humanoïde non-aventurier avec un sac, des poches ...") {
-        body = "nw";
-      } else if (oddSelected === "Humanoïde aventurier sans sac, poches ...") {
-        body = "ao";
-      } else if (oddSelected === "Humanoïde aventurier avec un sac, des poches ...") {
-        body = "aw";
-      } else if (oddSelected === "Animaux sauvages") {
-        body = "wa";
-      } else if (oddSelected === "Loot") {
-        body = "lo";
-      }
-
-      axios({
-        method: 'post',
-        url: 'https://GMEEngine.labonneauberge.repl.co/fantasyloot',
-        data: {
-          campaignID: id,
-          lootBody: body,
-          lootPlace: placesSelected
-        }
-      })
-      .then(function (response) {
-        let responseText = "";
-
-        if (response.data.number === 0) {
-          setHistory(h => ([...h, logLoot("Vous n'avez rien looté")]));
-        } else {
-          for (let i = 0 ; i < response.data.number ; i++) {
-            responseText = responseText + response.data.categories[i] + " => " + response.data.items[i];
-  
-            if (i < response.data.number - 1) {
-              responseText = responseText + "\n\n";
-            }
-          }
-  
-          setHistory(h => ([...h, logLoot(responseText)]));
-        }
-      });
     }
   };
 
   useEffect(() => {    
-    firebase.getDocument("helpers",id).then(doc => {
+    firebase.getDocument("helpers", id).then(doc => {
       setData(doc.data());
     });
     
     if (token) {
-      firebase.getDocument("users",token).then(doc => {
+      firebase.getDocument("users", token).then(doc => {
         setIsAuth(doc.data().helpers.includes(id));
       })
     } else {
