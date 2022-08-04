@@ -4,7 +4,9 @@ import { Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, Men
 import CasinoIcon from '@mui/icons-material/Casino';
 import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
+import eventCheck from "functions/mythic/eventCheck";
 import fateCheck from "functions/mythic/fateCheck";
+import { v4 as uuidv4 } from 'uuid';
 
 const options = [
   'd4',
@@ -67,6 +69,7 @@ export default function Helper() {
   const { id, token } = useParams();
   const [isAuth, setIsAuth] = useState(false);
   const [data, setData] = useState({})
+  const [dataCampaign, setDataCampaign] = useState({})
   const [functionSelected, setFunctionSelected] = useState("");
   const [oddSelected, setOddSelected] = useState("");
   const [yesOrNoSelected, setYesOrNoSelected] = useState("");
@@ -228,13 +231,9 @@ export default function Helper() {
         setHistory(h => ([...h, logMeaning("Description", response.data.description1 + " / " + response.data.description2)]));
       });
     } else if (functionSelected === "Event") {
-      axios({
-        method: 'get',
-        url: 'https://GMEEngine.labonneauberge.repl.co/event'
-      })
-      .then(function (response) {
-        setHistory(h => ([...h, logRandomEvent(response.data.eventFocusName + " (" + response.data.eventFocusDescription + ")\n\n" + response.data.eventAction + " / " + response.data.eventSubject)]));
-      });
+      let eventResponse = eventCheck();
+
+      setHistory(h => ([...h, logRandomEvent(eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
     } else if (functionSelected === "Fate") {
       let odd = "";
 
@@ -257,8 +256,8 @@ export default function Helper() {
       } else if (oddSelected === "Comme ça doit être") {
         odd = "HB";
       }
-
-      let fateResponse = fateCheck(4, odd, yesOrNoSelected);
+      
+      let fateResponse = fateCheck(dataCampaign.chaosFactor, odd, yesOrNoSelected);
 
       let yesno = "";
         
@@ -272,42 +271,13 @@ export default function Helper() {
         yesno = yesno + " EXCEPTIONNEL"
       }
 
-      setHistory(h => ([...h, logFate(odd, 4, yesno)]));
-      
-      /* axios({
-        method: 'post',
-        url: 'https://GMEEngine.labonneauberge.repl.co/fate',
-        data: {
-          odd: odd,
-          yesorno: yesOrNoSelected,
-          campaignID: id
-        }
-      })
-      .then(function (response) {
-        let yesno = "";
+      if (fateResponse.randomEvent === true) {
+        let eventResponse = eventCheck();
         
-        if (response.data.isYes === true) {
-          yesno = "OUI";
-        } else {
-          yesno = "NON"
-        }
-
-        if (response.data.isExceptional === true) {
-          yesno = yesno + " Exceptionnel"
-        }
-
-        if (response.data.randomEvent === true) {
-          axios({
-            method: 'get',
-            url: 'https://GMEEngine.labonneauberge.repl.co/event'
-          })
-          .then(function (responseEvent) {
-            setHistory(h => ([...h, logFate(odd,4,yesno + "Evénement aléatoire\n" + responseEvent.data.eventFocusName + " (" + responseEvent.data.eventFocusDescription + ")\n\n" + responseEvent.data.eventAction + " / " + responseEvent.data.eventSubject)]));
-          });
-        } else {
-          setHistory(h => ([...h, logFate(odd,4,yesno)]));
-        }
-      }); */
+        setHistory(h => ([...h, logFate(odd, dataCampaign.chaosFactor, yesno + "Evénement aléatoire\n" + eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
+      } else {
+        setHistory(h => ([...h, logFate(odd, dataCampaign.chaosFactor, yesno)]));
+      }
     } else if (functionSelected === "Loot") {
       let body = "";
 
@@ -355,20 +325,32 @@ export default function Helper() {
   };
 
   useEffect(() => {
-    axios({
-      method: 'post',
-      url: 'https://GMEEngine.labonneauberge.repl.co/campaign/create',
-      data: {
-        campaignID: id
+    firebase.getDocuments("campaigns", "campaignID", "==", id).then(docs => {
+      if (docs.empty) {
+        let inputParams = {
+          campaignID: id,
+          chaosFactor: 4
+        }
+        
+        firebase.setDocument("campaigns", uuidv4(), inputParams);
+
+        setDataCampaign(inputParams);
+      } else {
+        docs.forEach(doc => {
+          console.log(doc.data());
+          setDataCampaign(doc.data());
+
+          return;
+        });
       }
     })
+    
     firebase.getDocument("helpers",id).then(doc => setData(doc.data()));
     if (token) {
       firebase.getDocument("users",token).then(doc => {
         setIsAuth(doc.data().helpers.includes(id));
       })
-    }
-    else {
+    } else {
       setIsAuth(false);
     }
   }, [firebase,id,token,axios])

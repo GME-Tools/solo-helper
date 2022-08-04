@@ -5,7 +5,7 @@ import { getAuth, signInWithPopup, signOut } from 'firebase/auth';
 import { GoogleAuthProvider } from "firebase/auth";
 
 import { getFirestore } from 'firebase/firestore';
-import { collection, doc, getDoc, addDoc, setDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, addDoc, setDoc, deleteDoc, getDocs, query, where } from 'firebase/firestore';
 
 import { useNavigate } from "react-router-dom";
 
@@ -42,6 +42,7 @@ class Firebase {
   addDocument = (col, data) => addDoc(collection(this.db, col), data);
   setDocument = (col, item, data) => setDoc(doc(this.db, col, item), data,{merge: true});
   deleteDocument = (col, item) => deleteDoc(doc(this.db, col, item));
+  getDocuments = (col, item, ope, data) => getDocs(query(collection(this.db, col), where(item, ope, data)));
 
   getUser = uid => this.getDocument('users', uid);
   getCurrentUser = () => this.auth.currentUser ? this.getUser(this.auth.currentUser.uid) : Promise.reject("User Unknown");
