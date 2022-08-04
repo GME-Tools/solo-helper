@@ -42,7 +42,10 @@ export default function HelpersList() {
     const data = [...helpers, uid]
     setHelpers(data);
     firebase.setCurrentUserData({helpers: data});
-    firebase.setDocument("helpers",uid,{});
+    firebase.setDocument("helpers", uid, {
+      campaignID: uid,
+      chaosFactor: 4
+    });
     setNewUuid(uid);
   }
 

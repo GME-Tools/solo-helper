@@ -6,7 +6,6 @@ import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, l
 import { useFirebase } from "context/FirebaseContext";
 import eventCheck from "functions/mythic/eventCheck";
 import fateCheck from "functions/mythic/fateCheck";
-import { v4 as uuidv4 } from 'uuid';
 
 const options = [
   'd4',
@@ -69,7 +68,6 @@ export default function Helper() {
   const { id, token } = useParams();
   const [isAuth, setIsAuth] = useState(false);
   const [data, setData] = useState({})
-  const [dataCampaign, setDataCampaign] = useState({})
   const [functionSelected, setFunctionSelected] = useState("");
   const [oddSelected, setOddSelected] = useState("");
   const [yesOrNoSelected, setYesOrNoSelected] = useState("");
@@ -257,7 +255,7 @@ export default function Helper() {
         odd = "HB";
       }
       
-      let fateResponse = fateCheck(dataCampaign.chaosFactor, odd, yesOrNoSelected);
+      let fateResponse = fateCheck(data.chaosFactor, odd, yesOrNoSelected);
 
       let yesno = "";
         
@@ -274,9 +272,9 @@ export default function Helper() {
       if (fateResponse.randomEvent === true) {
         let eventResponse = eventCheck();
         
-        setHistory(h => ([...h, logFate(odd, dataCampaign.chaosFactor, yesno + "Evénement aléatoire\n" + eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
+        setHistory(h => ([...h, logFate(odd, data.chaosFactor, yesno + "Evénement aléatoire\n" + eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
       } else {
-        setHistory(h => ([...h, logFate(odd, dataCampaign.chaosFactor, yesno)]));
+        setHistory(h => ([...h, logFate(odd, data.chaosFactor, yesno)]));
       }
     } else if (functionSelected === "Loot") {
       let body = "";
@@ -324,28 +322,11 @@ export default function Helper() {
     }
   };
 
-  useEffect(() => {
-    firebase.getDocuments("campaigns", "campaignID", "==", id).then(docs => {
-      if (docs.empty) {
-        let inputParams = {
-          campaignID: id,
-          chaosFactor: 4
-        }
-        
-        firebase.setDocument("campaigns", uuidv4(), inputParams);
-
-        setDataCampaign(inputParams);
-      } else {
-        docs.forEach(doc => {
-          console.log(doc.data());
-          setDataCampaign(doc.data());
-
-          return;
-        });
-      }
-    })
+  useEffect(() => {    
+    firebase.getDocument("helpers",id).then(doc => {
+      setData(doc.data());
+    });
     
-    firebase.getDocument("helpers",id).then(doc => setData(doc.data()));
     if (token) {
       firebase.getDocument("users",token).then(doc => {
         setIsAuth(doc.data().helpers.includes(id));
