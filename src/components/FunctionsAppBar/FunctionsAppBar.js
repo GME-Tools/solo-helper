@@ -4,11 +4,12 @@ import { Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, Men
 import CasinoIcon from '@mui/icons-material/Casino';
 import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
-import eventCheck from "functions/mythic/eventCheck";
-import fateCheck from "functions/mythic/fateCheck";
-import actionRoll from "functions/mythic/actionRoll";
-import descriptionRoll from "functions/mythic/descriptionRoll";
-import fantasyLootGenerator from "functions/tables/fantasyLootGenerator";
+import eventCheck from "backend/mythic/eventCheck";
+import fateCheck from "backend/mythic/fateCheck";
+import actionRoll from "backend/mythic/actionRoll";
+import descriptionRoll from "backend/mythic/descriptionRoll";
+import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
+import { characterRandom, characterList } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -54,14 +55,12 @@ const bodies = [
 ];
 
 const subfonctionsCharacters = [
-  { label: 'Créer un personnage', value: 'creation' },
-  { label: 'Information sur un personnage', value: 'information' },
+  // { label: 'Ajouter un personnage', value: 'add' },
+  // { label: 'Information sur un personnage', value: 'information' },
   { label: 'Liste de personnages', value: 'list' },
-  { label: 'Modifier un personnage', value: 'update' },
-  { label: 'Sélectionner aléatoirement un Joueur', value: 'randomPlayer' },
-  { label: 'Sélectionner aléatoirement un personnage (Joueur ou PNJ)', value: 'randomAll' },
-  { label: 'Sélectionner aléatoirement un PNJ', value: 'randomNPC' },
-  { label: "Suppression d'un personnage", value: 'delete' }
+  // { label: 'Modifier un personnage', value: 'update' },
+  { label: 'Sélectionner aléatoirement un personnage', value: 'random' },
+  // { label: "Supprimer un personnage", value: 'delete' }
 ];
 
 export default function Helper() {
@@ -78,9 +77,7 @@ export default function Helper() {
   const [bodiesSelected, setBodiesSelected] = useState("");
   const [placesSelected, setPlacesSelected] = useState("");
   const [hiddenLoot, setHiddenLoot] = useState(true);
-  const [subfonctionsCharactersSelected, setSubfonctionsCharactersSelected] = useState("");
-  const [, setCharacterNameSelected] = useState("");
-  const [, setCharacterPlayerNPCSelected] = useState("");    
+  const [subfonctionsCharactersSelected, setSubfonctionsCharactersSelected] = useState(""); 
   const [hiddenCharacter, setHiddenCharacter] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -162,14 +159,6 @@ export default function Helper() {
     setSubfonctionsCharactersSelected(inputValue);
   };
 
-  const changeCharacterName = (event, inputValue) => {
-    setCharacterNameSelected(inputValue);
-  };
-
-  const changeCharacterPlayerNPC = (event, inputValue) => {
-    setCharacterPlayerNPCSelected(inputValue);
-  };
-
   const clickDice = () => {
     if (functionSelected === "Action") {
       let actionResponse = actionRoll();
@@ -177,47 +166,23 @@ export default function Helper() {
       setHistory(h => ([...h, logMeaning("Action", actionResponse.action + " / " + actionResponse.subject)]));
     } else if (functionSelected === "Character") {
       if (subfonctionsCharactersSelected === "list" || subfonctionsCharactersSelected === "Liste de personnages") {
-        axios({
-          method: 'post',
-          url: 'https://GMEEngine.labonneauberge.repl.co/character/post',
-          data: {
-            campaignID: id,
-            action: "characters"
-          }
-        })
-        .then(function (response) {
-          let responseText = "";
+        let characterResponse = characterList(data);
 
-          if (response.data.isExisted === false) {
-            setHistory(h => ([...h, logCharacter("La liste de personnages est vide.")]));
-          } else {
-            for (let i = 0 ; i < response.data.names.length ; i++) {
-              responseText = responseText + (i + 1) + "- " + response.data.names[i];
+        let responseText = "";
 
-              if (i < response.data.names.length - 1) {
-                responseText = responseText + "\n";
-              }
-            }
+        for (let i = 0 ; i < characterResponse.names.length ; i++) {
+          responseText = responseText + (i + 1) + "- " + characterResponse.names[i];
 
-            setHistory(h => ([...h, logCharacter(responseText)]));
+          if (i < characterResponse.names.length - 1) {
+            responseText = responseText + "\n";
           }
-        });
-      } else if (subfonctionsCharactersSelected === "randomAll" || subfonctionsCharactersSelected === "Sélectionner aléatoirement un personnage (Joueur ou PNJ)") {
-        axios({
-          method: 'post',
-          url: 'https://GMEEngine.labonneauberge.repl.co/character/post',
-          data: {
-            campaignID: id,
-            action: "randomAll"
-          }
-        })
-        .then(function (response) {
-          if (response.data.isExisted === false) {
-            setHistory(h => ([...h, logCharacter("La liste de personnages est vide.")]));
-          } else {
-            setHistory(h => ([...h, logCharacter(response.data.name)]));
-          }
-        });
+        }
+
+        setHistory(h => ([...h, logCharacter(responseText)]));
+      } else if (subfonctionsCharactersSelected === "random" || subfonctionsCharactersSelected === "Sélectionner aléatoirement un personnage") {
+        let characterResponse = characterRandom(data);
+
+        setHistory(h => ([...h, logCharacter(characterResponse.name)]));
       }
     } else if (functionSelected === "Description") {
       let descriptionResponse = descriptionRoll();
@@ -452,19 +417,6 @@ export default function Helper() {
         <TextField {...params}
           label="Choose a subfonction"/>}
       /> : null}
-
-      {!hiddenCharacter ?
-          <TextField id="tf-characterName" label="Name" variant="outlined" onChange={changeCharacterName} />
-      : null}
-
-      {!hiddenCharacter ? <FormControl>
-        <RadioGroup
-          name="radio-buttons-group-characterPlayerNPC"
-          onChange={changeCharacterPlayerNPC}>
-          <FormControlLabel value="Player" control={<Radio />} label="Joueur" />
-          <FormControlLabel value="NPC" control={<Radio />} label="PNJ" />
-        </RadioGroup>
-      </FormControl> : null}
 
       <Button
         variant="contained"
