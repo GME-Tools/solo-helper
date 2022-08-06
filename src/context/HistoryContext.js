@@ -37,6 +37,12 @@ export const logCharacter = (result) => ({
   result: result
 });
 
+export const logTheme = (result) => ({
+  emoji: <span style={{lineHeight: 1}}>🕵🏻‍♂️</span>,
+  command: "Thème",
+  result: result
+});
+
 const data = [
   {
     emoji: <span style={{lineHeight: 1}}>🎲</span>,

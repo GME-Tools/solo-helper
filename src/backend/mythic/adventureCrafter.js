@@ -1,8 +1,8 @@
 const dice = require('../dice');
-// const adventureData = require('../../data/adventurecrafter');
+const adventureData = require('../../data/adventurecrafter');
 // const plotPointsData = require('../../data/plotPoints');
 
-/* const themeCreation = (campaign, themesPlayer) => {
+const themeCreation = (data, themesPlayer) => {
   let themeName = "";
   let themeDescription = "";
   let themes = [];
@@ -14,21 +14,17 @@ const dice = require('../dice');
     [10,10]
   ];
   let isExisted = false;
-  
-  if (campaign[0].themes === undefined || campaign[0].themes.length === 0) {
-    campaign[0].themes = [];
 
+  let findName = function(themes, themeName) {
+    return themes.find(theme => theme.name === themeName);
+  };
+  
+  if (data.themes.length === 0) {
     if (themesPlayer.length > 0) {
       for (let i = 0 ; i <= themesPlayer.length ; i++) {
         for (let j = 1 ; j <= Object.keys(adventureData.randomThemesTable).length ; j++) {
           if (themesPlayer[i] === adventureData.randomThemesTable[j].name) {
-            // console.log(themesPlayer.length);
-
             themes.push({"name": adventureData.randomThemesTable[j].name, "description": adventureData.randomThemesTable[j].description, "values": values[themes.length]});
-
-            campaign[0].themes.push({"name": adventureData.randomThemesTable[j].name, "description": adventureData.randomThemesTable[j].description, "values": values[themes.length-1], "alternated": false});
-
-            // console.log("campaign[0].themes: " + campaign[0].themes);
           }
         }
       } 
@@ -43,38 +39,29 @@ const dice = require('../dice');
           themeDescription = adventureData.randomThemesTable[i].description;
 
           if (themes.length > 0) {
-            while (themes.find(theme => theme.name === themeName) !== undefined) {
+            while (findName(themes, adventureData.randomThemesTable[i].name) !== undefined) {
               if (i === 5) {
                 i = 1;
               } else {
                 i++;
               }
-              
-              themeName = adventureData.randomThemesTable[i].name;
-              themeDescription = adventureData.randomThemesTable[i].description;
             }
+            
+            themeName = adventureData.randomThemesTable[i].name;
+            themeDescription = adventureData.randomThemesTable[i].description;
           }
 
           themes.push({"name": themeName, "description": themeDescription, "values": values[themes.length]});
 
-          campaign[0].themes.push({"name": themeName, "description": themeDescription, "values": values[themes.length-1], "alternated": false});
-
-          // console.log("campaign[0].themes: " + campaign[0].themes);
+          break;
         }
       }
     }
     
-    campaign[0].themes[3].alternated = true;
-
-    console.log(themes);
-
-    campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    });
+    themes[3].alternated = true;
+    themes[4].alternated = false;
   } else {
-    themes = campaign[0].themes;
-
-    console.log("themes: " + campaign[0].themes);
+    themes = data.themes;
 
     isExisted = true;
   }
@@ -83,7 +70,7 @@ const dice = require('../dice');
     themes: themes,
     isExisted: isExisted
   }
-} */
+}
 
 /* const themeList = (campaign) => {
   let themes = [];
@@ -1182,6 +1169,7 @@ const characterList = (data) => {
 } */
 
 module.exports = {
+  "themeCreation": themeCreation,
   "characterRandom": characterRandom,
   "characterList": characterList
 };

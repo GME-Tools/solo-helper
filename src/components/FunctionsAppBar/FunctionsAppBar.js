@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
-import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter } from "context/HistoryContext";
+import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter, logTheme } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
 import eventCheck from "backend/mythic/eventCheck";
 import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { characterRandom, characterList } from "backend/mythic/adventureCrafter";
+import { themeCreation, characterRandom, characterList } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -42,7 +42,8 @@ const functions = [
   { label: 'Description', id: 3 },
   { label: 'Event', id: 4 },
   { label: 'Fantasy Loot', id: 5 },
-  { label: 'Fate', id: 6 }
+  { label: 'Fate', id: 6 },
+  { label: 'Theme', id: 7 }
 ];
 
 const bodies = [
@@ -63,6 +64,18 @@ const subfonctionsCharacters = [
   // { label: "Supprimer un personnage", value: 'delete' }
 ];
 
+const subfonctionsThemes = [
+  { label: 'Création des thèmes', value: 'creation' }
+];
+
+const themes = [
+  { label: 'ACTION', id: 1 },
+  { label: 'TENSION', id: 2 },
+  { label: 'MYSTÈRE', id: 3 },
+  { label: 'SOCIAL', id: 4 },
+  { label: 'PERSONNEL', id: 5 },
+];
+
 export default function Helper() {
   const firebase = useFirebase();
   const [, setHistory] = useHistory();
@@ -79,6 +92,16 @@ export default function Helper() {
   const [hiddenLoot, setHiddenLoot] = useState(true);
   const [subfonctionsCharactersSelected, setSubfonctionsCharactersSelected] = useState(""); 
   const [hiddenCharacter, setHiddenCharacter] = useState(true);
+  const [subfonctionsThemesSelected, setSubfonctionsThemesSelected] = useState(""); 
+  const [hiddenTheme, setHiddenTheme] = useState(true);
+  const [creationThemesSelected, setCreationThemesSelected] = useState("");
+  const [hiddenCreationTheme, setHiddenCreationTheme] = useState(true);
+  const [manualCreationThemesSelected1, setManualCreationThemesSelected1] = useState("");
+  const [manualCreationThemesSelected2, setManualCreationThemesSelected2] = useState("");
+  const [manualCreationThemesSelected3, setManualCreationThemesSelected3] = useState("");
+  const [manualCreationThemesSelected4, setManualCreationThemesSelected4] = useState("");
+  const [manualCreationThemesSelected5, setManualCreationThemesSelected5] = useState("");
+  const [hiddenManualCreationTheme, setHiddenManualCreationTheme] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -124,18 +147,27 @@ export default function Helper() {
       setHiddenCharacter(false);
       setHiddenFate(true);
       setHiddenLoot(true);
+      setHiddenTheme(true);
     } else if (inputValue === "Fate") {
       setHiddenCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
+      setHiddenTheme(true);
     } else if (inputValue === "Fantasy Loot") {
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
+      setHiddenTheme(true);
+    } else if (inputValue === "Theme") {
+      setHiddenCharacter(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenTheme(false);
     } else {
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
+      setHiddenTheme(true);
     }
   };
 
@@ -159,6 +191,44 @@ export default function Helper() {
     setSubfonctionsCharactersSelected(inputValue);
   };
 
+  const changeSubfonctionsThemes = (event, inputValue) => {
+    setSubfonctionsThemesSelected(inputValue);
+
+    if (inputValue === "Création des thèmes") {
+      setHiddenCreationTheme(false);
+    }
+  };
+
+  const changeThemes = (event, inputValue) => {
+    setCreationThemesSelected(inputValue);
+
+    if (inputValue === "manual") {
+      setHiddenManualCreationTheme(false);
+    } else {
+      setHiddenManualCreationTheme(true);
+    }
+  };
+
+  const changeCreationThemes1 = (event, inputValue) => {
+    setManualCreationThemesSelected1(inputValue);
+  };
+  
+  const changeCreationThemes2 = (event, inputValue) => {
+    setManualCreationThemesSelected2(inputValue);
+  };
+
+  const changeCreationThemes3 = (event, inputValue) => {
+    setManualCreationThemesSelected3(inputValue);
+  };
+
+  const changeCreationThemes4 = (event, inputValue) => {
+    setManualCreationThemesSelected4(inputValue);
+  };
+
+  const changeCreationThemes5 = (event, inputValue) => {
+    setManualCreationThemesSelected5(inputValue);
+  };
+  
   const clickDice = () => {
     if (functionSelected === "Action") {
       let actionResponse = actionRoll();
@@ -222,6 +292,8 @@ export default function Helper() {
 
       firebase.updateDocument("helpers", id, {
         "inventory": fantasyLootData
+      }).then(doc => {
+        setData(doc.data());
       });
 
       let responseText = "";
@@ -283,6 +355,36 @@ export default function Helper() {
       } else {
         setHistory(h => ([...h, logFate(odd, data.chaosFactor, yesno)]));
       }
+    } else if (functionSelected === "Theme") {
+      if (subfonctionsThemesSelected === "creation" || subfonctionsThemesSelected === "Création des thèmes") {
+        let themeResponse;
+        
+        if (creationThemesSelected === "random") {
+          themeResponse = themeCreation(data, []);
+        } else {
+          let manualThemes = [manualCreationThemesSelected1, manualCreationThemesSelected2, manualCreationThemesSelected3, manualCreationThemesSelected4, manualCreationThemesSelected5];
+
+          themeResponse = themeCreation(data, manualThemes);
+        }
+
+        firebase.updateDocument("helpers", id, {
+          "themes": themeResponse.themes
+        }).then(doc => {
+          setData(doc.data());
+        });
+
+        let responseText = "";
+
+        for (let i = 0 ; i < themeResponse.themes.length ; i++) {
+          responseText = responseText + (i + 1) + "- " + themeResponse.themes[i].name;
+
+          if (i < themeResponse.themes.length - 1) {
+            responseText = responseText + "\n";
+          }
+        }
+
+        setHistory(h => ([...h, logTheme(responseText)]));
+      }
     }
   };
 
@@ -298,7 +400,7 @@ export default function Helper() {
     } else {
       setIsAuth(false);
     }
-  }, [firebase,id,token,axios])
+  }, [firebase, id, token, axios])
 
   console.log(data);
   console.log(isAuth);
@@ -416,6 +518,99 @@ export default function Helper() {
         renderInput={(params) =>
         <TextField {...params}
           label="Choose a subfonction"/>}
+      /> : null}
+
+      {!hiddenTheme ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-themes"
+        options={subfonctionsThemes}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsThemes}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a subfonction"/>}
+      /> : null}
+
+      {!hiddenCreationTheme ? <FormControl>
+        <RadioGroup
+          name="radio-buttons-group-themes"
+          onChange={changeThemes}>
+          <FormControlLabel value="random" control={<Radio />} label="Aléatoire" />
+          <FormControlLabel value="manual" control={<Radio />} label="Manuel" />
+        </RadioGroup>
+      </FormControl> : null}
+
+      {!hiddenManualCreationTheme ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-creation-themes-1"
+        options={themes}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeCreationThemes1}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Premier thème"/>}
+      /> : null}
+
+      {!hiddenManualCreationTheme ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-creation-themes-2"
+        options={themes}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeCreationThemes2}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Deuxième thème"/>}
+      /> : null}
+
+      {!hiddenManualCreationTheme ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-creation-themes-3"
+        options={themes}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeCreationThemes3}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Troisième thème"/>}
+      /> : null}
+
+      {!hiddenManualCreationTheme ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-creation-themes-4"
+        options={themes}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeCreationThemes4}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Quatrième thème"/>}
+      /> : null}
+
+      {!hiddenManualCreationTheme ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-creation-themes-5"
+        options={themes}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeCreationThemes5}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Cinquième thème"/>}
       /> : null}
 
       <Button
