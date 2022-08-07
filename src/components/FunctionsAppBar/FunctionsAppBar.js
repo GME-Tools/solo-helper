@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, characterRandom, characterList } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, characterList } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -65,7 +65,8 @@ const subfonctionsCharacters = [
 ];
 
 const subfonctionsThemes = [
-  { label: 'Création des thèmes', value: 'creation' }
+  { label: 'Création des thèmes', value: 'creation' },
+  { label: 'Liste des thèmes', value: 'list' }
 ];
 
 const themes = [
@@ -148,26 +149,36 @@ export default function Helper() {
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenTheme(true);
+      setHiddenCreationTheme(true);
+      setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fate") {
       setHiddenCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
       setHiddenTheme(true);
+      setHiddenCreationTheme(true);
+      setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fantasy Loot") {
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
       setHiddenTheme(true);
+      setHiddenCreationTheme(true);
+      setHiddenManualCreationTheme(true);
     } else if (inputValue === "Theme") {
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenTheme(false);
+      setHiddenCreationTheme(true);
+      setHiddenManualCreationTheme(true);
     } else {
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenTheme(true);
+      setHiddenCreationTheme(true);
+      setHiddenManualCreationTheme(true);
     }
   };
 
@@ -384,6 +395,26 @@ export default function Helper() {
         }
 
         setHistory(h => ([...h, logTheme(responseText)]));
+      } else if (subfonctionsThemesSelected === "list" || subfonctionsThemesSelected === "Liste des thèmes") {
+        let themeResponse;
+
+        themeResponse = themeList(data);
+
+        if (themeResponse.isExisted === true) {
+          let responseText = "";
+
+          for (let i = 0 ; i < themeResponse.themes.length ; i++) {
+            responseText = responseText + (i + 1) + "- " + themeResponse.themes[i].name;
+  
+            if (i < themeResponse.themes.length - 1) {
+              responseText = responseText + "\n";
+            }
+          }
+  
+          setHistory(h => ([...h, logTheme(responseText)]));
+        } else {
+          setHistory(h => ([...h, logTheme("La liste des thèmes n'a pas encore été créée pour cette campagne.")]));
+        }
       }
     }
   };

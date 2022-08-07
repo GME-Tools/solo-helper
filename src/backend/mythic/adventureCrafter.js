@@ -72,14 +72,12 @@ const themeCreation = (data, themesPlayer) => {
   }
 }
 
-/* const themeList = (campaign) => {
+const themeList = (data) => {
   let themes = [];
   let isExisted = false;
 
-  if (campaign[0].themes.length !== 0 && campaign[0].themes !== undefined) {
-    themes = campaign[0].themes;
-
-    console.log("themes: " + campaign[0].themes);
+  if (data.themes.length !== 0 && data.themes !== undefined) {
+    themes = data.themes;
 
     isExisted = true;
   }
@@ -88,7 +86,7 @@ const themeCreation = (data, themesPlayer) => {
     themes: themes,
     isExisted: isExisted
   }
-} */
+}
 
 const characterRandom = (data) => {
   let characterDice = dice.die(100);
@@ -105,31 +103,31 @@ const characterRandom = (data) => {
   }
 }
 
-/* const plotRandom = (campaign, add) => {
+/* const plotRandom = (data, add) => {
   let plotDice = dice.die(100);
   let plotName = "";
 
-  for (let i = 0 ; i < campaign[0].plots.length ; i++) {
-    if (plotDice >= campaign[0].plots[i].value[0] && plotDice <= campaign[0].plots[i].value[1]) {
-      plotName = campaign[0].plots[i].name;
+  for (let i = 0 ; i < data.plotsList.length ; i++) {
+    if (plotDice >= data.plotsList[i].value[0] && plotDice <= data.plotsList[i].value[1]) {
+      plotName = data.plotsList[i].name;
     }
   }
 
   if (add === true && (plotName !== "Nouvelle intrigue" && plotName !== "Choisissez l'intrigue la plus logique")) {
     let nbPlots = 0;
 
-    if (campaign[0].plots.find (plot => plot.name === plotName)) {
-      for (let i = 0 ; i < campaign[0].plots.length ; i++) {
-        if (campaign[0].plots[i].name === plotName) {
+    if (data.plotsList.find (plot => plot.name === plotName)) {
+      for (let i = 0 ; i < data.plotsList.length ; i++) {
+        if (data.plotsList[i].name === plotName) {
           nbPlots++;
         }
       }
     }
     
     if (nbPlots < 3) {
-      for (let i = 0 ; i < campaign[0].plots.length ; i++) {
-        if (campaign[0].plots[i].name === "Nouvelle intrigue" || campaign[0].plots[i].name === "Choisissez l'intrigue la plus logique") {
-          campaign[0].plots[i].name = plotName;
+      for (let i = 0 ; i < data.plotsList.length ; i++) {
+        if (data.plotsList[i].name === "Nouvelle intrigue" || data.plotsList[i].name === "Choisissez l'intrigue la plus logique") {
+          data.plotsList[i].name = plotName;
           break;
         }
       }
@@ -137,7 +135,7 @@ const characterRandom = (data) => {
   }
 
   if (add === true) {
-    campaign[0].currentPlot[0] = plotName;
+    data.currentPlot[0] = plotName;
   }
 
   return {
@@ -1170,13 +1168,13 @@ const characterList = (data) => {
 
 module.exports = {
   "themeCreation": themeCreation,
+  "themeList": themeList,
   "characterRandom": characterRandom,
+  // "plotRandom": plotRandom,
   "characterList": characterList
 };
 
-/* module.exports = themeCreation;
-module.exports = themeList;
-module.exports = plotRandom;
+/* module.exports = plotRandom;
 module.exports = plotList;
 module.exports = characterInformation;
 module.exports = plotInformation;
