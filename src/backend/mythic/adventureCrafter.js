@@ -103,7 +103,7 @@ const characterRandom = (data) => {
   }
 }
 
-/* const plotRandom = (data, add) => {
+const plotRandom = (data, add) => {
   let plotDice = dice.die(100);
   let plotName = "";
 
@@ -141,7 +141,7 @@ const characterRandom = (data) => {
   return {
     name: plotName
   }
-} */
+}
 
 const characterList = (data) => {
   let characterNames = [];
@@ -155,17 +155,17 @@ const characterList = (data) => {
   }
 }
 
-/* const plotList = (campaign) => {
+const plotList = (data) => {
   let plotNames = [];
   
-  for (let i = 0 ; i < campaign[0].plots.length ; i++) {
-    plotNames.push(campaign[0].plots[i].name);
+  for (let i = 0 ; i < data.plotsList.length ; i++) {
+    plotNames.push(data.plotsList[i].name);
   }
   
   return {
     names: plotNames
   }
-} */
+}
 
 /* const characterInformation = (campaign, character) => {
   let numberOf = 0;
@@ -1170,13 +1170,12 @@ module.exports = {
   "themeCreation": themeCreation,
   "themeList": themeList,
   "characterRandom": characterRandom,
-  // "plotRandom": plotRandom,
-  "characterList": characterList
+  "plotRandom": plotRandom,
+  "characterList": characterList,
+  "plotList": plotList
 };
 
-/* module.exports = plotRandom;
-module.exports = plotList;
-module.exports = characterInformation;
+/* module.exports = characterInformation;
 module.exports = plotInformation;
 module.exports = characterAdd;
 module.exports = plotAdd;

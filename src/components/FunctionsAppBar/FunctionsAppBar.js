@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
-import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter, logTheme } from "context/HistoryContext";
+import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter, logPlot, logTheme } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
 import eventCheck from "backend/mythic/eventCheck";
 import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, characterList } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -43,7 +43,8 @@ const functions = [
   { label: 'Event', id: 4 },
   { label: 'Fantasy Loot', id: 5 },
   { label: 'Fate', id: 6 },
-  { label: 'Theme', id: 7 }
+  { label: 'Plot', id: 7 },
+  { label: 'Theme', id: 8 }
 ];
 
 const bodies = [
@@ -62,6 +63,15 @@ const subfonctionsCharacters = [
   // { label: 'Modifier un personnage', value: 'update' },
   { label: 'Sélectionner aléatoirement un personnage', value: 'random' },
   // { label: "Supprimer un personnage", value: 'delete' }
+];
+
+const subfonctionsPlots = [
+  // { label: 'Ajouter une intrigue', value: 'add' },
+  // { label: 'Information sur une intrigue', value: 'information' },
+  { label: "Liste d'intrigues", value: 'list' },
+  // { label: 'Modifier une intrigue', value: 'update' },
+  { label: 'Sélectionner aléatoirement une intrigue', value: 'random' },
+  // { label: "Supprimer une intrigue", value: 'delete' }
 ];
 
 const subfonctionsThemes = [
@@ -93,6 +103,8 @@ export default function Helper() {
   const [hiddenLoot, setHiddenLoot] = useState(true);
   const [subfonctionsCharactersSelected, setSubfonctionsCharactersSelected] = useState(""); 
   const [hiddenCharacter, setHiddenCharacter] = useState(true);
+   const [subfonctionsPlotsSelected, setSubfonctionsPlotsSelected] = useState(""); 
+  const [hiddenPlot, setHiddenPlot] = useState(true);
   const [subfonctionsThemesSelected, setSubfonctionsThemesSelected] = useState(""); 
   const [hiddenTheme, setHiddenTheme] = useState(true);
   const [creationThemesSelected, setCreationThemesSelected] = useState("");
@@ -148,6 +160,7 @@ export default function Helper() {
       setHiddenCharacter(false);
       setHiddenFate(true);
       setHiddenLoot(true);
+      setHiddenPlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -155,6 +168,7 @@ export default function Helper() {
       setHiddenCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
+      setHiddenPlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -162,6 +176,15 @@ export default function Helper() {
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
+      setHiddenPlot(true);
+      setHiddenTheme(true);
+      setHiddenCreationTheme(true);
+      setHiddenManualCreationTheme(true);
+    } else if (inputValue === "Plot") {
+      setHiddenCharacter(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(false);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -169,6 +192,7 @@ export default function Helper() {
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
+      setHiddenPlot(true);
       setHiddenTheme(false);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -176,6 +200,7 @@ export default function Helper() {
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
+      setHiddenPlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -200,6 +225,10 @@ export default function Helper() {
 
   const changeSubfonctionsCharacters = (event, inputValue) => {
     setSubfonctionsCharactersSelected(inputValue);
+  };
+
+  const changeSubfonctionsPlots = (event, inputValue) => {
+    setSubfonctionsPlotsSelected(inputValue);
   };
 
   const changeSubfonctionsThemes = (event, inputValue) => {
@@ -365,6 +394,26 @@ export default function Helper() {
         setHistory(h => ([...h, logFate(odd, data.chaosFactor, yesno + "Evénement aléatoire\n" + eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
       } else {
         setHistory(h => ([...h, logFate(odd, data.chaosFactor, yesno)]));
+      }
+    } else if (functionSelected === "Plot") {
+      if (subfonctionsPlotsSelected === "list" || subfonctionsPlotsSelected === "Liste d'intrigues") {
+        let plotResponse = plotList(data);
+
+        let responseText = "";
+
+        for (let i = 0 ; i < plotResponse.names.length ; i++) {
+          responseText = responseText + (i + 1) + "- " + plotResponse.names[i];
+
+          if (i < plotResponse.names.length - 1) {
+            responseText = responseText + "\n";
+          }
+        }
+
+        setHistory(h => ([...h, logPlot(responseText)]));
+      } else if (subfonctionsPlotsSelected === "random" || subfonctionsPlotsSelected === "Sélectionner aléatoirement une intrigue") {
+        let plotResponse = plotRandom(data, false);
+
+        setHistory(h => ([...h, logPlot(plotResponse.name)]));
       }
     } else if (functionSelected === "Theme") {
       if (subfonctionsThemesSelected === "creation" || subfonctionsThemesSelected === "Création des thèmes") {
@@ -546,6 +595,20 @@ export default function Helper() {
         getOptionLabel={(option) => option.label}
         sx={{ width: 300 }}
         onInputChange={changeSubfonctionsCharacters}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a subfonction"/>}
+      /> : null}
+
+      {!hiddenPlot ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-plots"
+        options={subfonctionsPlots}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsPlots}
         renderInput={(params) =>
         <TextField {...params}
           label="Choose a subfonction"/>}
