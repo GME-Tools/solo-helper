@@ -167,11 +167,11 @@ const plotList = (data) => {
   }
 }
 
-/* const characterInformation = (campaign, character) => {
+const characterOccurrences = (data, character) => {
   let numberOf = 0;
   
-  for (let i = 0 ; i < campaign[0].characters.length ; i++) {
-    if (campaign[0].characters[i].name === character) {
+  for (let i = 0 ; i < data.charactersList.length ; i++) {
+    if (data.charactersList[i].name === character) {
       numberOf++;
     }
   }
@@ -179,13 +179,13 @@ const plotList = (data) => {
   return {
     numberOf: numberOf
   }
-} */
+}
 
-/* const plotInformation = (campaign, plot) => {
+const plotOccurrences = (data, plot) => {
   let numberOf = 0;
   
-  for (let i = 0 ; i < campaign[0].plots.length ; i++) {
-    if (campaign[0].plots[i].name === plot) {
+  for (let i = 0 ; i < data.plotsList.length ; i++) {
+    if (data.plotsList[i].name === plot) {
       numberOf++;
     }
   }
@@ -193,7 +193,7 @@ const plotList = (data) => {
   return {
     numberOf: numberOf
   }
-} */
+}
 
 /* const characterAdd = (data, isPlayer, character) => {
   let isCreated = false;
@@ -1172,12 +1172,12 @@ module.exports = {
   "characterRandom": characterRandom,
   "plotRandom": plotRandom,
   "characterList": characterList,
-  "plotList": plotList
+  "plotList": plotList,
+  "characterOccurrences": characterOccurrences,
+  "plotOccurrences": plotOccurrences
 };
 
-/* module.exports = characterInformation;
-module.exports = plotInformation;
-module.exports = characterAdd;
+/* module.exports = characterAdd;
 module.exports = plotAdd;
 module.exports = characterUpdate;
 module.exports = plotUpdate;

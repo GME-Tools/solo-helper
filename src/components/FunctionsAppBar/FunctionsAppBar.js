@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -61,18 +61,24 @@ const subfonctionsCharacters = [
   // { label: 'Information sur un personnage', value: 'information' },
   { label: 'Liste de personnages', value: 'list' },
   // { label: 'Modifier un personnage', value: 'update' },
+  { label: "Occurrences d'un personnage", value: 'occurrence' },
   { label: 'Sélectionner aléatoirement un personnage', value: 'random' },
   // { label: "Supprimer un personnage", value: 'delete' }
 ];
+
+let subfonctionsOccurrenceCharacters = [];
 
 const subfonctionsPlots = [
   // { label: 'Ajouter une intrigue', value: 'add' },
   // { label: 'Information sur une intrigue', value: 'information' },
   { label: "Liste d'intrigues", value: 'list' },
   // { label: 'Modifier une intrigue', value: 'update' },
+  { label: "Occurrences d'une intrigue", value: 'occurrence' },
   { label: 'Sélectionner aléatoirement une intrigue', value: 'random' },
   // { label: "Supprimer une intrigue", value: 'delete' }
 ];
+
+let subfonctionsOccurrencePlots = [];
 
 const subfonctionsThemes = [
   { label: 'Création des thèmes', value: 'creation' },
@@ -103,8 +109,12 @@ export default function Helper() {
   const [hiddenLoot, setHiddenLoot] = useState(true);
   const [subfonctionsCharactersSelected, setSubfonctionsCharactersSelected] = useState(""); 
   const [hiddenCharacter, setHiddenCharacter] = useState(true);
+  const [subfonctionsOccurrenceCharactersSelected, setSubfonctionsOccurrenceCharactersSelected] = useState(""); 
+  const [hiddenOccurrenceCharacter, setHiddenOccurrenceCharacter] = useState(true);
    const [subfonctionsPlotsSelected, setSubfonctionsPlotsSelected] = useState(""); 
   const [hiddenPlot, setHiddenPlot] = useState(true);
+  const [subfonctionsOccurrencePlotsSelected, setSubfonctionsOccurrencePlotsSelected] = useState(""); 
+  const [hiddenOccurrencePlot, setHiddenOccurrencePlot] = useState(true);
   const [subfonctionsThemesSelected, setSubfonctionsThemesSelected] = useState(""); 
   const [hiddenTheme, setHiddenTheme] = useState(true);
   const [creationThemesSelected, setCreationThemesSelected] = useState("");
@@ -158,49 +168,61 @@ export default function Helper() {
               
     if (inputValue === "Character") {
       setHiddenCharacter(false);
+      setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
+      setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fate") {
       setHiddenCharacter(true);
+      setHiddenOccurrenceCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
       setHiddenPlot(true);
+      setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fantasy Loot") {
       setHiddenCharacter(true);
+      setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
       setHiddenPlot(true);
+      setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Plot") {
       setHiddenCharacter(true);
+      setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(false);
+      setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Theme") {
       setHiddenCharacter(true);
+      setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
+      setHiddenOccurrencePlot(true);
       setHiddenTheme(false);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     } else {
       setHiddenCharacter(true);
+      setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
+      setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -225,10 +247,48 @@ export default function Helper() {
 
   const changeSubfonctionsCharacters = (event, inputValue) => {
     setSubfonctionsCharactersSelected(inputValue);
+
+    if (inputValue === 'occurrence' || inputValue === "Occurrences d'un personnage") {
+      const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
+
+      for (let i = 0 ; i < uniqueCharacters.length ; i++) {
+        subfonctionsOccurrenceCharacters.push({
+          "label": uniqueCharacters[i],
+          "value": uniqueCharacters[i]
+        });
+      }
+
+      setHiddenOccurrenceCharacter(false);
+    } else {
+      setHiddenOccurrenceCharacter(true);
+    }
+  };
+
+  const changeSubfonctionsOccurrenceCharacters = (event, inputValue) => {
+    setSubfonctionsOccurrenceCharactersSelected(inputValue);
   };
 
   const changeSubfonctionsPlots = (event, inputValue) => {
     setSubfonctionsPlotsSelected(inputValue);
+
+    if (inputValue === 'occurrence' || inputValue === "Occurrences d'une intrigue") {
+      const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
+
+      for (let i = 0 ; i < uniquePlots.length ; i++) {
+        subfonctionsOccurrencePlots.push({
+          "label": uniquePlots[i],
+          "value": uniquePlots[i]
+        });
+      }
+
+      setHiddenOccurrencePlot(false);
+    } else {
+      setHiddenOccurrencePlot(true);
+    }
+  };
+
+  const changeSubfonctionsOccurrencePlots = (event, inputValue) => {
+    setSubfonctionsOccurrencePlotsSelected(inputValue);
   };
 
   const changeSubfonctionsThemes = (event, inputValue) => {
@@ -293,6 +353,10 @@ export default function Helper() {
         let characterResponse = characterRandom(data);
 
         setHistory(h => ([...h, logCharacter(characterResponse.name)]));
+      } else if (subfonctionsCharactersSelected === 'occurrence' || subfonctionsCharactersSelected === "Occurrences d'un personnage") {
+        let characterResponse = characterOccurrences(data, subfonctionsOccurrenceCharactersSelected);
+
+        setHistory(h => ([...h, logCharacter("Le personnage " + subfonctionsOccurrenceCharactersSelected + " apparaît " + characterResponse.numberOf + " fois dans la liste des personnages")]));
       }
     } else if (functionSelected === "Description") {
       let descriptionResponse = descriptionRoll();
@@ -414,6 +478,10 @@ export default function Helper() {
         let plotResponse = plotRandom(data, false);
 
         setHistory(h => ([...h, logPlot(plotResponse.name)]));
+      } else if (subfonctionsPlotsSelected === 'occurrence' || subfonctionsPlotsSelected === "Occurrences d'une intrigue") {
+        let plotResponse = plotOccurrences(data, subfonctionsOccurrencePlotsSelected);
+
+        setHistory(h => ([...h, logPlot("L'intrigue " + subfonctionsOccurrencePlotsSelected + " apparaît " + plotResponse.numberOf + " fois dans la liste des intrigues")]));
       }
     } else if (functionSelected === "Theme") {
       if (subfonctionsThemesSelected === "creation" || subfonctionsThemesSelected === "Création des thèmes") {
@@ -600,6 +668,20 @@ export default function Helper() {
           label="Choose a subfonction"/>}
       /> : null}
 
+      {!hiddenOccurrenceCharacter ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-occurrence-characters"
+        options={subfonctionsOccurrenceCharacters}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsOccurrenceCharacters}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a character"/>}
+      /> : null}
+
       {!hiddenPlot ? <Autocomplete
         autoComplete
         autoSelect
@@ -612,6 +694,20 @@ export default function Helper() {
         renderInput={(params) =>
         <TextField {...params}
           label="Choose a subfonction"/>}
+      /> : null}
+
+      {!hiddenOccurrencePlot ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-occurrence-plots"
+        options={subfonctionsOccurrencePlots}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsOccurrencePlots}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a plot"/>}
       /> : null}
 
       {!hiddenTheme ? <Autocomplete
