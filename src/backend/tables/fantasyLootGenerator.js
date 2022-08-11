@@ -386,9 +386,6 @@ const fantasyLootGenerator = function(lootBody, lootPlace) {
     lootNumber = 0;
   }
 
-  console.log(lootCategories);
-  console.log(lootItems);
-
   return {
     number: lootNumber,
     categories: lootCategories,

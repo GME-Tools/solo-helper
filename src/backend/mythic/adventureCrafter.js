@@ -195,28 +195,28 @@ const plotOccurrences = (data, plot) => {
   }
 }
 
-/* const characterAdd = (data, isPlayer, character) => {
-  let isCreated = false;
+const characterAdd = (charactersList, characterName, isPlayer) => {
   let nbCharacters = 0;
+  let full = false;
 
-  if (data.characters.find (character => character.name === character)) {
-    for (let i = 0 ; i < data.characters.length ; i++) {
-      if (data.characters[i].name === character) {
+  if (charactersList.find (character => character.name === characterName)) {
+    for (let i = 0 ; i < charactersList.length ; i++) {
+      if (charactersList[i].name === characterName) {
         nbCharacters++;
       }
     }
   }
 
-  if (nbCharacters < 3 && (character !== "Nouveau personnage" && character !== "Choisissez le personnage le plus logique")) {
-    for (let i = 0 ; i < data.characters.length ; i++) {
-      if (data.characters[i].name === "Nouveau personnage" || data.characters[i].name === "Choisissez le personnage le plus logique") {
-        if (data.characters.find (character => character.name === character)) {
-          for (let j = 0 ; j < data.characters.length ; j++) {
-            if (data.characters[j].name === character) {
-              data.characters[i].name = data.characters[j].name;
-              data.characters[i].player = data.characters[j].player;
-              data.characters[i].travel = data.characters[j].travel;
-              data.characters[i].piecesOr = data.characters[j].piecesOr;
+  if (nbCharacters < 3 && (characterName !== "Nouveau personnage" && characterName !== "Choisissez le personnage le plus logique")) {
+    for (let i = 0 ; i < charactersList.length ; i++) {
+      if (charactersList[i].name === "Nouveau personnage" || charactersList[i].name === "Choisissez le personnage le plus logique") {
+        if (charactersList.find (character => character.name === characterName)) {
+          for (let j = 0 ; j < charactersList.length ; j++) {
+            if (charactersList[j].name === characterName) {
+              charactersList[i].name = charactersList[j].name;
+              charactersList[i].player = charactersList[j].player;
+              charactersList[i].travel = charactersList[j].travel;
+              charactersList[i].piecesOr = charactersList[j].piecesOr;
             }
           }
         } else {
@@ -227,26 +227,24 @@ const plotOccurrences = (data, plot) => {
             "comments": "si 48 = -5 pénalité à la perception passive",
           }
         
-          data.characters[i].name = character;
-          data.characters[i].player = isPlayer;
-          data.characters[i].travel = travel;
-          data.characters[i].piecesOr = 100;
+          charactersList[i].name = characterName;
+          charactersList[i].player = isPlayer;
+          charactersList[i].travel = travel;
+          charactersList[i].piecesOr = 100;
         }
 
-        isCreated = true;
         break;
       }
     }
+  } else {
+    full = true;
   }
-
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    });
   
   return {
-    isCreated: isCreated
+    charactersList: charactersList,
+    full: full
   }
-} */
+}
 
 /* const plotAdd = (campaign, plot) => {
   let isCreated = false;
@@ -1174,11 +1172,11 @@ module.exports = {
   "characterList": characterList,
   "plotList": plotList,
   "characterOccurrences": characterOccurrences,
-  "plotOccurrences": plotOccurrences
+  "plotOccurrences": plotOccurrences,
+  "characterAdd": characterAdd
 };
 
-/* module.exports = characterAdd;
-module.exports = plotAdd;
+/* module.exports = plotAdd;
 module.exports = characterUpdate;
 module.exports = plotUpdate;
 module.exports = characterDelete;

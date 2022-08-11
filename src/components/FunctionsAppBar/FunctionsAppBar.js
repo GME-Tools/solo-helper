@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -57,7 +57,7 @@ const bodies = [
 ];
 
 const subfonctionsCharacters = [
-  // { label: 'Ajouter un personnage', value: 'add' },
+  { label: 'Ajouter un personnage', value: 'add' },
   // { label: 'Information sur un personnage', value: 'information' },
   { label: 'Liste de personnages', value: 'list' },
   // { label: 'Modifier un personnage', value: 'update' },
@@ -66,6 +66,7 @@ const subfonctionsCharacters = [
   // { label: "Supprimer un personnage", value: 'delete' }
 ];
 
+let subfonctionsAddExistingCharacters = [];
 let subfonctionsOccurrenceCharacters = [];
 
 const subfonctionsPlots = [
@@ -109,6 +110,13 @@ export default function Helper() {
   const [hiddenLoot, setHiddenLoot] = useState(true);
   const [subfonctionsCharactersSelected, setSubfonctionsCharactersSelected] = useState(""); 
   const [hiddenCharacter, setHiddenCharacter] = useState(true);
+  const [subfonctionsAddCharactersSelected, setSubfonctionsAddCharactersSelected] = useState("");
+  const [hiddenAddCharacter, setHiddenAddCharacter] = useState(true);
+  const [subfonctionsAddExistingCharactersSelected, setSubfonctionsAddExistingCharactersSelected] = useState("");
+  const [hiddenAddExistingCharacter, setHiddenAddExistingCharacter] = useState(true);
+  const [subfonctionsAddNewNameCharactersSelected, setSubfonctionsAddNewNameCharactersSelected] = useState("");
+const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCharactersSelected] = useState("");
+  const [hiddenAddNewCharacter, setHiddenAddNewCharacter] = useState(true);
   const [subfonctionsOccurrenceCharactersSelected, setSubfonctionsOccurrenceCharactersSelected] = useState(""); 
   const [hiddenOccurrenceCharacter, setHiddenOccurrenceCharacter] = useState(true);
    const [subfonctionsPlotsSelected, setSubfonctionsPlotsSelected] = useState(""); 
@@ -168,6 +176,9 @@ export default function Helper() {
               
     if (inputValue === "Character") {
       setHiddenCharacter(false);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
@@ -178,6 +189,9 @@ export default function Helper() {
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fate") {
       setHiddenCharacter(true);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
@@ -188,6 +202,9 @@ export default function Helper() {
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fantasy Loot") {
       setHiddenCharacter(true);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
@@ -198,6 +215,9 @@ export default function Helper() {
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Plot") {
       setHiddenCharacter(true);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
@@ -208,6 +228,9 @@ export default function Helper() {
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Theme") {
       setHiddenCharacter(true);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
@@ -218,6 +241,9 @@ export default function Helper() {
       setHiddenManualCreationTheme(true);
     } else {
       setHiddenCharacter(true);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
@@ -248,7 +274,12 @@ export default function Helper() {
   const changeSubfonctionsCharacters = (event, inputValue) => {
     setSubfonctionsCharactersSelected(inputValue);
 
-    if (inputValue === 'occurrence' || inputValue === "Occurrences d'un personnage") {
+    if (inputValue === 'add' || inputValue === 'Ajouter un personnage') {
+      setHiddenAddCharacter(false);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
+      setHiddenOccurrenceCharacter(true);
+    } else if (inputValue === 'occurrence' || inputValue === "Occurrences d'un personnage") {
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
@@ -259,9 +290,48 @@ export default function Helper() {
       }
 
       setHiddenOccurrenceCharacter(false);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
     } else {
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
     }
+  };
+
+  const changeSubfonctionsAddCharacters = (event, inputValue) => {
+    setSubfonctionsAddCharactersSelected(inputValue);
+
+    if (inputValue === "existing") {
+      const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
+
+      for (let i = 0 ; i < uniqueCharacters.length ; i++) {
+        subfonctionsAddExistingCharacters.push({
+          "label": uniqueCharacters[i],
+          "value": uniqueCharacters[i]
+        });
+      }
+
+      setHiddenAddExistingCharacter(false);
+      setHiddenAddNewCharacter(true);
+    } else {
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(false);
+    }
+  };
+
+  const changeSubfonctionsAddExistingCharacters = (event, inputValue) => {
+    setSubfonctionsAddExistingCharactersSelected(inputValue);
+  };
+
+  const changeSubfonctionsAddNewNameCharacters = (event) => {
+    setSubfonctionsAddNewNameCharactersSelected(event.currentTarget.value);
+  };
+
+  const changeSubfonctionsAddNewPlayerCharacters = (event, inputValue) => {
+    setSubfonctionsAddNewPlayerCharactersSelected(inputValue);
   };
 
   const changeSubfonctionsOccurrenceCharacters = (event, inputValue) => {
@@ -335,7 +405,43 @@ export default function Helper() {
       
       setHistory(h => ([...h, logMeaning("Action", actionResponse.action + " / " + actionResponse.subject)]));
     } else if (functionSelected === "Character") {
-      if (subfonctionsCharactersSelected === "list" || subfonctionsCharactersSelected === "Liste de personnages") {
+      if (subfonctionsCharactersSelected === "add" || subfonctionsCharactersSelected === "Ajouter un personnage") {
+        if (subfonctionsAddCharactersSelected === "existing") {
+          let characterResponse = characterAdd(data.charactersList, subfonctionsAddExistingCharactersSelected);
+
+          if (characterResponse.full === false) {
+            firebase.updateDocument("helpers", id, {
+              "charactersList": characterResponse.charactersList
+            }).then(doc => {
+              setData(doc.data());
+            });
+
+            setHistory(h => ([...h, logCharacter("Une occurrence du personnage " + subfonctionsAddExistingCharactersSelected + " a été ajoutée à la liste de personnages")]));
+          } else {
+            setHistory(h => ([...h, logCharacter("Il y a déjà trois occurrences de ce personnage dans la liste des personnages")]));
+          }
+        } else {
+          let isPlayer = false;
+
+          if (subfonctionsAddNewPlayerCharactersSelected === "player") {
+            isPlayer = true;
+          }
+          
+          let characterResponse = characterAdd(data.charactersList, subfonctionsAddNewNameCharactersSelected, isPlayer);
+
+          if (characterResponse.full === false) {
+            firebase.updateDocument("helpers", id, {
+              "charactersList": characterResponse.charactersList
+            }).then(doc => {
+              setData(doc.data());
+            });
+
+            setHistory(h => ([...h, logCharacter("Le personnage " + subfonctionsAddNewNameCharactersSelected + " a été ajouté à la liste de personnages")]));
+          } else {
+            setHistory(h => ([...h, logCharacter("Il y a déjà trois occurrences de ce personnage dans la liste des personnages")]));
+          }
+        }
+      } else if (subfonctionsCharactersSelected === "list" || subfonctionsCharactersSelected === "Liste de personnages") {
         let characterResponse = characterList(data);
 
         let responseText = "";
@@ -667,6 +773,44 @@ export default function Helper() {
         <TextField {...params}
           label="Choose a subfonction"/>}
       /> : null}
+
+      {!hiddenAddCharacter ? <FormControl>
+        <RadioGroup
+          name="radio-buttons-group-add-character"
+          onChange={changeSubfonctionsAddCharacters}>
+          <FormControlLabel value="existing" control={<Radio />} label="Personnage existant" />
+          <FormControlLabel value="new" control={<Radio />} label="Nouveau personnage" />
+        </RadioGroup>
+      </FormControl> : null}
+
+      {!hiddenAddExistingCharacter ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-occurrence-add-existing-characters"
+        options={subfonctionsAddExistingCharacters}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsAddExistingCharacters}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a character"/>}
+      /> : null}
+
+      {!hiddenAddNewCharacter ? <TextField
+        id="outlined-add-new-character"
+        label="Choose a name"
+        variant="outlined"
+        onChange={changeSubfonctionsAddNewNameCharacters} /> : null}
+
+      {!hiddenAddNewCharacter ? <FormControl>
+        <RadioGroup
+          name="radio-buttons-group-add-new-character"
+          onChange={changeSubfonctionsAddNewPlayerCharacters}>
+          <FormControlLabel value="player" control={<Radio />} label="Joueur" />
+          <FormControlLabel value="npc" control={<Radio />} label="PNJ" />
+        </RadioGroup>
+      </FormControl> : null}
 
       {!hiddenOccurrenceCharacter ? <Autocomplete
         autoComplete
