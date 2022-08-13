@@ -246,36 +246,34 @@ const characterAdd = (charactersList, characterName, isPlayer) => {
   }
 }
 
-/* const plotAdd = (campaign, plot) => {
-  let isCreated = false;
+const plotAdd = (plotsList, plotName) => {
   let nbPlots = 0;
+  let full = false;
 
-  if (campaign[0].plots.find (plot => plot.name === plot)) {
-    for (let i = 0 ; i < campaign[0].plots.length ; i++) {
-      if (campaign[0].plots[i].name === plot) {
+  if (plotsList.find (plot => plot.name === plotName)) {
+    for (let i = 0 ; i < plotsList.length ; i++) {
+      if (plotsList[i].name === plotName) {
         nbPlots++;
       }
     }
   }
 
-  if (nbPlots < 3 && (plot !== "Nouvelle intrigue" && plot !== "Choisissez l'intrigue la plus logique")) {
-    for (let i = 0 ; i < campaign[0].plots.length ; i++) {
-      if (campaign[0].plots[i].name === "Nouvelle intrigue" || campaign[0].plots[i].name === "Choisissez l'intrigue la plus logique") {
-        campaign[0].plots[i].name = plot;
-        isCreated = true;
+  if (nbPlots < 3 && (plotName !== "Nouvelle intrigue" && plotName !== "Choisissez l'intrigue la plus logique")) {
+    for (let i = 0 ; i < plotsList.length ; i++) {
+      if (plotsList[i].name === "Nouvelle intrigue" || plotsList[i].name === "Choisissez l'intrigue la plus logique") {
+        plotsList[i].name = plotName;
         break;
       }
     }
+  } else {
+    full = true;
   }
-  
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    });
   
   return {
-    isCreated: isCreated
+    plotsList: plotsList,
+    full: full
   }
-} */
+}
 
 /* const characterUpdate = (campaign, characterOld, characterNew) => {
   let isExisted = false;
@@ -1173,11 +1171,11 @@ module.exports = {
   "plotList": plotList,
   "characterOccurrences": characterOccurrences,
   "plotOccurrences": plotOccurrences,
-  "characterAdd": characterAdd
+  "characterAdd": characterAdd,
+  "plotAdd": plotAdd
 };
 
-/* module.exports = plotAdd;
-module.exports = characterUpdate;
+/* module.exports = characterUpdate;
 module.exports = plotUpdate;
 module.exports = characterDelete;
 module.exports = plotDelete;

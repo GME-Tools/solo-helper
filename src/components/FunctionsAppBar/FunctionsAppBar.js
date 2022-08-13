@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -70,7 +70,7 @@ let subfonctionsAddExistingCharacters = [];
 let subfonctionsOccurrenceCharacters = [];
 
 const subfonctionsPlots = [
-  // { label: 'Ajouter une intrigue', value: 'add' },
+  { label: 'Ajouter une intrigue', value: 'add' },
   // { label: 'Information sur une intrigue', value: 'information' },
   { label: "Liste d'intrigues", value: 'list' },
   // { label: 'Modifier une intrigue', value: 'update' },
@@ -80,6 +80,7 @@ const subfonctionsPlots = [
 ];
 
 let subfonctionsOccurrencePlots = [];
+let subfonctionsAddExistingPlots = [];
 
 const subfonctionsThemes = [
   { label: 'Création des thèmes', value: 'creation' },
@@ -121,6 +122,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const [hiddenOccurrenceCharacter, setHiddenOccurrenceCharacter] = useState(true);
    const [subfonctionsPlotsSelected, setSubfonctionsPlotsSelected] = useState(""); 
   const [hiddenPlot, setHiddenPlot] = useState(true);
+   const [subfonctionsAddPlotsSelected, setSubfonctionsAddPlotsSelected] = useState("");
+  const [hiddenAddPlot, setHiddenAddPlot] = useState(true);
+  const [subfonctionsAddExistingPlotsSelected, setSubfonctionsAddExistingPlotsSelected] = useState("");
+  const [hiddenAddExistingPlot, setHiddenAddExistingPlot] = useState(true);
+  const [subfonctionsAddNewPlotsSelected, setSubfonctionsAddNewPlotsSelected] = useState("");
+  const [hiddenAddNewPlot, setHiddenAddNewPlot] = useState(true);
   const [subfonctionsOccurrencePlotsSelected, setSubfonctionsOccurrencePlotsSelected] = useState(""); 
   const [hiddenOccurrencePlot, setHiddenOccurrencePlot] = useState(true);
   const [subfonctionsThemesSelected, setSubfonctionsThemesSelected] = useState(""); 
@@ -183,6 +190,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
+      setHiddenAddPlot(true);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
       setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
@@ -196,6 +206,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenFate(false);
       setHiddenLoot(true);
       setHiddenPlot(true);
+      setHiddenAddPlot(true);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
       setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
@@ -209,6 +222,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenFate(true);
       setHiddenLoot(false);
       setHiddenPlot(true);
+      setHiddenAddPlot(true);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
       setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
@@ -222,6 +238,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(false);
+      setHiddenAddPlot(true);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
       setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
@@ -235,6 +254,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
+      setHiddenAddPlot(true);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
       setHiddenOccurrencePlot(true);
       setHiddenTheme(false);
       setHiddenCreationTheme(true);
@@ -248,6 +270,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
+      setHiddenAddPlot(true);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
       setHiddenOccurrencePlot(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
@@ -273,6 +298,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
 
   const changeSubfonctionsCharacters = (event, inputValue) => {
     setSubfonctionsCharactersSelected(inputValue);
+
+    subfonctionsAddExistingCharacters = [];
+    subfonctionsOccurrenceCharacters = [];
 
     if (inputValue === 'add' || inputValue === 'Ajouter un personnage') {
       setHiddenAddCharacter(false);
@@ -341,7 +369,15 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const changeSubfonctionsPlots = (event, inputValue) => {
     setSubfonctionsPlotsSelected(inputValue);
 
-    if (inputValue === 'occurrence' || inputValue === "Occurrences d'une intrigue") {
+    subfonctionsAddExistingPlots = [];
+    subfonctionsOccurrencePlots = [];
+
+    if (inputValue === 'add' || inputValue === 'Ajouter une intrigue') {
+      setHiddenAddPlot(false);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
+      setHiddenOccurrencePlot(true);
+    } else if (inputValue === 'occurrence' || inputValue === "Occurrences d'une intrigue") {
       const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
@@ -352,9 +388,44 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       }
 
       setHiddenOccurrencePlot(false);
+      setHiddenAddPlot(true);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
     } else {
+      setHiddenAddPlot(true);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
       setHiddenOccurrencePlot(true);
     }
+  };
+
+  const changeSubfonctionsAddPlots = (event, inputValue) => {
+    setSubfonctionsAddPlotsSelected(inputValue);
+
+    if (inputValue === "existing") {
+      const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
+
+      for (let i = 0 ; i < uniquePlots.length ; i++) {
+        subfonctionsAddExistingPlots.push({
+          "label": uniquePlots[i],
+          "value": uniquePlots[i]
+        });
+      }
+
+      setHiddenAddExistingPlot(false);
+      setHiddenAddNewPlot(true);
+    } else {
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(false);
+    }
+  };
+
+  const changeSubfonctionsAddExistingPlots = (event, inputValue) => {
+    setSubfonctionsAddExistingPlotsSelected(inputValue);
+  };
+
+  const changeSubfonctionsAddNewPlots = (event) => {
+    setSubfonctionsAddNewPlotsSelected(event.currentTarget.value);
   };
 
   const changeSubfonctionsOccurrencePlots = (event, inputValue) => {
@@ -566,7 +637,37 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         setHistory(h => ([...h, logFate(odd, data.chaosFactor, yesno)]));
       }
     } else if (functionSelected === "Plot") {
-      if (subfonctionsPlotsSelected === "list" || subfonctionsPlotsSelected === "Liste d'intrigues") {
+      if (subfonctionsPlotsSelected === "add" || subfonctionsPlotsSelected === "Ajouter une intrigue") {
+        if (subfonctionsAddPlotsSelected === "existing") {
+          let plotResponse = plotAdd(data.plotsList, subfonctionsAddExistingPlotsSelected);
+
+          if (plotResponse.full === false) {
+            firebase.updateDocument("helpers", id, {
+              "plotsList": plotResponse.plotsList
+            }).then(doc => {
+              setData(doc.data());
+            });
+
+            setHistory(h => ([...h, logPlot("Une occurrence de l'intrigue " + subfonctionsAddExistingPlotsSelected + " a été ajoutée à la liste des intrigues")]));
+          } else {
+            setHistory(h => ([...h, logPlot("Il y a déjà trois occurrences de cette intrigue dans la liste des intrigues")]));
+          }
+        } else {
+          let plotResponse = plotAdd(data.plotsList, subfonctionsAddNewPlotsSelected);
+
+          if (plotResponse.full === false) {
+            firebase.updateDocument("helpers", id, {
+              "plotsList": plotResponse.plotsList
+            }).then(doc => {
+              setData(doc.data());
+            });
+
+            setHistory(h => ([...h, logPlot("L'intrigue " + subfonctionsAddNewPlotsSelected + " a été ajoutée à la liste des intrigues")]));
+          } else {
+            setHistory(h => ([...h, logPlot("Il y a déjà trois occurrences de cette intrigue dans la liste des intrigues")]));
+          }
+        }
+      } else if (subfonctionsPlotsSelected === "list" || subfonctionsPlotsSelected === "Liste d'intrigues") {
         let plotResponse = plotList(data);
 
         let responseText = "";
@@ -799,7 +900,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
 
       {!hiddenAddNewCharacter ? <TextField
         id="outlined-add-new-character"
-        label="Choose a name"
+        label="Write a name"
         variant="outlined"
         onChange={changeSubfonctionsAddNewNameCharacters} /> : null}
 
@@ -839,6 +940,35 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         <TextField {...params}
           label="Choose a subfonction"/>}
       /> : null}
+
+      {!hiddenAddPlot ? <FormControl>
+        <RadioGroup
+          name="radio-buttons-group-add-plot"
+          onChange={changeSubfonctionsAddPlots}>
+          <FormControlLabel value="existing" control={<Radio />} label="Intrigue existante" />
+          <FormControlLabel value="new" control={<Radio />} label="Nouvelle intrigue" />
+        </RadioGroup>
+      </FormControl> : null}
+
+      {!hiddenAddExistingPlot ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-occurrence-add-existing-plotd"
+        options={subfonctionsAddExistingPlots}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsAddExistingPlots}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a plot"/>}
+      /> : null}
+
+      {!hiddenAddNewPlot ? <TextField
+        id="outlined-add-new-plot"
+        label="Write a plot"
+        variant="outlined"
+        onChange={changeSubfonctionsAddNewPlots} /> : null}
 
       {!hiddenOccurrencePlot ? <Autocomplete
         autoComplete
