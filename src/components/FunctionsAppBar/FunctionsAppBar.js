@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -60,14 +60,14 @@ const subfonctionsCharacters = [
   { label: 'Ajouter un personnage', value: 'add' },
   // { label: 'Information sur un personnage', value: 'information' },
   { label: 'Liste de personnages', value: 'list' },
-  // { label: 'Modifier un personnage', value: 'update' },
+  { label: 'Modifier un personnage', value: 'update' },
   { label: "Occurrences d'un personnage", value: 'occurrence' },
   { label: 'Sélectionner aléatoirement un personnage', value: 'random' },
   // { label: "Supprimer un personnage", value: 'delete' }
 ];
 
-let subfonctionsAddExistingCharacters = [];
-let subfonctionsOccurrenceCharacters = [];
+let existingCharacters = [];
+let updatePlayer = false;
 
 const subfonctionsPlots = [
   { label: 'Ajouter une intrigue', value: 'add' },
@@ -79,8 +79,7 @@ const subfonctionsPlots = [
   // { label: "Supprimer une intrigue", value: 'delete' }
 ];
 
-let subfonctionsOccurrencePlots = [];
-let subfonctionsAddExistingPlots = [];
+let existingPlots = [];
 
 const subfonctionsThemes = [
   { label: 'Création des thèmes', value: 'creation' },
@@ -120,6 +119,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const [hiddenAddNewCharacter, setHiddenAddNewCharacter] = useState(true);
   const [subfonctionsOccurrenceCharactersSelected, setSubfonctionsOccurrenceCharactersSelected] = useState(""); 
   const [hiddenOccurrenceCharacter, setHiddenOccurrenceCharacter] = useState(true);
+  const [subfonctionsUpdateCharactersSelected, setSubfonctionsUpdateCharactersSelected] = useState("");
+  const [hiddenUpdateCharacter, setHiddenUpdateCharacter] = useState(true);
+  const [subfonctionsUpdateNameCharactersSelected, setSubfonctionsUpdateNameCharactersSelected] = useState("");
+  const [hiddenUpdateNameCharacter, setHiddenUpdateNameCharacter] = useState(true);
+  const [subfonctionsUpdatePlayerCharactersSelected, setSubfonctionsUpdatePlayerCharactersSelected] = useState("");
+  const [hiddenUpdatePlayerCharacter, setHiddenUpdatePlayerCharacter] = useState(true);
    const [subfonctionsPlotsSelected, setSubfonctionsPlotsSelected] = useState(""); 
   const [hiddenPlot, setHiddenPlot] = useState(true);
    const [subfonctionsAddPlotsSelected, setSubfonctionsAddPlotsSelected] = useState("");
@@ -187,6 +192,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -203,6 +211,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -219,6 +230,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
       setHiddenPlot(true);
@@ -235,6 +249,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(false);
@@ -251,6 +268,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -267,6 +287,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -299,19 +322,21 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const changeSubfonctionsCharacters = (event, inputValue) => {
     setSubfonctionsCharactersSelected(inputValue);
 
-    subfonctionsAddExistingCharacters = [];
-    subfonctionsOccurrenceCharacters = [];
+    existingCharacters = [];
 
     if (inputValue === 'add' || inputValue === 'Ajouter un personnage') {
       setHiddenAddCharacter(false);
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
     } else if (inputValue === 'occurrence' || inputValue === "Occurrences d'un personnage") {
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
-        subfonctionsOccurrenceCharacters.push({
+        existingCharacters.push({
           "label": uniqueCharacters[i],
           "value": uniqueCharacters[i]
         });
@@ -321,11 +346,34 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenAddCharacter(true);
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
+    } else if (inputValue === 'update' || inputValue === "Modifier un personnage") {
+      const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
+
+      for (let i = 0 ; i < uniqueCharacters.length ; i++) {
+        existingCharacters.push({
+          "label": uniqueCharacters[i],
+          "value": uniqueCharacters[i]
+        });
+      }
+
+      setHiddenOccurrenceCharacter(true);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
+      setHiddenUpdateCharacter(false);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
     } else {
       setHiddenAddCharacter(true);
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
       setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
     }
   };
 
@@ -336,7 +384,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
-        subfonctionsAddExistingCharacters.push({
+        existingCharacters.push({
           "label": uniqueCharacters[i],
           "value": uniqueCharacters[i]
         });
@@ -366,11 +414,45 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
     setSubfonctionsOccurrenceCharactersSelected(inputValue);
   };
 
+  const changeSubfonctionsUpdateCharacters = (event, inputValue) => {
+    setSubfonctionsUpdateCharactersSelected(inputValue);
+
+    if (data.charactersList.find(character => character.name === inputValue)) {
+      for (let i = 0 ; i < data.charactersList.length ; i++) {
+        if (data.charactersList[i].name === inputValue) {
+          if (data.charactersList[i].player === false) {
+            updatePlayer = "npc";
+          } else {
+            updatePlayer = "player";
+          }
+
+          changeSubfonctionsUpdatePlayerCharacters(event, updatePlayer);
+          
+          break;
+        }
+      }
+    }
+
+    setHiddenUpdateNameCharacter(false);
+    setHiddenUpdatePlayerCharacter(false);
+  };
+
+  const changeSubfonctionsUpdateNameCharacters = (event, inputValue) => {
+    setSubfonctionsUpdateNameCharactersSelected(event.currentTarget.value);
+  };
+
+  const changeSubfonctionsUpdatePlayerCharacters = (event, inputValue) => {
+    if (inputValue !== undefined) {
+      setSubfonctionsUpdatePlayerCharactersSelected(inputValue);
+    } else {
+      setSubfonctionsUpdatePlayerCharactersSelected(event.currentTarget.value);
+    }
+  };
+
   const changeSubfonctionsPlots = (event, inputValue) => {
     setSubfonctionsPlotsSelected(inputValue);
 
-    subfonctionsAddExistingPlots = [];
-    subfonctionsOccurrencePlots = [];
+    existingPlots = [];
 
     if (inputValue === 'add' || inputValue === 'Ajouter une intrigue') {
       setHiddenAddPlot(false);
@@ -381,7 +463,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
-        subfonctionsOccurrencePlots.push({
+        existingPlots.push({
           "label": uniquePlots[i],
           "value": uniquePlots[i]
         });
@@ -406,7 +488,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
-        subfonctionsAddExistingPlots.push({
+        existingPlots.push({
           "label": uniquePlots[i],
           "value": uniquePlots[i]
         });
@@ -534,6 +616,22 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         let characterResponse = characterOccurrences(data, subfonctionsOccurrenceCharactersSelected);
 
         setHistory(h => ([...h, logCharacter("Le personnage " + subfonctionsOccurrenceCharactersSelected + " apparaît " + characterResponse.numberOf + " fois dans la liste des personnages")]));
+      } else if (subfonctionsCharactersSelected === "update" || subfonctionsCharactersSelected === "Modifier un personnage") {
+        let isPlayer = false;
+
+        if (subfonctionsUpdatePlayerCharactersSelected === "player") {
+          isPlayer = true;
+        }
+        
+        let characterResponse = characterUpdate(data.charactersList, subfonctionsUpdateCharactersSelected, subfonctionsUpdateNameCharactersSelected, isPlayer);
+
+        firebase.updateDocument("helpers", id, {
+          "charactersList": characterResponse.charactersList
+        }).then(doc => {
+          setData(doc.data());
+        });
+
+        setHistory(h => ([...h, logCharacter("Le personnage " + subfonctionsUpdateNameCharactersSelected + " a été mis à jour")]));
       }
     } else if (functionSelected === "Description") {
       let descriptionResponse = descriptionRoll();
@@ -889,7 +987,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         autoSelect
         disablePortal
         id="combo-box-occurrence-add-existing-characters"
-        options={subfonctionsAddExistingCharacters}
+        options={existingCharacters}
         getOptionLabel={(option) => option.label}
         sx={{ width: 300 }}
         onInputChange={changeSubfonctionsAddExistingCharacters}
@@ -918,7 +1016,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         autoSelect
         disablePortal
         id="combo-box-occurrence-characters"
-        options={subfonctionsOccurrenceCharacters}
+        options={existingCharacters}
         getOptionLabel={(option) => option.label}
         sx={{ width: 300 }}
         onInputChange={changeSubfonctionsOccurrenceCharacters}
@@ -926,6 +1024,36 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         <TextField {...params}
           label="Choose a character"/>}
       /> : null}
+
+      {!hiddenUpdateCharacter ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-update-characters"
+        options={existingCharacters}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsUpdateCharacters}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a character"/>}
+      /> : null}
+
+      {!hiddenUpdateNameCharacter ? <TextField
+        id="outlined-update-character"
+        label={subfonctionsUpdateCharactersSelected}
+        variant="outlined"
+        onChange={changeSubfonctionsUpdateNameCharacters} /> : null}
+
+      {!hiddenUpdatePlayerCharacter ? <FormControl>
+        <RadioGroup
+          name="radio-buttons-group-update-character"
+          value={subfonctionsUpdatePlayerCharactersSelected}
+          onChange={changeSubfonctionsUpdatePlayerCharacters}>
+          <FormControlLabel value="player" control={<Radio />} label="Joueur" />
+          <FormControlLabel value="npc" control={<Radio />} label="PNJ" />
+        </RadioGroup>
+      </FormControl> : null}
 
       {!hiddenPlot ? <Autocomplete
         autoComplete
@@ -955,7 +1083,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         autoSelect
         disablePortal
         id="combo-box-occurrence-add-existing-plotd"
-        options={subfonctionsAddExistingPlots}
+        options={existingPlots}
         getOptionLabel={(option) => option.label}
         sx={{ width: 300 }}
         onInputChange={changeSubfonctionsAddExistingPlots}
@@ -975,7 +1103,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         autoSelect
         disablePortal
         id="combo-box-occurrence-plots"
-        options={subfonctionsOccurrencePlots}
+        options={existingPlots}
         getOptionLabel={(option) => option.label}
         sx={{ width: 300 }}
         onInputChange={changeSubfonctionsOccurrencePlots}

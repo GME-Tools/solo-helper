@@ -275,27 +275,20 @@ const plotAdd = (plotsList, plotName) => {
   }
 }
 
-/* const characterUpdate = (campaign, characterOld, characterNew) => {
-  let isExisted = false;
-  
-  if (campaign[0].characters.find(character => character.name === characterOld)) {
-    for(let i = 0 ; i < campaign[0].characters.length ; i++) {
-      if (campaign[0].characters[i].name === characterOld) {
-        campaign[0].characters[i].name = characterNew;
-        
-        isExisted = true;
+const characterUpdate = (charactersList, nameOld, nameNew, isPlayer) => {
+  if (charactersList.find(character => character.name === nameOld)) {
+    for(let i = 0 ; i < charactersList.length ; i++) {
+      if (charactersList[i].name === nameOld) {
+        charactersList[i].name = nameNew;
+        charactersList[i].player = isPlayer;
       }
     }
   }
-  
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    });
-  
+
   return {
-    isExisted: isExisted
+    charactersList: charactersList
   }
-} */
+}
 
 /* const plotUpdate = (campaign, plotOld, plotNew) => {
   let isExisted = false;
@@ -1172,11 +1165,11 @@ module.exports = {
   "characterOccurrences": characterOccurrences,
   "plotOccurrences": plotOccurrences,
   "characterAdd": characterAdd,
-  "plotAdd": plotAdd
+  "plotAdd": plotAdd,
+  "characterUpdate": characterUpdate
 };
 
-/* module.exports = characterUpdate;
-module.exports = plotUpdate;
+/* module.exports = plotUpdate;
 module.exports = characterDelete;
 module.exports = plotDelete;
 module.exports = themeRandom;
