@@ -344,29 +344,28 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
   }
 }
 
-/* const plotDelete = (campaign, plotName) => {
-  let isExisted = false;
+const plotDelete = (plotsList, plotName) => {
+  let empty = false;
   
-  if (campaign[0].plots.find(plot => plot.name === plotName)) {
-    for(let i = 0 ; i < campaign[0].plots.length ; i++) {
-      if (campaign[0].plots[i].name === plotName) {
-        campaign[0].plots[i].name = "Choisissez l'intrigue la plus logique";
-        
-        isExisted = true;
+  if (plotsList.find(plot => plot.name === plotName)) {
+    for(let i = 0 ; i < plotsList.length ; i++) {
+      if (plotsList[i].name === plotName) {
+        plotsList[i].name = "Choisissez l'intrigue la plus logique";
         
         break;
       }
     }
   }
-  
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    })
+
+  if (plotsList.find(plot => plot.name === plotName) === undefined) {
+    empty = true;
+  }
   
   return {
-    isExisted: isExisted
+    plotsList: plotsList,
+    empty: empty
   }
-} */
+}
 
 /* const themeRandom = (campaign) => {
   let themeName = "";
@@ -1159,11 +1158,11 @@ module.exports = {
   "plotAdd": plotAdd,
   "characterUpdate": characterUpdate,
   "plotUpdate": plotUpdate,
-  "characterDelete": characterDelete
+  "characterDelete": characterDelete,
+  "plotDelete": plotDelete
 };
 
-/* module.exports = plotDelete;
-module.exports = themeRandom;
+/* module.exports = themeRandom;
 module.exports = plotPoints;
 module.exports = needsRandom;
 module.exports = plotPointsRead;
