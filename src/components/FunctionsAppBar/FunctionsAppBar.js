@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -57,13 +57,13 @@ const bodies = [
 ];
 
 const subfonctionsCharacters = [
-  { label: 'Ajouter un personnage', value: 'add' },
+  { label: 'Ajouter une occurence et / ou un personnage', value: 'add' },
   // { label: 'Information sur un personnage', value: 'information' },
   { label: 'Liste de personnages', value: 'list' },
   { label: 'Modifier un personnage', value: 'update' },
   { label: "Occurrences d'un personnage", value: 'occurrence' },
   { label: 'Sélectionner aléatoirement un personnage', value: 'random' },
-  // { label: "Supprimer un personnage", value: 'delete' }
+  { label: "Supprimer une occurence et / ou un personnage", value: 'delete' }
 ];
 
 let existingCharacters = [];
@@ -125,6 +125,8 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const [hiddenUpdateNameCharacter, setHiddenUpdateNameCharacter] = useState(true);
   const [subfonctionsUpdatePlayerCharactersSelected, setSubfonctionsUpdatePlayerCharactersSelected] = useState("");
   const [hiddenUpdatePlayerCharacter, setHiddenUpdatePlayerCharacter] = useState(true);
+  const [subfonctionsDeleteCharactersSelected, setSubfonctionsDeleteCharactersSelected] = useState("");
+  const [hiddenDeleteCharacter, setHiddenDeleteCharacter] = useState(true);
    const [subfonctionsPlotsSelected, setSubfonctionsPlotsSelected] = useState(""); 
   const [hiddenPlot, setHiddenPlot] = useState(true);
    const [subfonctionsAddPlotsSelected, setSubfonctionsAddPlotsSelected] = useState("");
@@ -199,6 +201,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(true);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -220,6 +223,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(true);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -241,6 +245,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(true);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
       setHiddenPlot(true);
@@ -262,6 +267,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(true);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(false);
@@ -283,6 +289,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(true);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -304,6 +311,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(true);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -340,7 +348,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
 
     existingCharacters = [];
 
-    if (inputValue === 'add' || inputValue === 'Ajouter un personnage') {
+    if (inputValue === 'add' || inputValue === 'Ajouter une occurence et / ou un personnage') {
       setHiddenAddCharacter(false);
       setHiddenAddExistingCharacter(true);
       setHiddenAddNewCharacter(true);
@@ -348,6 +356,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(true);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
     } else if (inputValue === 'occurrence' || inputValue === "Occurrences d'un personnage") {
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
@@ -365,6 +374,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(true);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
     } else if (inputValue === 'update' || inputValue === "Modifier un personnage") {
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
@@ -382,6 +392,25 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(false);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
+    } else if (inputValue === 'delete' || inputValue === "Supprimer une occurence et / ou un personnage") {
+      const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
+
+      for (let i = 0 ; i < uniqueCharacters.length ; i++) {
+        existingCharacters.push({
+          "label": uniqueCharacters[i],
+          "value": uniqueCharacters[i]
+        });
+      }
+      
+      setHiddenDeleteCharacter(false);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
+      setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
     } else {
       setHiddenAddCharacter(true);
       setHiddenAddExistingCharacter(true);
@@ -390,6 +419,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateCharacter(true);
       setHiddenUpdateNameCharacter(true);
       setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
     }
   };
 
@@ -464,6 +494,10 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setSubfonctionsUpdatePlayerCharactersSelected(event.currentTarget.value);
     }
   };
+
+  const changeSubfonctionsDeleteCharacters = (event, inputValue) => {
+    setSubfonctionsDeleteCharactersSelected(inputValue);
+  }
 
   const changeSubfonctionsPlots = (event, inputValue) => {
     setSubfonctionsPlotsSelected(inputValue);
@@ -606,7 +640,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       
       setHistory(h => ([...h, logMeaning("Action", actionResponse.action + " / " + actionResponse.subject)]));
     } else if (functionSelected === "Character") {
-      if (subfonctionsCharactersSelected === "add" || subfonctionsCharactersSelected === "Ajouter un personnage") {
+      if (subfonctionsCharactersSelected === "add" || subfonctionsCharactersSelected === "Ajouter une occurence et / ou un personnage") {
         if (subfonctionsAddCharactersSelected === "existing") {
           let characterResponse = characterAdd(data.charactersList, subfonctionsAddExistingCharactersSelected);
 
@@ -680,6 +714,21 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         });
 
         setHistory(h => ([...h, logCharacter("Le personnage " + subfonctionsUpdateNameCharactersSelected + " a été mis à jour")]));
+      } else if (subfonctionsCharactersSelected === 'delete' || subfonctionsCharactersSelected === "Supprimer une occurence et / ou un personnage") {
+        let characterResponse = characterDelete(data.charactersList, data.archivedCharacters, subfonctionsDeleteCharactersSelected);
+
+        firebase.updateDocument("helpers", id, {
+          "charactersList": characterResponse.charactersList,
+          "archivedCharacters": characterResponse.archivedCharacters
+        }).then(doc => {
+          setData(doc.data());
+        });
+
+        if (characterResponse.empty === false) {
+          setHistory(h => ([...h, logCharacter("Une occurrence du personnage " + subfonctionsDeleteCharactersSelected + " a été supprimée de la liste de personnages")]));
+        } else {
+          setHistory(h => ([...h, logCharacter("La dernière occurrence du personnage " + subfonctionsDeleteCharactersSelected + " a été supprimée de la liste de personnages et le personnage est maintenant archivé")]));
+        }
       }
     } else if (functionSelected === "Description") {
       let descriptionResponse = descriptionRoll();
@@ -1112,6 +1161,20 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
           <FormControlLabel value="npc" control={<Radio />} label="PNJ" />
         </RadioGroup>
       </FormControl> : null}
+
+      {!hiddenDeleteCharacter ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-occurrence-delete-characters"
+        options={existingCharacters}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsDeleteCharacters}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a character"/>}
+      /> : null}
 
       {!hiddenPlot ? <Autocomplete
         autoComplete

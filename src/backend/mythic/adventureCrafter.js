@@ -304,46 +304,45 @@ const plotUpdate = (plotsList, plotOld, plotNew) => {
   }
 }
 
-/* const characterDelete = (campaign, characterName) => {
-  let isExisted = false;
+const characterDelete = (charactersList, archivedCharacters, characterName) => {
   let name = "";
   let player = false;
   let travel = [];
   let piecesOr = 0;
+  let empty = false;
   
-  if (campaign[0].characters.find(character => character.name === characterName)) {
-    for(let i = 0 ; i < campaign[0].characters.length ; i++) {
-      if (campaign[0].characters[i].name === characterName) {
-        name = campaign[0].characters[i].name;
-        player = campaign[0].characters[i].player;
-        travel = campaign[0].characters[i].travel;
-        piecesOr = campaign[0].characters[i].piecesOr;
+  if (charactersList.find(character => character.name === characterName)) {
+    for(let i = 0 ; i < charactersList.length ; i++) {
+      if (charactersList[i].name === characterName) {
+        name = charactersList[i].name;
+        player = charactersList[i].player;
+        travel = charactersList[i].travel;
+        piecesOr = charactersList[i].piecesOr;
 
-        campaign[0].characters[i].name = "Choisissez le personnage le plus logique";
-        
-        isExisted = true;
+        charactersList[i].name = "Choisissez le personnage le plus logique";
         
         break;
       }
     }
   }
 
-  if (campaign[0].characters.find(character => character.name === characterName) === undefined) {
-    if (campaign[0].archivedCharacters === undefined || campaign[0].archivedCharacters.length === 0) {
-      campaign[0].archivedCharacters = [];
-    }
-    
-    campaign[0].archivedCharacters.push({"name" : name, "player": player, "travel": travel, "piecesOr": piecesOr});
-  }
-  
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
+  if (charactersList.find(character => character.name === characterName) === undefined) {
+    archivedCharacters.push({
+      "name" : name,
+      "player": player,
+      "travel": travel,
+      "piecesOr": piecesOr
     });
+
+    empty = true;
+  }
   
   return {
-    isExisted: isExisted
+    charactersList: charactersList,
+    archivedCharacters: archivedCharacters,
+    empty: empty
   }
-} */
+}
 
 /* const plotDelete = (campaign, plotName) => {
   let isExisted = false;
@@ -1159,11 +1158,11 @@ module.exports = {
   "characterAdd": characterAdd,
   "plotAdd": plotAdd,
   "characterUpdate": characterUpdate,
-  "plotUpdate": plotUpdate
+  "plotUpdate": plotUpdate,
+  "characterDelete": characterDelete
 };
 
-/* module.exports = characterDelete;
-module.exports = plotDelete;
+/* module.exports = plotDelete;
 module.exports = themeRandom;
 module.exports = plotPoints;
 module.exports = needsRandom;
