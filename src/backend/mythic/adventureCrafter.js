@@ -408,6 +408,31 @@ const themeRandom = (themes) => {
   }
 }
 
+const characterInformation = (charactersList, characterName) => {
+  let name = "";
+  let player = false;
+  let travel = [];
+  let piecesOr = 0;
+  
+  for (let i = 0 ; i < charactersList.length ; i++) {
+    if (charactersList[i].name === characterName) {
+      name = charactersList[i].name;
+      player = charactersList[i].player;
+      travel = charactersList[i].travel;
+      piecesOr = charactersList[i].piecesOr;
+
+      break;
+    }
+  }
+  
+  return {
+    name: name,
+    player: player,
+    travel: travel,
+    piecesOr: piecesOr
+  }
+}
+
 /* const plotPoints = (campaign) => {
   let plotPointsName = [];
   let plotPointsDescription = [];
@@ -1164,7 +1189,8 @@ module.exports = {
   "plotUpdate": plotUpdate,
   "characterDelete": characterDelete,
   "plotDelete": plotDelete,
-  "themeRandom": themeRandom
+  "themeRandom": themeRandom,
+  "characterInformation": characterInformation
 };
 
 /* module.exports = plotPoints;
