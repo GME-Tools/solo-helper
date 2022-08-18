@@ -367,42 +367,46 @@ const plotDelete = (plotsList, plotName) => {
   }
 }
 
-/* const themeRandom = (campaign) => {
+const themeRandom = (themes) => {
   let themeName = "";
   let themeDescription = "";
   let themeDice = dice.die(10);
+  let isExisted = false;
 
-  for (let i = 0 ; i < campaign[0].themes.length ; i++) {
-    if (themeDice >= campaign[0].themes[i].values[0] && themeDice <= campaign[0].themes[i].values[1]) {
-      if (themeDice === 10) {
-        if (campaign[0].themes[3].alternated === true) {
-          themeName = campaign[0].themes[3].name;
-          themeDescription = campaign[0].themes[3].description;
-          campaign[0].themes[3].alternated = false;
-          campaign[0].themes[4].alternated = true;
+  if (themes.length > 0) {
+    for (let i = 0 ; i < themes.length ; i++) {
+      if (themeDice >= themes[i].values[0] && themeDice <= themes[i].values[1]) {
+        if (themeDice === 10) {
+          if (themes[3].alternated === true) {
+            themeName = themes[3].name;
+            themeDescription = themes[3].description;
+            themes[3].alternated = false;
+            themes[4].alternated = true;
+          } else {
+            themeName = themes[4].name;
+            themeDescription = themes[4].description;
+            themes[4].alternated = false;
+            themes[3].alternated = true;
+          }
+          
+          break;
         } else {
-          themeName = campaign[0].themes[4].name;
-          themeDescription = campaign[0].themes[4].description;
-          campaign[0].themes[4].alternated = false;
-          campaign[0].themes[3].alternated = true;
+          themeName = themes[i].name;
+          themeDescription = themes[i].description;
         }
-        break;
-      } else {
-        themeName = campaign[0].themes[i].name;
-        themeDescription = campaign[0].themes[i].description;
       }
     }
+
+    isExisted = true;
+    
   }
-  
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    });
   
   return {
     themeName: themeName,
-    themeDescription: themeDescription
+    themeDescription: themeDescription,
+    isExisted: isExisted
   }
-} */
+}
 
 /* const plotPoints = (campaign) => {
   let plotPointsName = [];
@@ -1159,11 +1163,11 @@ module.exports = {
   "characterUpdate": characterUpdate,
   "plotUpdate": plotUpdate,
   "characterDelete": characterDelete,
-  "plotDelete": plotDelete
+  "plotDelete": plotDelete,
+  "themeRandom": themeRandom
 };
 
-/* module.exports = themeRandom;
-module.exports = plotPoints;
+/* module.exports = plotPoints;
 module.exports = needsRandom;
 module.exports = plotPointsRead;
 module.exports = plotPointsUpdate;

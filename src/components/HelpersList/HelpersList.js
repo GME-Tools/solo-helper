@@ -46,7 +46,6 @@ export default function HelpersList() {
       archivedCharacters: [],
       campaignID: uid,
       chaosFactor: 4,
-      characters: [],
       charactersList: [
         { "value": [1,4],
           "name": "Nouveau personnage" },
@@ -101,7 +100,6 @@ export default function HelpersList() {
       ],
       currentPlots: [],
       inventory: [],
-      plots: [],
       plotsList: [
         { "value": [1,4],
           "name": "Choisissez l'intrigue la plus logique" },

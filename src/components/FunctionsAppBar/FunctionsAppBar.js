@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -83,7 +83,8 @@ let existingPlots = [];
 
 const subfonctionsThemes = [
   { label: 'Création des thèmes', value: 'creation' },
-  { label: 'Liste des thèmes', value: 'list' }
+  { label: 'Liste des thèmes', value: 'list' },
+  { label: 'Sélectionner aléatoirement un thème', value: 'random' },
 ];
 
 const themes = [
@@ -632,7 +633,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const changeSubfonctionsThemes = (event, inputValue) => {
     setSubfonctionsThemesSelected(inputValue);
 
-    if (inputValue === "Création des thèmes") {
+    if (inputValue === "creation" || inputValue === "Création des thèmes") {
       setHiddenCreationTheme(false);
     }
   };
@@ -972,9 +973,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
 
         setHistory(h => ([...h, logTheme(responseText)]));
       } else if (subfonctionsThemesSelected === "list" || subfonctionsThemesSelected === "Liste des thèmes") {
-        let themeResponse;
-
-        themeResponse = themeList(data);
+        let themeResponse = themeList(data);
 
         if (themeResponse.isExisted === true) {
           let responseText = "";
@@ -990,6 +989,14 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
           setHistory(h => ([...h, logTheme(responseText)]));
         } else {
           setHistory(h => ([...h, logTheme("La liste des thèmes n'a pas encore été créée pour cette campagne.")]));
+        }
+      } else if (subfonctionsThemesSelected === "random" || subfonctionsThemesSelected === "Sélectionner aléatoirement un thème") {
+        let themeResponse = themeRandom(data.themes);
+
+        if (themeResponse.isExisted === true) {
+          setHistory(h => ([...h, logTheme(themeResponse.themeName + " (" + themeResponse.themeDescription + ")")]));
+        } else {
+          setHistory(h => ([...h, logTheme("La liste des thèmes n'a pas encore été créée pour cette campagne")]));
         }
       }
     }
