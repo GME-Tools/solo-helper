@@ -379,10 +379,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
-        existingCharacters.push({
-          "label": uniqueCharacters[i],
-          "value": uniqueCharacters[i]
-        });
+        if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
+          existingCharacters.push({
+            "label": uniqueCharacters[i],
+            "value": uniqueCharacters[i]
+          });
+        }
       }
 
       setHiddenOccurrenceCharacter(false);
@@ -398,10 +400,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
-        existingCharacters.push({
-          "label": uniqueCharacters[i],
-          "value": uniqueCharacters[i]
-        });
+        if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
+          existingCharacters.push({
+            "label": uniqueCharacters[i],
+            "value": uniqueCharacters[i]
+          });
+        }
       }
 
       setHiddenOccurrenceCharacter(true);
@@ -417,10 +421,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
-        existingCharacters.push({
-          "label": uniqueCharacters[i],
-          "value": uniqueCharacters[i]
-        });
+        if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
+          existingCharacters.push({
+            "label": uniqueCharacters[i],
+            "value": uniqueCharacters[i]
+          });
+        }
       }
       
       setHiddenDeleteCharacter(false);
@@ -436,10 +442,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
-        existingCharacters.push({
-          "label": uniqueCharacters[i],
-          "value": uniqueCharacters[i]
-        });
+        if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
+          existingCharacters.push({
+            "label": uniqueCharacters[i],
+            "value": uniqueCharacters[i]
+          });
+        }
       }
       
       setHiddenInformationCharacter(false);
@@ -471,10 +479,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniqueCharacters = [...new Set(data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
-        existingCharacters.push({
-          "label": uniqueCharacters[i],
-          "value": uniqueCharacters[i]
-        });
+        if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
+          existingCharacters.push({
+            "label": uniqueCharacters[i],
+            "value": uniqueCharacters[i]
+          });
+        }
       }
 
       setHiddenAddExistingCharacter(false);
@@ -561,10 +571,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
-        existingPlots.push({
-          "label": uniquePlots[i],
-          "value": uniquePlots[i]
-        });
+        if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
+          existingPlots.push({
+            "label": uniquePlots[i],
+            "value": uniquePlots[i]
+          });
+        }
       }
 
       setHiddenOccurrencePlot(false);
@@ -578,10 +590,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
-        existingPlots.push({
-          "label": uniquePlots[i],
-          "value": uniquePlots[i]
-        });
+        if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
+          existingPlots.push({
+            "label": uniquePlots[i],
+            "value": uniquePlots[i]
+          });
+        }
       }
       
       setHiddenAddPlot(true);
@@ -595,10 +609,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
-        existingPlots.push({
-          "label": uniquePlots[i],
-          "value": uniquePlots[i]
-        });
+        if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
+          existingPlots.push({
+            "label": uniquePlots[i],
+            "value": uniquePlots[i]
+          });
+        }
       }
       
       setHiddenAddPlot(true);
@@ -626,10 +642,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
-        existingPlots.push({
-          "label": uniquePlots[i],
-          "value": uniquePlots[i]
-        });
+        if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
+          existingPlots.push({
+            "label": uniquePlots[i],
+            "value": uniquePlots[i]
+          });
+        }
       }
 
       setHiddenAddExistingPlot(false);
