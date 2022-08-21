@@ -1,6 +1,6 @@
 const dice = require('../dice');
 const adventureData = require('../../data/adventurecrafter');
-// const plotPointsData = require('../../data/plotPoints');
+const plotPointsData = require('../../data/plotPoints');
 
 const themeCreation = (data, themesPlayer) => {
   let themeName = "";
@@ -433,7 +433,8 @@ const characterInformation = (charactersList, characterName) => {
   }
 }
 
-/* const plotPoints = (campaign) => {
+const plotPoints = (campaign) => {
+  let plotPoints = [];
   let plotPointsName = [];
   let plotPointsDescription = [];
   let plotPointsNeeds = [];
@@ -443,33 +444,30 @@ const characterInformation = (charactersList, characterName) => {
   let themeName = "";
   let themeDice = 0;
 
-  if (campaign[0].plotPoints === undefined || campaign[0].plotPoints.length === 0) {
-    campaign[0].plotPoints = [];
-  }
-
   while (plotPointsName.length < 5) {
     themeDice = dice.die(10);
 
-    for (let i = 0 ; i < campaign[0].themes.length ; i++) {
-      if (themeDice >= campaign[0].themes[i].values[0] && themeDice <= campaign[0].themes[i].values[1]) {
+    for (let i = 0 ; i < campaign.themes.length ; i++) {
+      if (themeDice >= campaign.themes[i].values[0] && themeDice <= campaign.themes[i].values[1]) {
         if (themeDice === 10) {
-          if (campaign[0].themes[3].alternated === true) {
-            themeName = campaign[0].themes[3].name;
-            campaign[0].themes[3].alternated = false;
-            campaign[0].themes[4].alternated = true;
+          if (campaign.themes[3].alternated === true) {
+            themeName = campaign.themes[3].name;
+            campaign.themes[3].alternated = false;
+            campaign.themes[4].alternated = true;
           } else {
-            themeName = campaign[0].themes[4].name;
-            campaign[0].themes[4].alternated = false;
-            campaign[0].themes[3].alternated = true;
+            themeName = campaign.themes[4].name;
+            campaign.themes[4].alternated = false;
+            campaign.themes[3].alternated = true;
           }
+          
           break;
         } else {
-          themeName = campaign[0].themes[i].name;
+          themeName = campaign.themes[i].name;
+
+          break;
         }
       }
     }
-
-    console.log("Theme : " + themeName);
 
     if (themeName === "ACTION") {
       plotPointsValue = "valueAction";
@@ -514,14 +512,11 @@ const characterInformation = (charactersList, characterName) => {
               }
             }
 
-            for (let j = 0 ; j < campaign[0].characters.length ; j++) {
-              if (campaign[0].characters[j].player === false) {
+            for (let j = 0 ; j < campaign.characters.length ; j++) {
+              if (campaign.characters[j].player === false) {
                 nbNPC++;
               }
             }
-
-            console.log("metaName : " + metaName);
-            console.log("nbNPC : " + metaName);
           } while ((metaName === "LE PERSONNAGE QUITTE L'AVENTURE" && nbNPC > 0) || ((metaName === "LE PERSONNAGE RALENTIT" || metaName === "PERSONNAGE RÉTROGRADÉ") && nbNPC > 0));
         } else if (plotPointsData.plotPointsTable[i].name === "RIEN") {
           if (none < 4) {
@@ -541,17 +536,22 @@ const characterInformation = (charactersList, characterName) => {
             continue;
           }
         } else if (plotPointsData.plotPointsTable[i].name === "CONCLUSION" && plotPointsName.find(name => name === plotPointsData.plotPointsTable[i].name) === undefined) {
-          if (campaign[0].plots.find(plot => plot.name === campaign[0].currentPlot[0])) {
-            for(let j = 0 ; j < campaign[0].plots.length ; j++) {
-              if (campaign[0].plots[j].name === campaign[0].currentPlot[0]) {
-                campaign[0].plots[j].name = "Choisissez l'intrigue la plus logique";
+          if (campaign.plotsList.find(plot => plot.name === campaign.currentPlot[0])) {
+            for(let j = 0 ; j < campaign.plotsList.length ; j++) {
+              if (campaign.plotsList[j].name === campaign.currentPlot[0]) {
+                campaign.plotsList[j].name = "Choisissez l'intrigue la plus logique";
               }
             }
           }
 
-          plotPointsName.push(plotPointsData.plotPointsTable[i].name);
-          plotPointsDescription.push(plotPointsData.plotPointsTable[i].description);
-
+          if (plotPointsData.plotPointsTable[i].name === "META") {
+            plotPointsDescription.push(metaName);
+            plotPointsDescription.push(metaDescription);
+          } else {
+            plotPointsName.push(plotPointsData.plotPointsTable[i].name);
+            plotPointsDescription.push(plotPointsData.plotPointsTable[i].description);
+          }
+          
           let needsTemp = [];
 
           for (let j = 0 ; j < Object.keys(plotPointsData.plotPointsTable[i].need).length ; j++) {
@@ -572,43 +572,23 @@ const characterInformation = (charactersList, characterName) => {
           plotPointsNeeds.push(needsTemp);
         }
 
-        if (campaign[0].plotPoints.length < 5) {
-          if (plotPointsData.plotPointsTable[i].name === "META") {
-            campaign[0].plotPoints.push({"name": metaName, "description": metaDescription});
-          } else {
-            campaign[0].plotPoints.push({"name": plotPointsData.plotPointsTable[i].name, "description": plotPointsData.plotPointsTable[i].description});
-          }
-        } else {
-          if (plotPointsData.plotPointsTable[i].name === "META") {
-            console.log("plotPointsName.length - 1 : " + plotPointsName.length - 1);
-            console.log("metaName : " + metaName);
-            console.log("metaDescription : " + metaDescription);
-            
-            campaign[0].plotPoints[plotPointsName.length - 1].name = metaName;
-            campaign[0].plotPoints[plotPointsName.length - 1].description = metaDescription;
-          } else {
-            console.log("plotPointsName.length - 1 : " + plotPointsName.length - 1);
-            console.log("name : " + plotPointsData.plotPointsTable[i].name);
-            console.log("description : " + plotPointsData.plotPointsTable[i].description);
-
-            campaign[0].plotPoints[plotPointsName.length - 1].name = plotPointsData.plotPointsTable[i].name;
-            campaign[0].plotPoints[plotPointsName.length - 1].description = plotPointsData.plotPointsTable[i].description;
-          }
-        }
+        break;
       }
     }
   }
-  
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
+
+  for (let i = 0 ; i < plotPointsName.length ; i++) {
+    plotPoints.push({
+      "name": plotPointsName[i],
+      "description": plotPointsDescription[i],
+      "needs": plotPointsNeeds[i]
     });
+  }
   
   return {
-    plotPointsName: plotPointsName,
-    plotPointsDescription: plotPointsDescription,
-    plotPointsNeeds: plotPointsNeeds
+    plotPoints: plotPoints
   }
-} */
+}
 
 /* const needsRandom = (campaign, needs) => {
   let nbPlayer = 0;
@@ -1190,11 +1170,11 @@ module.exports = {
   "characterDelete": characterDelete,
   "plotDelete": plotDelete,
   "themeRandom": themeRandom,
-  "characterInformation": characterInformation
+  "characterInformation": characterInformation,
+  "plotPoints": plotPoints
 };
 
-/* module.exports = plotPoints;
-module.exports = needsRandom;
+/* module.exports = needsRandom;
 module.exports = plotPointsRead;
 module.exports = plotPointsUpdate;
 module.exports = characterCreation; */

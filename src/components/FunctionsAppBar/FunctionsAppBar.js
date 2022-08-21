@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
-import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter, logPlot, logTheme } from "context/HistoryContext";
+import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter, logPlot, logPlotPoints, logTheme } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
 import eventCheck from "backend/mythic/eventCheck";
 import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation, plotPoints } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -44,7 +44,8 @@ const functions = [
   { label: 'Fantasy Loot', id: 5 },
   { label: 'Fate', id: 6 },
   { label: 'Plot', id: 7 },
-  { label: 'Theme', id: 8 }
+  { label: 'Plot Points', id: 8 },
+  { label: 'Theme', id: 9 }
 ];
 
 const bodies = [
@@ -53,7 +54,7 @@ const bodies = [
   { label: 'Humanoïde aventurier sans sac, poches ...', value: 'ao'},
   { label: 'Humanoïde aventurier avec un sac, des poches ...', value: 'aw'},
   { label: 'Animaux sauvages', value: 'wa'},
-  { label: 'Loot', value: 'lo'},
+  { label: 'Loot', value: 'lo'}
 ];
 
 const subfonctionsCharacters = [
@@ -81,10 +82,14 @@ const subfonctionsPlots = [
 
 let existingPlots = [];
 
+  const subfonctionsPlotPoints = [
+    { label: 'Génération des Plot Points', value: 'generation' }
+  ];
+
 const subfonctionsThemes = [
   { label: 'Création des thèmes', value: 'creation' },
   { label: 'Liste des thèmes', value: 'list' },
-  { label: 'Sélectionner aléatoirement un thème', value: 'random' },
+  { label: 'Sélectionner aléatoirement un thème', value: 'random' }
 ];
 
 const themes = [
@@ -92,7 +97,7 @@ const themes = [
   { label: 'TENSION', id: 2 },
   { label: 'MYSTÈRE', id: 3 },
   { label: 'SOCIAL', id: 4 },
-  { label: 'PERSONNEL', id: 5 },
+  { label: 'PERSONNEL', id: 5 }
 ];
 
 export default function Helper() {
@@ -146,6 +151,8 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const [hiddenUpdateNamePlot, setHiddenUpdateNamePlot] = useState(true);
   const [subfonctionsDeletePlotsSelected, setSubfonctionsDeletePlotsSelected] = useState("");
   const [hiddenDeletePlot, setHiddenDeletePlot] = useState(true);
+  const [subfonctionsPlotPointsSelected, setSubfonctionsPlotPointsSelected] = useState(""); 
+  const [hiddenPlotPoint, setHiddenPlotPoint] = useState(true);
   const [subfonctionsThemesSelected, setSubfonctionsThemesSelected] = useState(""); 
   const [hiddenTheme, setHiddenTheme] = useState(true);
   const [creationThemesSelected, setCreationThemesSelected] = useState("");
@@ -218,6 +225,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdatePlot(true);
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
+      setHiddenPlotPoint(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -242,6 +250,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdatePlot(true);
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
+      setHiddenPlotPoint(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -266,6 +275,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdatePlot(true);
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
+      setHiddenPlotPoint(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -290,6 +300,32 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdatePlot(true);
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
+      setHiddenPlotPoint(true);
+      setHiddenTheme(true);
+      setHiddenCreationTheme(true);
+      setHiddenManualCreationTheme(true);
+    } else if (inputValue === "Plot Points") {
+      setHiddenCharacter(true);
+      setHiddenAddCharacter(true);
+      setHiddenAddExistingCharacter(true);
+      setHiddenAddNewCharacter(true);
+      setHiddenOccurrenceCharacter(true);
+      setHiddenUpdateCharacter(true);
+      setHiddenUpdateNameCharacter(true);
+      setHiddenUpdatePlayerCharacter(true);
+      setHiddenDeleteCharacter(true);
+      setHiddenInformationCharacter(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(true);
+      setHiddenAddPlot(true);
+      setHiddenAddExistingPlot(true);
+      setHiddenAddNewPlot(true);
+      setHiddenOccurrencePlot(true);
+      setHiddenUpdatePlot(true);
+      setHiddenUpdateNamePlot(true);
+      setHiddenDeletePlot(true);
+      setHiddenPlotPoint(false);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -314,6 +350,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdatePlot(true);
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
+      setHiddenPlotPoint(true);
       setHiddenTheme(false);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -338,6 +375,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdatePlot(true);
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
+      setHiddenPlotPoint(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -684,6 +722,10 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
     setSubfonctionsDeletePlotsSelected(inputValue);
   };
 
+  const changeSubfonctionsPlotPoints = (event, inputValue) => {
+    setSubfonctionsPlotPointsSelected(inputValue);
+  };
+
   const changeSubfonctionsThemes = (event, inputValue) => {
     setSubfonctionsThemesSelected(inputValue);
 
@@ -1008,6 +1050,28 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         } else {
           setHistory(h => ([...h, logPlot("La dernière occurrence de l'intrigue " + subfonctionsDeletePlotsSelected + " a été supprimée de la liste d'intrigues")]));
         }
+      }
+    } else if (functionSelected === "Plot Points") {
+      if (subfonctionsPlotPointsSelected === "generation" || subfonctionsPlotPointsSelected === "Génération des Plot Points") {
+        let plotPointsResponse = plotPoints(data);
+
+        firebase.updateDocument("helpers", id, {
+          "plotPoints": plotPointsResponse.plotPoints
+        }).then(doc => {
+          setData(doc.data());
+        });
+
+        let responseText = "";
+
+        for (let i = 0 ; i < plotPointsResponse.plotPoints.length ; i++) {
+          responseText = responseText + (i + 1) + "- " + plotPointsResponse.plotPoints[i].name;
+
+          if (i < plotPointsResponse.plotPoints.length - 1) {
+            responseText = responseText + "\n";
+          }
+        }
+
+        setHistory(h => ([...h, logPlotPoints(responseText)]));
       }
     } else if (functionSelected === "Theme") {
       if (subfonctionsThemesSelected === "creation" || subfonctionsThemesSelected === "Création des thèmes") {
@@ -1399,6 +1463,20 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         renderInput={(params) =>
         <TextField {...params}
           label="Choose a plot"/>}
+      /> : null}
+
+      {!hiddenPlotPoint ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-plotPoints"
+        options={subfonctionsPlotPoints}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsPlotPoints}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a subfonction"/>}
       /> : null}
 
       {!hiddenTheme ? <Autocomplete

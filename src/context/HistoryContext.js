@@ -43,6 +43,12 @@ export const logPlot = (result) => ({
   result: result
 });
 
+export const logPlotPoints = (result) => ({
+  emoji: <span style={{lineHeight: 1}}>⚔️</span>,
+  command: "Plot Points",
+  result: result
+});
+
 export const logTheme = (result) => ({
   emoji: <span style={{lineHeight: 1}}>📚️</span>,
   command: "Thème",
