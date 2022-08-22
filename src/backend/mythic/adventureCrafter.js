@@ -1,6 +1,7 @@
 const dice = require('../dice');
 const adventureData = require('../../data/adventurecrafter');
 const plotPointsData = require('../../data/plotPoints');
+const needsRandom = require('./needsRandom');
 
 const themeCreation = (data, themesPlayer) => {
   let themeName = "";
@@ -135,7 +136,7 @@ const plotRandom = (data, add) => {
   }
 
   if (add === true) {
-    data.currentPlot[0] = plotName;
+    data.currentPlot = plotName;
   }
 
   return {
@@ -512,8 +513,8 @@ const plotPoints = (campaign) => {
               }
             }
 
-            for (let j = 0 ; j < campaign.characters.length ; j++) {
-              if (campaign.characters[j].player === false) {
+            for (let j = 0 ; j < campaign.charactersList.length ; j++) {
+              if (campaign.charactersList[j].player === false) {
                 nbNPC++;
               }
             }
@@ -536,9 +537,9 @@ const plotPoints = (campaign) => {
             continue;
           }
         } else if (plotPointsData.plotPointsTable[i].name === "CONCLUSION" && plotPointsName.find(name => name === plotPointsData.plotPointsTable[i].name) === undefined) {
-          if (campaign.plotsList.find(plot => plot.name === campaign.currentPlot[0])) {
+          if (campaign.plotsList.find(plot => plot.name === campaign.currentPlot)) {
             for(let j = 0 ; j < campaign.plotsList.length ; j++) {
-              if (campaign.plotsList[j].name === campaign.currentPlot[0]) {
+              if (campaign.plotsList[j].name === campaign.currentPlot) {
                 campaign.plotsList[j].name = "Choisissez l'intrigue la plus logique";
               }
             }
@@ -584,284 +585,13 @@ const plotPoints = (campaign) => {
       "needs": plotPointsNeeds[i]
     });
   }
+
+  plotPoints = needsRandom.needsRandom(campaign, plotPoints);
   
   return {
     plotPoints: plotPoints
   }
 }
-
-/* const needsRandom = (campaign, needs) => {
-  let nbPlayer = 0;
-  let name = "";
-  let player = false;
-  let travel = [];
-  let piecesOr = 0;
-  let existedCharacters = [];
-  let isCreated = true;
-
-  for (let i = 0 ; i < campaign[0].plotPoints.length ; i++) {
-    if (campaign[0].plotPoints[i].needs === undefined || campaign[0].plotPoints[i].needs.length === 0) {
-      campaign[0].plotPoints[i].needs = [];
-    } else {
-      campaign[0].plotPoints[i].needs.splice(0, needs.length);
-    }
-  }
-
-  for (let i = 0 ; i < needs.length ; i++) {
-    for (let j = 0 ; j < needs[i].length ; j++) {
-      if (needs[i][j].name === "Personnage") {
-        let characterDice = dice.die(100);
-        let nbCharacters = 0;
-
-        for (let k = 0 ; k < campaign[0].characters.length ; k++) {
-          if (characterDice >= campaign[0].characters[k].value[0] && characterDice <= campaign[0].characters[k].value[1]) {
-            if (campaign[0].plotPoints[i].name === "LE PERSONNAGE QUITTE L'AVENTURE") {
-              if (campaign[0].characters[k].name === "Nouveau personnage" || campaign[0].characters[k].player === true) {
-                needs[i][j].name = "Choisissez le personnage le plus logique";
-              } else if (campaign[0].characters[k].name !== "Choisissez le personnage le plus logique") {
-                for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                  if (campaign[0].characters[l].name === campaign[0].characters[k].name) {
-                    name = campaign[0].characters[k].name;
-                    player = campaign[0].characters[k].player;
-                    travel = campaign[0].characters[k].travel;
-                    piecesOr = campaign[0].characters[k].piecesOr;
-
-                    campaign[0].characters[l].name = "Choisissez le personnage le plus logique";
-                    campaign[0].characters[l].player = false;
-                    campaign[0].characters[l].travel = {
-                      "travelMode": "Pieds",
-                      "KMPerDay": 38,
-                      "KMPerDay2": 48,
-                      "comments": "si 48 = -5 pénalité à la perception passive"
-                    };
-                    campaign[0].characters[l].piecesOr = 100;
-                  }
-                }
-
-                if (campaign[0].archivedCharacters === undefined || campaign[0].archivedCharacters.length === 0) {
-                  campaign[0].archivedCharacters = [];
-                }
-                
-                if (campaign[0].characters.find(character => character.name === name) === undefined) {
-                  campaign[0].archivedCharacters.push({"name" : name, "player": player, "travel": travel, "piecesOr": piecesOr});
-                }
-              }
-            } else if (campaign[0].plotPoints[i].name === "RETOUR DE PERSONNAGE") {
-              if (campaign[0].archivedCharacters === undefined || campaign[0].archivedCharacters.length === 0) {
-                needs[i][j].name = "Choisissez le personnage le plus logique";
-              } else {
-                let characterDice = dice.die(campaign[0].archivedCharacters.length);
-
-                needs[i][j].name = campaign[0].characters[characterDice - 1].name;
-
-                for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                  if (campaign[0].characters[l].name === "Nouveau personnage" || campaign[0].characters[l].name === "Choisissez le personnage le plus logique") {
-                    campaign[0].characters[l].name = campaign[0].characters[characterDice - 1].name;
-                    campaign[0].characters[l].player = campaign[0].characters[characterDice - 1].player;
-                    campaign[0].characters[l].travel = campaign[0].characters[characterDice - 1].travel;
-                    campaign[0].characters[l].piecesOr = campaign[0].characters[characterDice - 1].piecesOr;
-                    
-                    break;
-                  }
-                }
-
-                campaign[0].archivedCharacters.splice(characterDice - 1, 1);
-              }
-            } else if (campaign[0].plotPoints[i].name === "LE PERSONNAGE S'INTENSIFIE") {
-              if (campaign[0].characters[k].name !== "Nouveau personnage" && campaign[0].characters[k].name !== "Choisissez le personnage le plus logique") {
-                for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                  if (campaign[0].characters[l].name === "Nouveau personnage" || campaign[0].characters[l].name === "Choisissez le personnage le plus logique") {
-                    campaign[0].characters[l].name = campaign[0].characters[k].name;
-                    campaign[0].characters[l].player = campaign[0].characters[k].player;
-                    campaign[0].characters[l].travel = campaign[0].characters[k].travel;
-                    campaign[0].characters[l].piecesOr = campaign[0].characters[k].piecesOr;
-
-                    break;
-                  }
-                }
-              }
-            } else if (campaign[0].plotPoints[i].name === "LE PERSONNAGE RALENTIT") {
-              if (campaign[0].characters[k].name !== "Nouveau personnage" || campaign[0].characters[k].name !== "Choisissez le personnage le plus logique") {
-                for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                  if (campaign[0].characters[l].name === campaign[0].characters[k].name) {
-                    nbPlayer++;
-                  }
-                }
-              }
-
-              if (campaign[0].characters[k].name === "Nouveau personnage" || nbPlayer < 1) {
-                needs[i][j].name = "Choisissez le personnage le plus logique";
-              } else if (campaign[0].characters[k].name !== "Choisissez le personnage le plus logique") {
-                name = campaign[0].characters[k].name;
-                player = campaign[0].characters[k].player;
-                travel = campaign[0].characters[k].travel;
-                piecesOr = campaign[0].characters[k].piecesOr;
-
-                campaign[0].characters[k].name = "Choisissez le personnage le plus logique";
-                campaign[0].characters[k].player = false;
-                campaign[0].characters[k].travel = {
-                  "travelMode": "Pieds",
-                  "KMPerDay": 38,
-                  "KMPerDay2": 48,
-                  "comments": "si 48 = -5 pénalité à la perception passive"
-                };
-                campaign[0].characters[k].piecesOr = 100;
-              }
-
-              if (campaign[0].archivedCharacters === undefined || campaign[0].archivedCharacters.length === 0) {
-                campaign[0].archivedCharacters = [];
-              }
-              
-              if (campaign[0].characters.find(character => character.name === name) === undefined) {
-                campaign[0].archivedCharacters.push({"name" : name, "player": player, "travel": travel, "piecesOr": piecesOr});
-              }
-            } else if (campaign[0].plotPoints[i].name === "PERSONNAGE RÉTROGRADÉ") {
-              let name = "";
-
-              if (campaign[0].characters[k].name !== "Nouveau personnage" || campaign[0].characters[k].name !== "Choisissez le personnage le plus logique") {
-                for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                  if (campaign[0].characters[l].name === campaign[0].characters[k].name) {
-                    nbPlayer++;
-                  }
-                }
-              }
-
-              if (campaign[0].characters[k].name === "Nouveau personnage" || nbPlayer < 2) {
-                needs[i][j].name = "Choisissez le personnage le plus logique";
-              } else if (campaign[0].characters[k].name !== "Choisissez le personnage le plus logique") {
-                name = campaign[0].characters[k].name;
-                player = campaign[0].characters[k].player;
-                travel = campaign[0].characters[k].travel;
-                piecesOr = campaign[0].characters[k].piecesOr;
-
-                campaign[0].characters[k].name = "Choisissez le personnage le plus logique";
-                campaign[0].characters[k].player = false;
-                campaign[0].characters[k].travel = {
-                  "travelMode": "Pieds",
-                  "KMPerDay": 38,
-                  "KMPerDay2": 48,
-                  "comments": "si 48 = -5 pénalité à la perception passive",
-                };
-                campaign[0].characters[k].piecesOr = 100;
-
-                for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                  if (campaign[0].characters[l].name === name) {
-                    campaign[0].characters[l].name = "Choisissez le personnage le plus logique";
-                    campaign[0].characters[l].player = false;
-                    campaign[0].characters[l].travel = {
-                      "travelMode": "Pieds",
-                      "KMPerDay": 38,
-                      "KMPerDay2": 48,
-                      "comments": "si 48 = -5 pénalité à la perception passive",
-                    };
-                    campaign[0].characters[l].piecesOr = 100;
-                    
-                    break;
-                  }
-                }
-              }
-
-              if (campaign[0].archivedCharacters === undefined || campaign[0].archivedCharacters.length === 0) {
-                campaign[0].archivedCharacters = [];
-              }
-              
-              if (campaign[0].characters.find(character => character.name === name) === undefined) {
-                campaign[0].archivedCharacters.push({"name" : name, "player": player, "travel": travel, "piecesOr": piecesOr});
-              }
-            } else if (campaign[0].plotPoints[i].name === "PERSONNAGE PROMU") {
-              if (campaign[0].characters[k].name === "Nouveau personnage")  {
-                needs[i][j].name = "Choisissez le personnage le plus logique";
-              } else if (campaign[0].characters[k].name !== "Choisissez le personnage le plus logique") {
-                for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                  if (campaign[0].characters[l].name === "Nouveau personnage" || campaign[0].characters[l].name === "Choisissez le personnage le plus logique") {
-                    campaign[0].characters[l].name = campaign[0].characters[k].name;
-                    campaign[0].characters[l].player = campaign[0].characters[k].player;
-                    campaign[0].characters[l].travel = campaign[0].characters[k].travel;
-                    campaign[0].characters[l].piecesOr = campaign[0].characters[k].piecesOr;
-                    
-                    isCreated = true;
-                    break;
-                  }
-                }
-
-                for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                  if (campaign[0].characters[l].name === "Nouveau personnage" || campaign[0].characters[l].name === "Choisissez le personnage le plus logique") {
-                    campaign[0].characters[l].name = campaign[0].characters[k].name;
-                    campaign[0].characters[l].player = campaign[0].characters[k].player;
-                    campaign[0].characters[l].travel = campaign[0].characters[k].travel;
-                    campaign[0].characters[l].piecesOr = campaign[0].characters[k].piecesOr;
-                    
-                    isCreated = true;
-                    break;
-                  }
-                }
-              }
-            } else {
-              if (campaign[0].characters[k].name !== "Nouveau personnage" && campaign[0].characters[k].name !== "Choisissez le personnage le plus logique") {
-                for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                  if (campaign[0].characters[l].name === campaign[0].characters[k].name) {
-                    nbCharacters++;
-                  }
-                }
-              }
-
-              console.log("nbCharacters : " + nbCharacters);
-
-              if (nbCharacters < 3) {
-                if (existedCharacters.find(character => character === campaign[0].characters[k].name) === undefined) {
-                  for (let l = 0 ; l < campaign[0].characters.length ; l++) {
-                    if (campaign[0].characters[l].name === "Nouveau personnage" || campaign[0].characters[l].name === "Choisissez le personnage le plus logique") {
-                      campaign[0].characters[l].name = campaign[0].characters[k].name;
-
-                      existedCharacters.push(campaign[0].characters[k].name);
-
-                      break;
-                    }
-                  }
-                }
-              }
-
-              console.log("existedCharacters : " + existedCharacters);
-
-              needs[i][j].name = campaign[0].characters[k].name;
-            }
-          }
-        }
-      } else if (needs[i][j].name === "Intrigue") {
-        let plotDice = dice.die(100);
-        let nbPlots = 0;
-
-        for (let k = 0 ; k < campaign[0].plots.length ; k++) {
-          if (plotDice >= campaign[0].plots[k].value[0] && plotDice <= campaign[0].plots[k].value[1]) {
-
-            for (let l = 0 ; l < campaign[0].plots.length ; l++) {
-              if (campaign[0].plots[l].name !== "Choisissez l'intrigue la plus logique" || campaign[0].plots[l].name !== "Nouvelle intrigue") {
-                nbPlots++;
-              }
-            }
-
-            if (campaign[0].plots[k].name === campaign[0].currentPlot[0]) {
-              needs[i][j].name = "Choisissez l'intrigue la plus logique";
-            } else if (nbPlots === 0) {
-              needs[i][j].name = "Nouvelle intrigue";
-            } else {
-              needs[i][j].name = campaign[0].plots[k].name;
-            }
-          }
-        }
-      }
-      campaign[0].plotPoints[i].needs.push(needs[i][j]);
-    }
-  }
-
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    });
-
-  return {
-    needs: needs
-  }
-} */
 
 /* const plotPointsRead = (campaign) => {
   let plotPointsName = [];
@@ -1171,10 +901,9 @@ module.exports = {
   "plotDelete": plotDelete,
   "themeRandom": themeRandom,
   "characterInformation": characterInformation,
-  "plotPoints": plotPoints
+  "plotPoints": plotPoints,
 };
 
-/* module.exports = needsRandom;
-module.exports = plotPointsRead;
+/* module.exports = plotPointsRead;
 module.exports = plotPointsUpdate;
 module.exports = characterCreation; */

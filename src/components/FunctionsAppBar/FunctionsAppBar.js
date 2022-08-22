@@ -1054,19 +1054,18 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
     } else if (functionSelected === "Plot Points") {
       if (subfonctionsPlotPointsSelected === "generation" || subfonctionsPlotPointsSelected === "Génération des Plot Points") {
         let plotPointsResponse = plotPoints(data);
+        let responseText = "";
 
         firebase.updateDocument("helpers", id, {
-          "plotPoints": plotPointsResponse.plotPoints
-        }).then(doc => {
+          "plotPoints": plotPointsResponse.plotPoints.plotPoints
+        }).then(doc => { 
           setData(doc.data());
         });
 
-        let responseText = "";
+        for (let i = 0 ; i < plotPointsResponse.plotPoints.plotPoints.length ; i++) {
+          responseText = responseText + (i + 1) + "- " + plotPointsResponse.plotPoints.plotPoints[i].name;
 
-        for (let i = 0 ; i < plotPointsResponse.plotPoints.length ; i++) {
-          responseText = responseText + (i + 1) + "- " + plotPointsResponse.plotPoints[i].name;
-
-          if (i < plotPointsResponse.plotPoints.length - 1) {
+          if (i < plotPointsResponse.plotPoints.plotPoints.length - 1) {
             responseText = responseText + "\n";
           }
         }

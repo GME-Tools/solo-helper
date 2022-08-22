@@ -98,7 +98,7 @@ export default function HelpersList() {
         { "value": [97,100],
           "name": "Nouveau personnage" }
       ],
-      currentPlots: [],
+      currentPlot: "",
       inventory: [],
       plotsList: [
         { "value": [1,4],
