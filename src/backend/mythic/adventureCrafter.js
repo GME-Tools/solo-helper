@@ -587,7 +587,7 @@ const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, 
     });
   }
 
-  plotPointsList = needsRandom.needsRandom(plotPoints, charactersList, plotsList, currentPlot, archivedCharacters);
+  let plotPointsList = needsRandom.needsRandom(plotPoints, charactersList, plotsList, currentPlot, archivedCharacters);
   
   return {
     plotPointsList: plotPointsList
