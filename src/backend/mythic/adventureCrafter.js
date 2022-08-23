@@ -434,8 +434,7 @@ const characterInformation = (charactersList, characterName) => {
   }
 }
 
-const plotPoints = (campaign) => {
-  let plotPoints = [];
+const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, archivedCharacters) => {
   let plotPointsName = [];
   let plotPointsDescription = [];
   let plotPointsNeeds = [];
@@ -448,22 +447,22 @@ const plotPoints = (campaign) => {
   while (plotPointsName.length < 5) {
     themeDice = dice.die(10);
 
-    for (let i = 0 ; i < campaign.themes.length ; i++) {
-      if (themeDice >= campaign.themes[i].values[0] && themeDice <= campaign.themes[i].values[1]) {
+    for (let i = 0 ; i < themes.length ; i++) {
+      if (themeDice >= themes[i].values[0] && themeDice <= themes[i].values[1]) {
         if (themeDice === 10) {
-          if (campaign.themes[3].alternated === true) {
-            themeName = campaign.themes[3].name;
-            campaign.themes[3].alternated = false;
-            campaign.themes[4].alternated = true;
+          if (themes[3].alternated === true) {
+            themeName = themes[3].name;
+            themes[3].alternated = false;
+            themes[4].alternated = true;
           } else {
-            themeName = campaign.themes[4].name;
-            campaign.themes[4].alternated = false;
-            campaign.themes[3].alternated = true;
+            themeName = themes[4].name;
+            themes[4].alternated = false;
+            themes[3].alternated = true;
           }
           
           break;
         } else {
-          themeName = campaign.themes[i].name;
+          themeName = themes[i].name;
 
           break;
         }
@@ -513,8 +512,8 @@ const plotPoints = (campaign) => {
               }
             }
 
-            for (let j = 0 ; j < campaign.charactersList.length ; j++) {
-              if (campaign.charactersList[j].player === false) {
+            for (let j = 0 ; j < charactersList.length ; j++) {
+              if (charactersList[j].player === false) {
                 nbNPC++;
               }
             }
@@ -537,10 +536,10 @@ const plotPoints = (campaign) => {
             continue;
           }
         } else if (plotPointsData.plotPointsTable[i].name === "CONCLUSION" && plotPointsName.find(name => name === plotPointsData.plotPointsTable[i].name) === undefined) {
-          if (campaign.plotsList.find(plot => plot.name === campaign.currentPlot)) {
-            for(let j = 0 ; j < campaign.plotsList.length ; j++) {
-              if (campaign.plotsList[j].name === campaign.currentPlot) {
-                campaign.plotsList[j].name = "Choisissez l'intrigue la plus logique";
+          if (plotsList.find(plot => plot.name === currentPlot)) {
+            for(let j = 0 ; j < plotsList.length ; j++) {
+              if (plotsList[j].name === currentPlot) {
+                plotsList[j].name = "Choisissez l'intrigue la plus logique";
               }
             }
           }
@@ -578,6 +577,8 @@ const plotPoints = (campaign) => {
     }
   }
 
+  plotPoints = [];
+  
   for (let i = 0 ; i < plotPointsName.length ; i++) {
     plotPoints.push({
       "name": plotPointsName[i],
@@ -586,10 +587,10 @@ const plotPoints = (campaign) => {
     });
   }
 
-  plotPoints = needsRandom.needsRandom(campaign, plotPoints);
+  plotPointsList = needsRandom.needsRandom(plotPoints, charactersList, plotsList, currentPlot, archivedCharacters);
   
   return {
-    plotPoints: plotPoints
+    plotPointsList: plotPointsList
   }
 }
 

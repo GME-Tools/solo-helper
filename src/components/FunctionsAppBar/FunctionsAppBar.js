@@ -1053,19 +1053,23 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       }
     } else if (functionSelected === "Plot Points") {
       if (subfonctionsPlotPointsSelected === "generation" || subfonctionsPlotPointsSelected === "Génération des Plot Points") {
-        let plotPointsResponse = plotPoints(data);
+        let plotPointsResponse = plotPoints(data.plotPoints, data.charactersList, data.plotsList, data.currentPlot, data.themes, data.archivedCharacters);
         let responseText = "";
 
         firebase.updateDocument("helpers", id, {
-          "plotPoints": plotPointsResponse.plotPoints.plotPoints
+          "plotPoints": plotPointsResponse.plotPointsList.plotPoints,
+          "charactersList": plotPointsResponse.plotPointsList.charactersList,
+          "plotsList":  plotPointsResponse.plotPointsList.plotsList,
+          "currentPlot":  plotPointsResponse.plotPointsList.currentPlot,
+          "archivedCharacters":  plotPointsResponse.plotPointsList.archivedCharacters
         }).then(doc => { 
           setData(doc.data());
         });
 
-        for (let i = 0 ; i < plotPointsResponse.plotPoints.plotPoints.length ; i++) {
-          responseText = responseText + (i + 1) + "- " + plotPointsResponse.plotPoints.plotPoints[i].name;
+        for (let i = 0 ; i < plotPointsResponse.plotPointsList.plotPoints.length ; i++) {
+          responseText = responseText + (i + 1) + "- " + plotPointsResponse.plotPointsList.plotPoints[i].name;
 
-          if (i < plotPointsResponse.plotPoints.plotPoints.length - 1) {
+          if (i < plotPointsResponse.plotPointsList.plotPoints.length - 1) {
             responseText = responseText + "\n";
           }
         }
