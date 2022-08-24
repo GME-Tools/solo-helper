@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation, plotPoints } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation, plotPoints, plotPointsRead } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -83,7 +83,8 @@ const subfonctionsPlots = [
 let existingPlots = [];
 
   const subfonctionsPlotPoints = [
-    { label: 'Génération des Plot Points', value: 'generation' }
+    { label: 'Génération des Plot Points', value: 'generation' },
+    { label: 'Liste des Plot Points', value: 'list' }
   ];
 
 const subfonctionsThemes = [
@@ -1074,6 +1075,36 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
           }
         }
 
+        setHistory(h => ([...h, logPlotPoints(responseText)]));
+      } else if (subfonctionsPlotPointsSelected === "list" || subfonctionsPlotPointsSelected === "Liste des Plot Points") {
+        let plotPointsResponse = plotPointsRead(data.plotPoints);
+        let responseText = "";
+        let needsText = "";
+
+        for (let i = 0 ; i < plotPointsResponse.name.length ; i++) {
+          needsText = "";
+          
+          for (let j = 0 ; j < plotPointsResponse.needs[i].length ; j++) {
+            if (plotPointsResponse.needs[i][j].name !== "Non") {
+              needsText = needsText + plotPointsResponse.needs[i][j].name;
+
+              if (j < plotPointsResponse.needs[i].length - 1) {
+                needsText = needsText + " / ";
+              }
+            }
+          }
+
+          if (needsText === "") {
+            responseText = responseText + (i + 1) + "- " + plotPointsResponse.name[i] + " (" + plotPointsResponse.description[i] + ")";
+          } else {
+            responseText = responseText + (i + 1) + "- " + plotPointsResponse.name[i] + " (" + plotPointsResponse.description[i] + ") - " + needsText;
+          }
+
+          if (i < plotPointsResponse.name.length - 1) {
+            responseText = responseText + "\n";
+          }
+        }
+        
         setHistory(h => ([...h, logPlotPoints(responseText)]));
       }
     } else if (functionSelected === "Theme") {

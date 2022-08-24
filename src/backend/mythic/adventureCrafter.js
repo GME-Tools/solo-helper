@@ -594,23 +594,23 @@ const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, 
   }
 }
 
-/* const plotPointsRead = (campaign) => {
+const plotPointsRead = (plotPoints) => {
   let plotPointsName = [];
   let plotPointsDescription = [];
   let plotPointsNeeds = [];
   
-  for (let i = 0 ; i < campaign[0].plotPoints.length ; i++) {
-    plotPointsName.push(campaign[0].plotPoints[i].name);
-    plotPointsDescription.push(campaign[0].plotPoints[i].description);
-    plotPointsNeeds.push(campaign[0].plotPoints[i].needs);
+  for (let i = 0 ; i < plotPoints.length ; i++) {
+    plotPointsName.push(plotPoints[i].name);
+    plotPointsDescription.push(plotPoints[i].description);
+    plotPointsNeeds.push(plotPoints[i].needs);
   }
   
   return {
-    plotPointsName: plotPointsName,
-    plotPointsDescription: plotPointsDescription,
-    plotPointsNeeds: plotPointsNeeds
+    name: plotPointsName,
+    description: plotPointsDescription,
+    needs: plotPointsNeeds
   }
-} */
+}
 
 /* const plotPointsUpdate = (campaign, plotPoint, need, characterPlot) => {
   let plotPointsName = [];
@@ -903,8 +903,8 @@ module.exports = {
   "themeRandom": themeRandom,
   "characterInformation": characterInformation,
   "plotPoints": plotPoints,
+  "plotPointsRead": plotPointsRead
 };
 
-/* module.exports = plotPointsRead;
-module.exports = plotPointsUpdate;
+/* module.exports = plotPointsUpdate;
 module.exports = characterCreation; */
