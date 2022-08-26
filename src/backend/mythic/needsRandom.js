@@ -23,7 +23,7 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
           if (characterDice >= charactersList[k].value[0] && characterDice <= charactersList[k].value[1]) {
             if (plotPoints[i].name === "LE PERSONNAGE QUITTE L'AVENTURE") {
               if (charactersList[k].name === "Nouveau personnage" || charactersList[k].player === true) {
-                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique";
+                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique " + (j + 1);
               } else if (charactersList[k].name !== "Choisissez le personnage le plus logique") {
                 characterName = charactersList[k].name;
                 player = charactersList[k].player;
@@ -53,11 +53,11 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
                   });
                 }
               } else {
-                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique";
+                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique " + (j + 1);
               }
             } else if (plotPoints[i].name === "RETOUR DE PERSONNAGE") {
               if (archivedCharacters.length === 0) {
-                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique";
+                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique " + (j + 1);
               } else {
                 let characterDice = dice.die(archivedCharacters.length);
 
@@ -99,7 +99,7 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
               }
 
               if (charactersList[k].name === "Nouveau personnage" || nbPlayer < 1) {
-                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique";
+                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique " + (j + 1);
               } else if (charactersList[k].name !== "Choisissez le personnage le plus logique") {
                 characterName = charactersList[k].name;
                 player = charactersList[k].player;
@@ -116,7 +116,7 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
                 };
                 charactersList[k].piecesOr = 100;
               } else {
-                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique";
+                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique " + (j + 1);
               }
               
               if (findName(charactersList, characterName) === undefined) {
@@ -137,7 +137,7 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
               }
 
               if (charactersList[k].name === "Nouveau personnage" || nbPlayer < 2) {
-                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique";
+                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique " + (j + 1);
               } else if (charactersList[k].name !== "Choisissez le personnage le plus logique") {
                 characterName = charactersList[k].name;
                 player = charactersList[k].player;
@@ -170,7 +170,7 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
                   }
                 }
               } else {
-                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique";
+                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique " + (j + 1);
               }
               
               if (findName(charactersList, characterName) === undefined) {
@@ -183,7 +183,7 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
               }
             } else if (plotPoints[i].name === "PERSONNAGE PROMU") {
               if (charactersList[k].name === "Nouveau personnage")  {
-                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique";
+                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique " + (j + 1);
               } else if (charactersList[k].name !== "Choisissez le personnage le plus logique") {
                 for (let l = 0 ; l < charactersList.length ; l++) {
                   if (charactersList[l].name === "Nouveau personnage" || charactersList[l].name === "Choisissez le personnage le plus logique") {
@@ -207,7 +207,7 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
                   }
                 }
               } else {
-                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique";
+                plotPoints[i].needs[j].name = "Choisissez le personnage le plus logique " + (j + 1);
               }
             } else {
               if (charactersList[k].name !== "Nouveau personnage" && charactersList[k].name !== "Choisissez le personnage le plus logique") {
@@ -231,7 +231,11 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
                 }
               }
 
-              plotPoints[i].needs[j].name = charactersList[k].name;
+              if (charactersList[k].name === "Choisissez le personnage le plus logique" || charactersList[k].name === "Nouveau personnage") {
+                plotPoints[i].needs[j].name = charactersList[k].name + " " + (j + 1);
+              } else {
+                plotPoints[i].needs[j].name = charactersList[k].name;
+              }
             }
           }
         }
@@ -249,11 +253,15 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
             }
 
             if (plotsList[k].name === currentPlot) {
-              plotPoints[i].needs[j].name = "Choisissez l'intrigue la plus logique";
+              plotPoints[i].needs[j].name = "Choisissez l'intrigue la plus logique " + (j + 1);
             } else if (nbPlots === 0) {
-              plotPoints[i].needs[j].name = "Nouvelle intrigue";
+              plotPoints[i].needs[j].name = "Nouvelle intrigue " + (j + 1);
             } else {
-              plotPoints[i].needs[j].name = plotsList[k].name;
+              if (plotsList[k].name === "Choisissez l'intrigue la plus logique" || plotsList[k].name === "Nouvelle intrigue") {
+                plotPoints[i].needs[j].name = plotsList[k].name + " " + (j + 1);
+              } else {
+                plotPoints[i].needs[j].name = plotsList[k].name;
+              }
             }
           }
         }

@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation, plotPoints, plotPointsRead } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation, plotPoints, plotPointsRead, plotPointsUpdate } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -82,10 +82,15 @@ const subfonctionsPlots = [
 
 let existingPlots = [];
 
-  const subfonctionsPlotPoints = [
-    { label: 'Génération des Plot Points', value: 'generation' },
-    { label: 'Liste des Plot Points', value: 'list' }
-  ];
+const subfonctionsPlotPoints = [
+  { label: 'Génération des Plot Points', value: 'generation' },
+  { label: 'Liste des Plot Points', value: 'list' },
+  { label: 'Modifier un Plot Point', value: 'update' }
+];
+
+let existingPlotPoints = [];
+let existingNeedsPlotPoints = [];
+let existingNamePlotPoints = [];
 
 const subfonctionsThemes = [
   { label: 'Création des thèmes', value: 'creation' },
@@ -154,6 +159,12 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const [hiddenDeletePlot, setHiddenDeletePlot] = useState(true);
   const [subfonctionsPlotPointsSelected, setSubfonctionsPlotPointsSelected] = useState(""); 
   const [hiddenPlotPoint, setHiddenPlotPoint] = useState(true);
+  const [subfonctionsUpdatePlotPointsSelected, setSubfonctionsUpdatePlotPointsSelected] = useState("");
+  const [hiddenUpdatePlotPoints, setHiddenUpdatePlotPoints] = useState(true);
+  const [subfonctionsUpdateNeedsPlotPointsSelected, setSubfonctionsUpdateNeedsPlotPointsSelected] = useState("");
+  const [hiddenUpdateNeedsPlotPoints, setHiddenUpdateNeedsPlotPoints] = useState(true);
+  const [subfonctionsUpdateNamePlotPointsSelected, setSubfonctionsUpdateNamePlotPointsSelected] = useState("");
+  const [hiddenUpdateNamePlotPoints, setHiddenUpdateNamePlotPoints] = useState(true);
   const [subfonctionsThemesSelected, setSubfonctionsThemesSelected] = useState(""); 
   const [hiddenTheme, setHiddenTheme] = useState(true);
   const [creationThemesSelected, setCreationThemesSelected] = useState("");
@@ -227,6 +238,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
+      setHiddenUpdatePlotPoints(true);
+      setHiddenUpdateNeedsPlotPoints(true);
+      setHiddenUpdateNamePlotPoints(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -252,6 +266,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
+      setHiddenUpdatePlotPoints(true);
+      setHiddenUpdateNeedsPlotPoints(true);
+      setHiddenUpdateNamePlotPoints(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -277,6 +294,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
+      setHiddenUpdatePlotPoints(true);
+      setHiddenUpdateNeedsPlotPoints(true);
+      setHiddenUpdateNamePlotPoints(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -302,6 +322,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
+      setHiddenUpdatePlotPoints(true);
+      setHiddenUpdateNeedsPlotPoints(true);
+      setHiddenUpdateNamePlotPoints(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -327,6 +350,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
       setHiddenPlotPoint(false);
+      setHiddenUpdatePlotPoints(true);
+      setHiddenUpdateNeedsPlotPoints(true);
+      setHiddenUpdateNamePlotPoints(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -352,6 +378,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
+      setHiddenUpdatePlotPoints(true);
+      setHiddenUpdateNeedsPlotPoints(true);
+      setHiddenUpdateNamePlotPoints(true);
       setHiddenTheme(false);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -377,6 +406,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
+      setHiddenUpdatePlotPoints(true);
+      setHiddenUpdateNeedsPlotPoints(true);
+      setHiddenUpdateNamePlotPoints(true);
       setHiddenTheme(true);
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
@@ -725,6 +757,89 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
 
   const changeSubfonctionsPlotPoints = (event, inputValue) => {
     setSubfonctionsPlotPointsSelected(inputValue);
+
+    existingPlotPoints = [];
+    
+    if (inputValue === "update" || inputValue === "Modifier un Plot Point") {
+      const uniquePlotPoints = [...new Set(data.plotPoints.map(item => item.name))];
+
+      for (let i = 0 ; i < uniquePlotPoints.length ; i++) {
+        if (data.plotPoints[i].needs[0].name !== "Non") {
+          existingPlotPoints.push({
+            "label": uniquePlotPoints[i],
+            "value": uniquePlotPoints[i]
+          });
+        }
+      }
+      
+      setHiddenUpdatePlotPoints(false);
+      setHiddenUpdateNeedsPlotPoints(true);
+      setHiddenUpdateNamePlotPoints(true);
+    } else {
+      setHiddenUpdatePlotPoints(true);
+      setHiddenUpdateNeedsPlotPoints(true);
+      setHiddenUpdateNamePlotPoints(true);
+    }
+  };
+
+  const changeSubfonctionsUpdatePlotPoints = (event, inputValue) => {
+    setSubfonctionsUpdatePlotPointsSelected(inputValue);
+
+    existingNeedsPlotPoints = [];
+
+    let uniqueNeedsPlotPoints = [];
+    
+    for (let i = 0 ; i < data.plotPoints.find(item => item.name === inputValue).needs.length ; i++) {
+      uniqueNeedsPlotPoints.push(data.plotPoints.find(item => item.name === inputValue).needs[i]);
+    }
+
+    for (let i = 0 ; i < uniqueNeedsPlotPoints.length ; i++) {
+      existingNeedsPlotPoints.push({
+        "label": uniqueNeedsPlotPoints[i].name,
+        "value": uniqueNeedsPlotPoints[i].name
+      });
+    }
+
+    setHiddenUpdateNeedsPlotPoints(false);
+    setHiddenUpdateNamePlotPoints(true);
+  };
+
+  const changeSubfonctionsUpdateNeedsPlotPoints = (event, inputValue) => {
+    setSubfonctionsUpdateNeedsPlotPointsSelected(inputValue);
+
+    existingNamePlotPoints = [];
+
+    let uniqueCharactersPlots = [];
+
+    if (data.plotPoints.find(item => item.name === subfonctionsUpdatePlotPointsSelected).needs.find(item => item.name === inputValue).type === "Personnage") {
+      uniqueCharactersPlots = [...new Set(data.charactersList.map(item => item.name))];
+
+      for (let i = 0 ; i < uniqueCharactersPlots.length ; i++) {
+        if (uniqueCharactersPlots[i] !== "Nouveau personnage" && uniqueCharactersPlots[i] !== "Choisissez le personnage le plus logique") {
+          existingNamePlotPoints.push({
+            "label": uniqueCharactersPlots[i],
+            "value": uniqueCharactersPlots[i]
+          });
+        }
+      }
+    } else if (data.plotPoints.find(item => item.name === subfonctionsUpdatePlotPointsSelected).needs.find(item => item.name === inputValue).type === "Intrigue") {
+      uniqueCharactersPlots = [...new Set(data.plotsList.map(item => item.name))];
+
+      for (let i = 0 ; i < uniqueCharactersPlots.length ; i++) {
+        if (uniqueCharactersPlots[i] !== "Nouvelle intrigue" && uniqueCharactersPlots[i] !== "Choisissez l'intrigue la plus logique") {
+          existingNamePlotPoints.push({
+            "label": uniqueCharactersPlots[i],
+            "value": uniqueCharactersPlots[i]
+          });
+        }
+      }
+    }
+
+    setHiddenUpdateNamePlotPoints(false);
+  };
+
+  const changeSubfonctionsUpdateNamePlotPoints = (event, inputValue) => {
+    setSubfonctionsUpdateNamePlotPointsSelected(inputValue);
   };
 
   const changeSubfonctionsThemes = (event, inputValue) => {
@@ -1106,6 +1221,16 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         }
         
         setHistory(h => ([...h, logPlotPoints(responseText)]));
+      } else if (subfonctionsPlotPointsSelected === "update" || subfonctionsPlotPointsSelected === "Modifier un Plot Point") {
+        let plotPointsResponse = plotPointsUpdate(data.plotPoints, subfonctionsUpdatePlotPointsSelected, subfonctionsUpdateNeedsPlotPointsSelected, subfonctionsUpdateNamePlotPointsSelected);
+
+        firebase.updateDocument("helpers", id, {
+          "plotPoints": plotPointsResponse.plotPoints
+        }).then(doc => {
+          setData(doc.data());
+        });
+
+        setHistory(h => ([...h, logPlotPoints(subfonctionsUpdateNeedsPlotPointsSelected + " a été remplacé par " + subfonctionsUpdateNamePlotPointsSelected)]));
       }
     } else if (functionSelected === "Theme") {
       if (subfonctionsThemesSelected === "creation" || subfonctionsThemesSelected === "Création des thèmes") {
@@ -1511,6 +1636,48 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         renderInput={(params) =>
         <TextField {...params}
           label="Choose a subfonction"/>}
+      /> : null}
+
+      {!hiddenUpdatePlotPoints ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-update-plotPoints"
+        options={existingPlotPoints}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsUpdatePlotPoints}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a plot point"/>}
+      /> : null}
+      
+      {!hiddenUpdateNeedsPlotPoints ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-update-plotPoints-needs"
+        options={existingNeedsPlotPoints}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsUpdateNeedsPlotPoints}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a need"/>}
+      /> : null}
+
+      {!hiddenUpdateNamePlotPoints ? <Autocomplete
+        autoComplete
+        autoSelect
+        disablePortal
+        id="combo-box-update-plotPoints-name"
+        options={existingNamePlotPoints}
+        getOptionLabel={(option) => option.label}
+        sx={{ width: 300 }}
+        onInputChange={changeSubfonctionsUpdateNamePlotPoints}
+        renderInput={(params) =>
+        <TextField {...params}
+          label="Choose a name"/>}
       /> : null}
 
       {!hiddenTheme ? <Autocomplete

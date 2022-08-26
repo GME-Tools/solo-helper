@@ -505,7 +505,10 @@ const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, 
                 let needsTemp = [];
 
                 for (let k = 0 ; k < Object.keys(plotPointsData.plotPointsTable[i].meta[j].need).length ; k++) {
-                  needsTemp.push({"name": plotPointsData.plotPointsTable[i].meta[j].need[k]});
+                  needsTemp.push({
+                    "name": plotPointsData.plotPointsTable[i].meta[j].need[k],
+                    "type": plotPointsData.plotPointsTable[i].meta[j].need[k]
+                  });
                 }
 
                 plotPointsNeeds.push(needsTemp);
@@ -526,7 +529,10 @@ const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, 
             let needsTemp = [];
 
             for (let j = 0 ; j < Object.keys(plotPointsData.plotPointsTable[i].need).length ; j++) {
-              needsTemp.push({"name": plotPointsData.plotPointsTable[i].need[j]});
+              needsTemp.push({
+                "name": plotPointsData.plotPointsTable[i].need[j],
+                "type": plotPointsData.plotPointsTable[i].need[j]
+              });
             }
             
             plotPointsNeeds.push(needsTemp);
@@ -555,7 +561,10 @@ const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, 
           let needsTemp = [];
 
           for (let j = 0 ; j < Object.keys(plotPointsData.plotPointsTable[i].need).length ; j++) {
-            needsTemp.push({"name": plotPointsData.plotPointsTable[i].need[j]});
+            needsTemp.push({
+              "name": plotPointsData.plotPointsTable[i].need[j],
+              "type": plotPointsData.plotPointsTable[i].need[j]
+            });
           }
           
           plotPointsNeeds.push(needsTemp);
@@ -566,7 +575,10 @@ const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, 
           let needsTemp = [];
 
           for (let j = 0 ; j < Object.keys(plotPointsData.plotPointsTable[i].need).length ; j++) {
-            needsTemp.push({"name": plotPointsData.plotPointsTable[i].need[j]});
+            needsTemp.push({
+              "name": plotPointsData.plotPointsTable[i].need[j],
+              "type": plotPointsData.plotPointsTable[i].need[j]
+            });
           }
 
           plotPointsNeeds.push(needsTemp);
@@ -612,29 +624,13 @@ const plotPointsRead = (plotPoints) => {
   }
 }
 
-/* const plotPointsUpdate = (campaign, plotPoint, need, characterPlot) => {
-  let plotPointsName = [];
-  let plotPointsDescription = [];
-  let plotPointsNeeds = [];
-
-  campaign[0].plotPoints[plotPoint].needs[need].name = characterPlot;
-  
-  for (let i = 0 ; i < campaign[0].plotPoints.length ; i++) {
-    plotPointsName.push(campaign[0].plotPoints[i].name);
-    plotPointsDescription.push(campaign[0].plotPoints[i].description);
-    plotPointsNeeds.push(campaign[0].plotPoints[i].needs);
-  }
-
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    });
+const plotPointsUpdate = (plotPoints, plotPoint, need, newNeed) => {
+  plotPoints.find(item => item.name === plotPoint).needs.find(item => item.name === need).name = newNeed;
   
   return {
-    plotPointsName: plotPointsName,
-    plotPointsDescription: plotPointsDescription,
-    plotPointsNeeds: plotPointsNeeds
+    plotPoints: plotPoints
   }
-} */
+}
 
 /* const characterCreation = (campaign, needs, name) => {
   let characterSpecialTraitDice = 0;
@@ -903,8 +899,8 @@ module.exports = {
   "themeRandom": themeRandom,
   "characterInformation": characterInformation,
   "plotPoints": plotPoints,
-  "plotPointsRead": plotPointsRead
+  "plotPointsRead": plotPointsRead,
+  "plotPointsUpdate": plotPointsUpdate
 };
 
-/* module.exports = plotPointsUpdate;
-module.exports = characterCreation; */
+/* module.exports = characterCreation; */
