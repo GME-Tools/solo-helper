@@ -2,6 +2,7 @@ const dice = require('../dice');
 const adventureData = require('../../data/adventurecrafter');
 const plotPointsData = require('../../data/plotPoints');
 const needsRandom = require('./needsRandom');
+const generator = require('../generator');
 
 const themeCreation = (data, themesPlayer) => {
   let themeName = "";
@@ -670,9 +671,9 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
   let characterSpecialTraitDice = dice.die(100);
   let characterIdentityDice = dice.die(100);
   let characterDescriptorsDice = dice.die(100);
-  let randomNumber = dice.die(1000);
+  let randomNumber = dice.die(4) + 1;
 
-  plotPoints.find(item => item.name === plotPoint).needs[need].name = plotPoints.find(item => item.name === plotPoint).needs[need].name + randomNumber;
+  plotPoints.find(item => item.name === plotPoint).needs[need].name = generator.nameGenerator(randomNumber);
 
   for (let i = 0 ; i < charactersList.length ; i++) {
     if (charactersList[i].name === "Nouveau personnage" || charactersList[i].name === "Choisissez le personnage le plus logique") {
