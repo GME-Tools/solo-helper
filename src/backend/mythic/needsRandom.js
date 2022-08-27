@@ -1,4 +1,6 @@
 const dice = require('../dice');
+const adventureCrafter = require('./adventureCrafter');
+
 
 const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archivedCharacters) => {
   let nbPlayer = 0;
@@ -7,6 +9,7 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
   let travel = [];
   let piecesOr = 0;
   let existedCharacters = [];
+  let responseCharacterCreation = {};
 
   let findName = function(list, name) {
     return list.find(item => item.name === name);
@@ -219,7 +222,7 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
               }
 
               if (nbCharacters < 3) {
-                if (existedCharacters.find(character => character === charactersList[k].name) === undefined) {
+                if (findName(existedCharacters, charactersList[k].name)) {
                   for (let l = 0 ; l < charactersList.length ; l++) {
                     if (charactersList[l].name === "Nouveau personnage" || charactersList[l].name === "Choisissez le personnage le plus logique") {
                       charactersList[l].name = charactersList[k].name;
@@ -231,8 +234,12 @@ const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archive
                 }
               }
 
-              if (charactersList[k].name === "Choisissez le personnage le plus logique" || charactersList[k].name === "Nouveau personnage") {
+              if (charactersList[k].name === "Choisissez le personnage le plus logique") {
                 plotPoints[i].needs[j].name = charactersList[k].name + " " + (j + 1);
+              } else if (charactersList[k].name === "Nouveau personnage") {
+                responseCharacterCreation = adventureCrafter.characterCreation(charactersList, plotPoints, plotPoints[i].name, j);
+                plotPoints = responseCharacterCreation.plotPoints;
+                charactersList = responseCharacterCreation.charactersList;
               } else {
                 plotPoints[i].needs[j].name = charactersList[k].name;
               }

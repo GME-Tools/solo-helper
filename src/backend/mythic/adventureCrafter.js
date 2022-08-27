@@ -218,6 +218,10 @@ const characterAdd = (charactersList, characterName, isPlayer) => {
               charactersList[i].player = charactersList[j].player;
               charactersList[i].travel = charactersList[j].travel;
               charactersList[i].piecesOr = charactersList[j].piecesOr;
+              charactersList[i].characterSpecialTraitName = charactersList[j].characterSpecialTraitName;
+              charactersList[i].characterSpecialTraitDescription = charactersList[j].characterSpecialTraitDescription;
+              charactersList[i].characterIdentityName = charactersList[j].characterIdentityName;
+              charactersList[i].characterDescriptorsName = charactersList[j].characterDescriptorsName;
             }
           }
         } else {
@@ -232,6 +236,11 @@ const characterAdd = (charactersList, characterName, isPlayer) => {
           charactersList[i].player = isPlayer;
           charactersList[i].travel = travel;
           charactersList[i].piecesOr = 100;
+
+          charactersList[i].characterSpecialTraitName = "";
+          charactersList[i].characterSpecialTraitDescription = "";
+          charactersList[i].characterIdentityName = [];
+          charactersList[i].characterDescriptorsName = [];
         }
 
         break;
@@ -310,6 +319,10 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
   let player = false;
   let travel = [];
   let piecesOr = 0;
+  let characterSpecialTraitName = "";
+  let characterSpecialTraitDescription = "";
+  let characterIdentityName = [];
+  let characterDescriptorsName = [];
   let empty = false;
   
   if (charactersList.find(character => character.name === characterName)) {
@@ -319,6 +332,11 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
         player = charactersList[i].player;
         travel = charactersList[i].travel;
         piecesOr = charactersList[i].piecesOr;
+
+        characterSpecialTraitName = charactersList[i].characterSpecialTraitName;
+        characterSpecialTraitDescription = charactersList[i].characterSpecialTraitDescription;
+        characterIdentityName = charactersList[i].characterIdentityName;
+        characterDescriptorsName = charactersList[i].characterDescriptorsName;
 
         charactersList[i].name = "Choisissez le personnage le plus logique";
         
@@ -332,7 +350,11 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
       "name" : name,
       "player": player,
       "travel": travel,
-      "piecesOr": piecesOr
+      "piecesOr": piecesOr,
+      "characterSpecialTraitName": characterSpecialTraitName,
+      "characterSpecialTraitDescription": characterSpecialTraitDescription,
+      "characterIdentityName": characterIdentityName,
+      "characterDescriptorsName": characterDescriptorsName
     });
 
     empty = true;
@@ -414,6 +436,10 @@ const characterInformation = (charactersList, characterName) => {
   let player = false;
   let travel = [];
   let piecesOr = 0;
+  let characterSpecialTraitName = "";
+  let characterSpecialTraitDescription = "";
+  let characterIdentityName = [];
+  let characterDescriptorsName = [];
   
   for (let i = 0 ; i < charactersList.length ; i++) {
     if (charactersList[i].name === characterName) {
@@ -421,6 +447,10 @@ const characterInformation = (charactersList, characterName) => {
       player = charactersList[i].player;
       travel = charactersList[i].travel;
       piecesOr = charactersList[i].piecesOr;
+      characterSpecialTraitName = charactersList[i].characterSpecialTraitName;
+      characterSpecialTraitDescription = charactersList[i].characterSpecialTraitDescription;
+      characterIdentityName = charactersList[i].characterIdentityName;
+      characterDescriptorsName = charactersList[i].characterDescriptorsName;
 
       break;
     }
@@ -430,7 +460,11 @@ const characterInformation = (charactersList, characterName) => {
     name: name,
     player: player,
     travel: travel,
-    piecesOr: piecesOr
+    piecesOr: piecesOr,
+    characterSpecialTraitName: characterSpecialTraitName,
+    characterSpecialTraitDescription: characterSpecialTraitDescription,
+    characterIdentityName: characterIdentityName,
+    characterDescriptorsName: characterDescriptorsName
   }
 }
 
@@ -632,254 +666,97 @@ const plotPointsUpdate = (plotPoints, plotPoint, need, newNeed) => {
   }
 }
 
-/* const characterCreation = (campaign, needs, name) => {
-  let characterSpecialTraitDice = 0;
-  let characterIdentityDice = 0;
-  let characterDescriptorsDice = 0;
-  let nbNewCharacters = 1;
-  let characterSpecialTraitName = "";
-  let characterSpecialTraitDescription = "";
-  let characterIdentityName = [];
-  let characterDescriptorsName = [];
+const characterCreation = (charactersList, plotPoints, plotPoint, need, name) => {
+  let characterSpecialTraitDice = dice.die(100);
+  let characterIdentityDice = dice.die(100);
+  let characterDescriptorsDice = dice.die(100);
+  let randomNumber = dice.die(1000);
 
-  if (needs !== undefined) {
-    for (let i = 0 ; i < needs.length ; i++) {
-      for (let j = 0 ; j < needs[i].length ; j++) {
-        if (needs[i][j].name === "Nouveau personnage") {
-          characterSpecialTraitDice = dice.die(100);
-          characterIdentityDice = dice.die(100);
-          characterDescriptorsDice = dice.die(100);
+  plotPoints.find(item => item.name === plotPoint).needs[need].name = plotPoints.find(item => item.name === plotPoint).needs[need].name + randomNumber;
 
-          campaign[0].plotPoints[i].needs.splice(j, 1);
+  for (let i = 0 ; i < charactersList.length ; i++) {
+    if (charactersList[i].name === "Nouveau personnage" || charactersList[i].name === "Choisissez le personnage le plus logique") {
+      let travel = {
+        "travelMode": "Pieds",
+        "KMPerDay": 38,
+        "KMPerDay2": 48,
+        "comments": "si 48 = -5 pénalité à la perception passive",
+      }
+    
+      charactersList[i].name = plotPoints.find(item => item.name === plotPoint).needs[need].name;
+      charactersList[i].player = false;
+      charactersList[i].travel = travel;
+      charactersList[i].piecesOr = 100;
 
-          needs[i][j].name = needs[i][j].name + " " + nbNewCharacters;
-          
-          campaign[0].plotPoints[i].needs.push(needs[i][j]);
+      charactersList[i].characterSpecialTraitName = "";
+      charactersList[i].characterSpecialTraitDescription = "";
+      charactersList[i].characterIdentityName = [];
+      charactersList[i].characterDescriptorsName = [];
 
-          for (let k = 1 ; k <= Object.keys(adventureData.characterSpecialTraitTable).length ; k++) {
-            if (characterSpecialTraitDice >= adventureData.characterSpecialTraitTable[k].value[0] && characterSpecialTraitDice <= adventureData.characterSpecialTraitTable[k].value[1]) {
-              needs[i][j].characterSpecialTraitName = adventureData.characterSpecialTraitTable[k].name;
-              needs[i][j].characterSpecialTraitDescription = adventureData.characterSpecialTraitTable[k].description;
-            }
-          }
+      for (let j = 1 ; j <= Object.keys(adventureData.characterSpecialTraitTable).length ; j++) {
+        if (characterSpecialTraitDice >= adventureData.characterSpecialTraitTable[j].value[0] && characterSpecialTraitDice <= adventureData.characterSpecialTraitTable[j].value[1]) {
+          charactersList[i].characterSpecialTraitName = adventureData.characterSpecialTraitTable[j].name;
+          charactersList[i].characterSpecialTraitDescription = adventureData.characterSpecialTraitTable[j].description;
+        }
+      }
 
-          for (let k = 1 ; k <= Object.keys(adventureData.characterIdentityTable).length ; k++) {
-            if (characterIdentityDice >= adventureData.characterIdentityTable[k].value[0] && characterIdentityDice <= adventureData.characterIdentityTable[k].value[1]) {
-              if (adventureData.characterIdentityTable[k].name === "Jetez les dés pour deux identités") {
-                let characterIdentityDice2 = dice.die(67) + 33;
+      for (let j = 1 ; j <= Object.keys(adventureData.characterIdentityTable).length ; j++) {
+        if (characterIdentityDice >= adventureData.characterIdentityTable[j].value[0] && characterIdentityDice <= adventureData.characterIdentityTable[j].value[1]) {
+          if (adventureData.characterIdentityTable[j].name === "Jetez les dés pour deux identités") {
+            let characterIdentityDice2 = dice.die(67) + 33;
 
-                for (let l = 1 ; l <= Object.keys(adventureData.characterIdentityTable).length ; l++) {
-                  if (characterIdentityDice2 >= adventureData.characterIdentityTable[l].value[0] && characterIdentityDice2 <= adventureData.characterIdentityTable[l].value[1]) {
-                    if (needs[i][j].characterIdentityName === undefined || needs[i][j].characterIdentityName.length === 0) {
-                      needs[i][j].characterIdentityName = [];
-                    }
-
-                    needs[i][j].characterIdentityName.push(adventureData.characterIdentityTable[l].name);
-                  }
-                }
-
-                let characterIdentityDice3 = dice.die(67) + 33;
-
-                for (let l = 1 ; l <= Object.keys(adventureData.characterIdentityTable).length ; l++) {
-                  if (characterIdentityDice3 >= adventureData.characterIdentityTable[l].value[0] && characterIdentityDice3 <= adventureData.characterIdentityTable[l].value[1]) {
-                    if (needs[i][j].characterIdentityName === undefined || needs[i][j].characterIdentityName.length === 0) {
-                      needs[i][j].characterIdentityName = [];
-                    }
-
-                    needs[i][j].characterIdentityName.push(adventureData.characterIdentityTable[l].name);
-                  }
-                }
-              } else {
-                if (needs[i][j].characterIdentityName === undefined || needs[i][j].characterIdentityName.length === 0) {
-                    needs[i][j].characterIdentityName = [];
-                  }
-
-                needs[i][j].characterIdentityName.push(adventureData.characterIdentityTable[k].name);
+            for (let k = 1 ; k <= Object.keys(adventureData.characterIdentityTable).length ; k++) {
+              if (characterIdentityDice2 >= adventureData.characterIdentityTable[k].value[0] && characterIdentityDice2 <= adventureData.characterIdentityTable[k].value[1]) {
+                charactersList[i].characterIdentityName.push(adventureData.characterIdentityTable[k].name);
               }
             }
-          }
 
-          for (let k = 1 ; k <= Object.keys(adventureData.characterDescriptorsTable).length ; k++) {
-            if (characterDescriptorsDice >= adventureData.characterDescriptorsTable[k].value[0] && characterDescriptorsDice <= adventureData.characterDescriptorsTable[k].value[1]) {
-              if (adventureData.characterDescriptorsTable[k].name === "Jetez les dés pour deux identités") {
-                let characterDescriptorsDice2 = dice.die(67) + 33;
+            let characterIdentityDice3 = dice.die(67) + 33;
 
-                for (let l = 1 ; l <= Object.keys(adventureData.characterDescriptorsTable).length ; l++) {
-                  if (characterDescriptorsDice2 >= adventureData.characterDescriptorsTable[l].value[0] && characterDescriptorsDice2 <= adventureData.characterDescriptorsTable[l].value[1]) {
-                    if (needs[i][j].characterDescriptorsName === undefined || needs[i][j].characterDescriptorsName.length === 0) {
-                      needs[i][j].characterDescriptorsName = [];
-                    }
-
-                    needs[i][j].characterDescriptorsName.push(adventureData.characterDescriptorsTable[l].name);
-                  }
-                }
-
-                let characterDescriptorsDice3 = dice.die(67) + 33;
-
-                for (let l = 1 ; l <= Object.keys(adventureData.characterDescriptorsTable).length ; l++) {
-                  if (characterDescriptorsDice3 >= adventureData.characterDescriptorsTable[l].value[0] && characterDescriptorsDice3 <= adventureData.characterDescriptorsTable[l].value[1]) {
-                    if (needs[i][j].characterDescriptorsName === undefined || needs[i][j].characterDescriptorsName.length === 0) {
-                      needs[i][j].characterDescriptorsName = [];
-                    }
-
-                    needs[i][j].characterDescriptorsName.push(adventureData.characterDescriptorsTable[l].name);
-                  }
-                }
-              } else {
-                if (needs[i][j].characterDescriptorsName === undefined || needs[i][j].characterDescriptorsName.length === 0) {
-                  needs[i][j].characterDescriptorsName = [];
-                }
-
-                needs[i][j].characterDescriptorsName.push(adventureData.characterDescriptorsTable[k].name);
+            for (let k = 1 ; k <= Object.keys(adventureData.characterIdentityTable).length ; k++) {
+              if (characterIdentityDice3 >= adventureData.characterIdentityTable[k].value[0] && characterIdentityDice3 <= adventureData.characterIdentityTable[k].value[1]) {
+                charactersList[i].characterIdentityName.push(adventureData.characterIdentityTable[k].name);
               }
             }
-          }
-          nbNewCharacters++;
-
-          for (let k = 0 ; k < campaign[0].characters.length ; k++) {
-            if (campaign[0].characters[k].name === "Nouveau personnage" || campaign[0].characters[k].name === "Choisissez le personnage le plus logique") {
-              let travel = {
-                "travelMode": "Pieds",
-                "KMPerDay": 38,
-                "KMPerDay2": 48,
-                "comments": "si 48 = -5 pénalité à la perception passive",
-              }
-            
-              campaign[0].characters[k].name = needs[i][j].name;
-              campaign[0].characters[k].player = false;
-              campaign[0].characters[k].travel = travel;
-              campaign[0].characters[k].piecesOr = 100;
-
-              campaign[0].characters[k].specialTraitName = needs[i][j].characterSpecialTraitName;
-              campaign[0].characters[k].specialTraitDescription = needs[i][j].characterSpecialTraitDescription;
-
-              if (campaign[0].characters[k].identity === undefined || campaign[0].characters[k].identity === 0) {
-                campaign[0].characters[k].identity = [];
-              }
-
-              campaign[0].characters[k].identity = needs[i][j].characterIdentityName;
-
-              if (campaign[0].characters[k].descriptor === undefined || campaign[0].characters[k].descriptor === 0) {
-                campaign[0].characters[k].descriptor = [];
-              }
-
-              campaign[0].characters[k].descriptor = needs[i][j].characterDescriptorsName;
-
-              break;
-            }
+          } else {
+            charactersList[i].characterIdentityName.push(adventureData.characterIdentityTable[j].name);
           }
         }
       }
-    }
-  } else {
-    characterSpecialTraitDice = dice.die(100);
-    characterIdentityDice = dice.die(100);
-    characterDescriptorsDice = dice.die(100);
 
-    for (let k = 1 ; k <= Object.keys(adventureData.characterSpecialTraitTable).length ; k++) {
-      if (characterSpecialTraitDice >= adventureData.characterSpecialTraitTable[k].value[0] && characterSpecialTraitDice <= adventureData.characterSpecialTraitTable[k].value[1]) {
-        characterSpecialTraitName = adventureData.characterSpecialTraitTable[k].name;
-        characterSpecialTraitDescription = adventureData.characterSpecialTraitTable[k].description;
-      }
-    }
+      for (let j = 1 ; j <= Object.keys(adventureData.characterDescriptorsTable).length ; j++) {
+        if (characterDescriptorsDice >= adventureData.characterDescriptorsTable[j].value[0] && characterDescriptorsDice <= adventureData.characterDescriptorsTable[j].value[1]) {
+          if (adventureData.characterDescriptorsTable[j].name === "Jetez les dés pour deux identités") {
+            let characterDescriptorsDice2 = dice.die(67) + 33;
 
-    for (let k = 1 ; k <= Object.keys(adventureData.characterIdentityTable).length ; k++) {
-      if (characterIdentityDice >= adventureData.characterIdentityTable[k].value[0] && characterIdentityDice <= adventureData.characterIdentityTable[k].value[1]) {
-        if (adventureData.characterIdentityTable[k].name === "Jetez les dés pour deux identités") {
-          let characterIdentityDice2 = dice.die(67) + 33;
-
-          for (let l = 1 ; l <= Object.keys(adventureData.characterIdentityTable).length ; l++) {
-            if (characterIdentityDice2 >= adventureData.characterIdentityTable[l].value[0] && characterIdentityDice2 <= adventureData.characterIdentityTable[l].value[1]) {
-              characterIdentityName.push(adventureData.characterIdentityTable[l].name);
+            for (let k = 1 ; k <= Object.keys(adventureData.characterDescriptorsTable).length ; k++) {
+              if (characterDescriptorsDice2 >= adventureData.characterDescriptorsTable[k].value[0] && characterDescriptorsDice2 <= adventureData.characterDescriptorsTable[k].value[1]) {
+                charactersList[i].characterDescriptorsName.push(adventureData.characterDescriptorsTable[k].name);
+              }
             }
-          }
 
-          let characterIdentityDice3 = dice.die(67) + 33;
+            let characterDescriptorsDice3 = dice.die(67) + 33;
 
-          for (let l = 1 ; l <= Object.keys(adventureData.characterIdentityTable).length ; l++) {
-            if (characterIdentityDice3 >= adventureData.characterIdentityTable[l].value[0] && characterIdentityDice3 <= adventureData.characterIdentityTable[l].value[1]) {
-              characterIdentityName.push(adventureData.characterIdentityTable[l].name);
+            for (let k = 1 ; k <= Object.keys(adventureData.characterDescriptorsTable).length ; k++) {
+              if (characterDescriptorsDice3 >= adventureData.characterDescriptorsTable[k].value[0] && characterDescriptorsDice3 <= adventureData.characterDescriptorsTable[k].value[1]) {
+                charactersList[i].characterDescriptorsName.push(adventureData.characterDescriptorsTable[k].name);
+              }
             }
+          } else {
+            charactersList[i].characterDescriptorsName.push(adventureData.characterDescriptorsTable[j].name);
           }
-        } else {
-          characterIdentityName.push(adventureData.characterIdentityTable[k].name);
         }
       }
-    }
 
-    for (let k = 1 ; k <= Object.keys(adventureData.characterDescriptorsTable).length ; k++) {
-      if (characterDescriptorsDice >= adventureData.characterDescriptorsTable[k].value[0] && characterDescriptorsDice <= adventureData.characterDescriptorsTable[k].value[1]) {
-        if (adventureData.characterDescriptorsTable[k].name === "Jetez les dés pour deux identités") {
-          let characterDescriptorsDice2 = dice.die(67) + 33;
-
-          for (let l = 1 ; l <= Object.keys(adventureData.characterDescriptorsTable).length ; l++) {
-            if (characterDescriptorsDice2 >= adventureData.characterDescriptorsTable[l].value[0] && characterDescriptorsDice2 <= adventureData.characterDescriptorsTable[l].value[1]) {
-              characterDescriptorsName.push(adventureData.characterDescriptorsTable[l].name);
-            }
-          }
-
-          let characterDescriptorsDice3 = dice.die(67) + 33;
-
-          for (let l = 1 ; l <= Object.keys(adventureData.characterDescriptorsTable).length ; l++) {
-            if (characterDescriptorsDice3 >= adventureData.characterDescriptorsTable[l].value[0] && characterDescriptorsDice3 <= adventureData.characterDescriptorsTable[l].value[1]) {
-              characterDescriptorsName.push(adventureData.characterDescriptorsTable[l].name);
-            }
-          }
-        } else {
-          characterDescriptorsName.push(adventureData.characterDescriptorsTable[k].name);
-        }
-      }
-    }
-    nbNewCharacters++;
-
-    for (let k = 0 ; k < campaign[0].characters.length ; k++) {
-      if (campaign[0].characters[k].name === "Nouveau personnage" || campaign[0].characters[k].name === "Choisissez le personnage le plus logique") {
-        let travel = {
-          "travelMode": "Pieds",
-          "KMPerDay": 38,
-          "KMPerDay2": 48,
-          "comments": "si 48 = -5 pénalité à la perception passive",
-        }
-      
-        campaign[0].characters[k].name = name;
-        campaign[0].characters[k].player = false;
-        campaign[0].characters[k].travel = travel;
-        campaign[0].characters[k].piecesOr = 100;
-
-        campaign[0].characters[k].specialTraitName = characterSpecialTraitName;
-        campaign[0].characters[k].specialTraitDescription = characterSpecialTraitDescription;
-
-        if (campaign[0].characters[k].identity === undefined || campaign[0].characters[k].identity === 0) {
-          campaign[0].characters[k].identity = [];
-        }
-
-        campaign[0].characters[k].identity = characterIdentityName;
-
-        if (campaign[0].characters[k].descriptor === undefined || campaign[0].characters[k].descriptor === 0) {
-          campaign[0].characters[k].descriptor = [];
-        }
-
-        campaign[0].characters[k].descriptor = characterDescriptorsName;
-
-        break;
-      }
+      break;
     }
   }
-
-  campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    });
-
+  
   return {
-    needs: needs,
-    name: name,
-    characterSpecialTraitName: characterSpecialTraitName,
-    characterSpecialTraitDescription: characterSpecialTraitDescription,
-    characterIdentityName: characterIdentityName,
-    characterDescriptorsName: characterDescriptorsName
-
+    plotPoints: plotPoints,
+    charactersList: charactersList
   }
-} */
+}
 
 module.exports = {
   "themeCreation": themeCreation,
@@ -900,7 +777,8 @@ module.exports = {
   "characterInformation": characterInformation,
   "plotPoints": plotPoints,
   "plotPointsRead": plotPointsRead,
-  "plotPointsUpdate": plotPointsUpdate
+  "plotPointsUpdate": plotPointsUpdate,
+  "characterCreation": characterCreation
 };
 
-/* module.exports = characterCreation; */
+exports.characterCreation = characterCreation;
