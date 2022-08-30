@@ -672,8 +672,14 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
   let characterIdentityDice = dice.die(100);
   let characterDescriptorsDice = dice.die(100);
   let randomNumber = dice.die(4) + 1;
-
-  plotPoints.find(item => item.name === plotPoint).needs[need].name = generator.nameGenerator(randomNumber);
+  let characterName = "";
+  let characterSpecialTrait = {};
+  let characterIdentity = [];
+  let characterDescriptors = [];  
+  
+  if (plotPoints.length !== 0) {
+    plotPoints.find(item => item.name === plotPoint).needs[need].name = generator.nameGenerator(randomNumber);
+  }
 
   for (let i = 0 ; i < charactersList.length ; i++) {
     if (charactersList[i].name === "Nouveau personnage" || charactersList[i].name === "Choisissez le personnage le plus logique") {
@@ -684,7 +690,7 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
         "comments": "si 48 = -5 pénalité à la perception passive",
       }
     
-      charactersList[i].name = plotPoints.find(item => item.name === plotPoint).needs[need].name;
+      charactersList[i].name = generator.nameGenerator(randomNumber);
       charactersList[i].player = false;
       charactersList[i].travel = travel;
       charactersList[i].piecesOr = 100;
@@ -694,10 +700,14 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
       charactersList[i].characterIdentityName = [];
       charactersList[i].characterDescriptorsName = [];
 
+      characterName = charactersList[i].name;
+
       for (let j = 1 ; j <= Object.keys(adventureData.characterSpecialTraitTable).length ; j++) {
         if (characterSpecialTraitDice >= adventureData.characterSpecialTraitTable[j].value[0] && characterSpecialTraitDice <= adventureData.characterSpecialTraitTable[j].value[1]) {
           charactersList[i].characterSpecialTraitName = adventureData.characterSpecialTraitTable[j].name;
           charactersList[i].characterSpecialTraitDescription = adventureData.characterSpecialTraitTable[j].description;
+
+          characterSpecialTrait = { "characterSpecialTraitName": adventureData.characterSpecialTraitTable[j].name, "characterSpecialTraitDescription": charactersList[i].characterSpecialTraitDescription };
         }
       }
 
@@ -709,6 +719,7 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
             for (let k = 1 ; k <= Object.keys(adventureData.characterIdentityTable).length ; k++) {
               if (characterIdentityDice2 >= adventureData.characterIdentityTable[k].value[0] && characterIdentityDice2 <= adventureData.characterIdentityTable[k].value[1]) {
                 charactersList[i].characterIdentityName.push(adventureData.characterIdentityTable[k].name);
+                characterIdentity.push(adventureData.characterIdentityTable[k].name);
               }
             }
 
@@ -717,10 +728,12 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
             for (let k = 1 ; k <= Object.keys(adventureData.characterIdentityTable).length ; k++) {
               if (characterIdentityDice3 >= adventureData.characterIdentityTable[k].value[0] && characterIdentityDice3 <= adventureData.characterIdentityTable[k].value[1]) {
                 charactersList[i].characterIdentityName.push(adventureData.characterIdentityTable[k].name);
+                characterIdentity.push(adventureData.characterIdentityTable[k].name);
               }
             }
           } else {
             charactersList[i].characterIdentityName.push(adventureData.characterIdentityTable[j].name);
+            characterIdentity.push(adventureData.characterIdentityTable[j].name);
           }
         }
       }
@@ -733,6 +746,7 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
             for (let k = 1 ; k <= Object.keys(adventureData.characterDescriptorsTable).length ; k++) {
               if (characterDescriptorsDice2 >= adventureData.characterDescriptorsTable[k].value[0] && characterDescriptorsDice2 <= adventureData.characterDescriptorsTable[k].value[1]) {
                 charactersList[i].characterDescriptorsName.push(adventureData.characterDescriptorsTable[k].name);
+                characterDescriptors.push(adventureData.characterDescriptorsTable[k].name);
               }
             }
 
@@ -741,10 +755,12 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
             for (let k = 1 ; k <= Object.keys(adventureData.characterDescriptorsTable).length ; k++) {
               if (characterDescriptorsDice3 >= adventureData.characterDescriptorsTable[k].value[0] && characterDescriptorsDice3 <= adventureData.characterDescriptorsTable[k].value[1]) {
                 charactersList[i].characterDescriptorsName.push(adventureData.characterDescriptorsTable[k].name);
+                characterDescriptors.push(adventureData.characterDescriptorsTable[k].name);
               }
             }
           } else {
             charactersList[i].characterDescriptorsName.push(adventureData.characterDescriptorsTable[j].name);
+            characterDescriptors.push(adventureData.characterDescriptorsTable[j].name);
           }
         }
       }
@@ -755,7 +771,11 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
   
   return {
     plotPoints: plotPoints,
-    charactersList: charactersList
+    charactersList: charactersList,
+    characterName: characterName,
+    characterSpecialTrait: characterSpecialTrait,
+    characterIdentity: characterIdentity,
+    characterDescriptors: characterDescriptors
   }
 }
 

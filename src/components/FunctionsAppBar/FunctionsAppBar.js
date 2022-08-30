@@ -9,7 +9,7 @@ import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
-import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation, plotPoints, plotPointsRead, plotPointsUpdate } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation, plotPoints, plotPointsRead, plotPointsUpdate, characterCreation } from "backend/mythic/adventureCrafter";
 
 const options = [
   'd4',
@@ -59,6 +59,7 @@ const bodies = [
 
 const subfonctionsCharacters = [
   { label: 'Ajouter une occurrence et / ou un personnage', value: 'add' },
+  { label: 'Créer un nouveau personnage', value: 'creation' },
   { label: 'Informations sur un personnage', value: 'information' },
   { label: 'Liste de personnages', value: 'list' },
   { label: 'Modifier un personnage', value: 'update' },
@@ -922,6 +923,35 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
             setHistory(h => ([...h, logCharacter("Il y a déjà trois occurrences de ce personnage dans la liste des personnages")]));
           }
         }
+      } else if (subfonctionsCharactersSelected === "creation" || subfonctionsCharactersSelected === "Créer un nouveau personnage") {
+        let characterIdentityText = "";
+        let characterDescriptorsText = "";
+        
+        let characterResponse = characterCreation(data.charactersList, [], "", 0, "");
+
+        firebase.updateDocument("helpers", id, {
+          "charactersList": characterResponse.charactersList
+        }).then(doc => {
+          setData(doc.data());
+        });
+
+        for (let i = 0 ; i < characterResponse.characterIdentity.length ; i++) {
+          characterIdentityText = characterIdentityText + characterResponse.characterIdentity[i];
+
+          if (i < characterResponse.characterIdentity.length - 1) {
+            characterIdentityText = characterIdentityText + " / ";
+          }
+        }
+
+        for (let i = 0 ; i < characterResponse.characterDescriptors.length ; i++) {
+          characterDescriptorsText = characterDescriptorsText + characterResponse.characterDescriptors[i];
+
+          if (i < characterResponse.characterDescriptors.length - 1) {
+            characterDescriptorsText = characterDescriptorsText + " / ";
+          }
+        }
+
+        setHistory(h => ([...h, logCharacter("Le personnage " + characterResponse.characterName + " a été créé avec les caractéristiques suivantes (" + characterResponse.characterSpecialTrait.characterSpecialTraitName + " - " + characterIdentityText + " - " + characterDescriptorsText + ")")]));
       } else if (subfonctionsCharactersSelected === "list" || subfonctionsCharactersSelected === "Liste de personnages") {
         let characterResponse = characterList(data);
 
