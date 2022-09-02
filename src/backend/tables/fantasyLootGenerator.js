@@ -1,7 +1,7 @@
 const dice = require('../dice');
 const fantasyLootData = require('../../data/fantasyLootGenerator');
 
-const fantasyLootGenerator = function(lootBody, lootPlace) {
+const fantasyLootGenerator = function(inventory, lootBody, lootPlace) {
   let lootBodyModifier = 0;
   let lootFindTotal = 0;
   let lootNumber = 0;
@@ -386,10 +386,18 @@ const fantasyLootGenerator = function(lootBody, lootPlace) {
     lootNumber = 0;
   }
 
+  for (let i = 0 ; i < lootNumber ; i++) {
+    inventory.push({
+      "lootItem": lootItems[i],
+      "lootCategory": lootCategories[i]
+    });
+  }
+
   return {
     number: lootNumber,
     categories: lootCategories,
-    items: lootItems
+    items: lootItems,
+    inventory: inventory
   }
 }
 

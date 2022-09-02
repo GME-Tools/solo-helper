@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Autocomplete, TextField, Button, AppBar, Toolbar, FormControl, RadioGroup, FormControlLabel, Radio, Modal, Box } from "@mui/material";
-import { useHistory, logMeaning, logRandomEvent, logLoot, logCharacter, logPlot, logPlotPoints, logTheme } from "context/HistoryContext";
+import { useHistory, logMeaning, logRandomEvent, logCharacter, logPlot, logPlotPoints, logTheme } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
 import eventCheck from "backend/mythic/eventCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
-import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
 import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation, plotPoints, plotPointsRead, plotPointsUpdate, characterCreation } from "backend/mythic/adventureCrafter";
 import RollsButton from 'components/RollsButton/RollsButton';
 import Fate from 'components/Fate/Fate';
+import Loot from 'components/Loot/Loot';
 
 const style = {
   position: 'absolute',
@@ -33,15 +33,6 @@ const functions = [
   { label: 'Plot', id: 7 },
   { label: 'Plot Points', id: 8 },
   { label: 'Theme', id: 9 }
-];
-
-const bodies = [
-  { label: 'Humanoïde non-aventurier sans sac, poches ...', value: 'no'}, 
-  { label: 'Humanoïde non-aventurier avec un sac, des poches ...', value: 'nw'},
-  { label: 'Humanoïde aventurier sans sac, poches ...', value: 'ao'},
-  { label: 'Humanoïde aventurier avec un sac, des poches ...', value: 'aw'},
-  { label: 'Animaux sauvages', value: 'wa'},
-  { label: 'Loot', value: 'lo'}
 ];
 
 const subfonctionsCharacters = [
@@ -102,8 +93,6 @@ export default function FunctionAppBar() {
   const [data, setData] = useState({})
   const [functionSelected, setFunctionSelected] = useState("");
   const [hiddenFate, setHiddenFate] = useState(true);
-  const [bodiesSelected, setBodiesSelected] = useState("");
-  const [placesSelected, setPlacesSelected] = useState("");
   const [hiddenLoot, setHiddenLoot] = useState(true);
   const [subfonctionsCharactersSelected, setSubfonctionsCharactersSelected] = useState(""); 
   const [hiddenCharacter, setHiddenCharacter] = useState(true);
@@ -226,6 +215,8 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fantasy Loot") {
+      handleOpenModal();
+      
       setHiddenCharacter(true);
       setHiddenAddCharacter(true);
       setHiddenAddExistingCharacter(true);
@@ -366,14 +357,6 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     }
-  };
-  
-  const changeBodies = (event, inputValue) => {
-    setBodiesSelected(inputValue);
-  };
-
-  const changePlaces = (event, inputValue) => {
-    setPlacesSelected(inputValue);
   };
 
   const changeSubfonctionsCharacters = (event, inputValue) => {
@@ -970,55 +953,6 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       let eventResponse = eventCheck();
 
       setHistory(h => ([...h, logRandomEvent(eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
-    } else if (functionSelected === "Fantasy Loot") {
-      let body = "";
-
-      if (bodiesSelected === "Humanoïde non-aventurier sans sac, poches ...") {
-        body = "no";
-      } else if (bodiesSelected === "Humanoïde non-aventurier avec un sac, des poches ...") {
-        body = "nw";
-      } else if (bodiesSelected === "Humanoïde aventurier sans sac, poches ...") {
-        body = "ao";
-      } else if (bodiesSelected === "Humanoïde aventurier avec un sac, des poches ...") {
-        body = "aw";
-      } else if (bodiesSelected === "Animaux sauvages") {
-        body = "wa";
-      } else if (bodiesSelected === "Loot") {
-        body = "lo";
-      }
-
-      let fantasyLootResponse = fantasyLootGenerator(body, placesSelected);
-
-      let fantasyLootData = data.inventory;
-
-      for (let i = 0 ; i < fantasyLootResponse.number ; i++) {
-        fantasyLootData.push({
-          "lootItem": fantasyLootResponse.items[i],
-          "lootCategory": fantasyLootResponse.categories[i]
-        });
-      }
-
-      firebase.updateDocument("helpers", id, {
-        "inventory": fantasyLootData
-      }).then(doc => {
-        setData(doc.data());
-      });
-
-      let responseText = "";
-
-      if (fantasyLootResponse.number === 0) {
-        setHistory(h => ([...h, logLoot("Vous n'avez rien looté")]));
-      } else {
-        for (let i = 0 ; i < fantasyLootResponse.number ; i++) {
-          responseText = responseText + fantasyLootResponse.categories[i] + " => " + fantasyLootResponse.items[i];
-
-          if (i < fantasyLootResponse.number - 1) {
-            responseText = responseText + "\n\n";
-          }
-        }
-        
-        setHistory(h => ([...h, logLoot(responseText)]));
-      }
     } else if (functionSelected === "Plot") {
       if (subfonctionsPlotsSelected === "add" || subfonctionsPlotsSelected === "Ajouter une occurrence et / ou une intrigue") {
         if (subfonctionsAddPlotsSelected === "existing") {
@@ -1272,29 +1206,18 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         </Modal>
       : null}
 
-      {!hiddenLoot ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-bodies"
-        options={bodies}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeBodies}
-        renderInput={(params) =>
-          <TextField {...params}
-          label="Choose a Body"/>}
-      /> : null}
-
-      {!hiddenLoot ? <FormControl>
-        <RadioGroup
-          name="radio-buttons-group-places"
-          onChange={changePlaces}>
-          <FormControlLabel value="valueCommon" control={<Radio />} label="Commun" />
-          <FormControlLabel value="valueMilitary" control={<Radio />} label="Militaire" />
-          <FormControlLabel value="valueDungeon" control={<Radio />} label="Donjon" />
-        </RadioGroup>
-      </FormControl> : null}
+      {!hiddenLoot ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-loot-label"
+          aria-describedby="modal-loot-description"
+        >
+          <Box sx={style}>
+            <Loot inventory={data.inventory} idHelper={id} /> 
+          </Box>
+        </Modal>
+      : null}
 
       {!hiddenCharacter ? <Autocomplete
         autoComplete
