@@ -1,40 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Autocomplete, TextField, Button, AppBar, Toolbar, IconButton, Menu, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
-import CasinoIcon from '@mui/icons-material/Casino';
-import { useHistory, logDieRoll, logMeaning, logRandomEvent, logFate, logLoot, logCharacter, logPlot, logPlotPoints, logTheme } from "context/HistoryContext";
+import { Autocomplete, TextField, Button, AppBar, Toolbar, FormControl, RadioGroup, FormControlLabel, Radio, Modal, Box } from "@mui/material";
+import { useHistory, logMeaning, logRandomEvent, logLoot, logCharacter, logPlot, logPlotPoints, logTheme } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
 import eventCheck from "backend/mythic/eventCheck";
-import fateCheck from "backend/mythic/fateCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
 import fantasyLootGenerator from "backend/tables/fantasyLootGenerator";
 import { themeCreation, themeList, characterRandom, plotRandom, characterList, plotList, characterOccurrences, plotOccurrences, characterAdd, plotAdd, characterUpdate, plotUpdate, characterDelete, plotDelete, themeRandom, characterInformation, plotPoints, plotPointsRead, plotPointsUpdate, characterCreation } from "backend/mythic/adventureCrafter";
+import RollsButton from 'components/RollsButton/RollsButton';
+import Fate from 'components/Fate/Fate';
 
-const options = [
-  'd4',
-  'd6', 
-  'd8', 
-  'd10', 
-  'd12', 
-  'd20', 
-  'd100', 
-  'Custom'
-];
-
-const odds = [
-  'Impossible',
-  'Certainement pas',
-  'Très improbable',
-  'Improbable',
-  '50/50 ou Pas sûr',
-  'Probable',
-  'Très probable',
-  'Chose sûre',
-  'Comme ça doit être'
-];
-
-const ITEM_HEIGHT = 48;
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const functions = [
   { label: 'Action', id: 1 },
@@ -73,7 +60,6 @@ let updatePlayer = false;
 
 const subfonctionsPlots = [
   { label: 'Ajouter une occurrence et / ou une intrigue', value: 'add' },
-  // { label: 'Informations sur une intrigue', value: 'information' },
   { label: "Liste d'intrigues", value: 'list' },
   { label: 'Modifier une intrigue', value: 'update' },
   { label: "Occurrences d'une intrigue", value: 'occurrence' },
@@ -107,7 +93,7 @@ const themes = [
   { label: 'PERSONNEL', id: 5 }
 ];
 
-export default function Helper() {
+export default function FunctionAppBar() {
   const firebase = useFirebase();
   const [, setHistory] = useHistory();
   const axios = require('axios').default;
@@ -115,8 +101,6 @@ export default function Helper() {
   const [isAuth, setIsAuth] = useState(false);
   const [data, setData] = useState({})
   const [functionSelected, setFunctionSelected] = useState("");
-  const [oddSelected, setOddSelected] = useState("");
-  const [yesOrNoSelected, setYesOrNoSelected] = useState("");
   const [hiddenFate, setHiddenFate] = useState(true);
   const [bodiesSelected, setBodiesSelected] = useState("");
   const [placesSelected, setPlacesSelected] = useState("");
@@ -176,43 +160,9 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const [manualCreationThemesSelected4, setManualCreationThemesSelected4] = useState("");
   const [manualCreationThemesSelected5, setManualCreationThemesSelected5] = useState("");
   const [hiddenManualCreationTheme, setHiddenManualCreationTheme] = useState(true);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleClickDices = (event, index) => {
-    setAnchorEl(null);
-
-    if (index === 0) {
-      let random = Math.floor(Math.random() * 4 + 1);
-      setHistory(h => ([...h, logDieRoll("1d4",random)]));
-    } else if (index === 1) {
-      let random = Math.floor(Math.random() * 6 + 1);
-      setHistory(h => ([...h, logDieRoll("1d6",random)]));
-    } else if (index === 2) {
-      let random = Math.floor(Math.random() * 8 + 1);
-      setHistory(h => ([...h, logDieRoll("1d8",random)]));
-    } else if (index === 3) {
-      let random = Math.floor(Math.random() * 10 + 1);
-      setHistory(h => ([...h, logDieRoll("1d10",random)]));
-    } else if (index === 4) {
-      let random = Math.floor(Math.random() * 12 + 1);
-      setHistory(h => ([...h, logDieRoll("1d12",random)]));
-    } else if (index === 5) {
-      let random = Math.floor(Math.random() * 20 + 1);
-      setHistory(h => ([...h, logDieRoll("1d20",random)]));
-    } else if (index === 6) {
-      let random = Math.floor(Math.random() * 100 + 1);
-      setHistory(h => ([...h, logDieRoll("1d100",random)]));
-    }
-  };
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
 
   const changeFunctions = (event, inputValue) => {
     setFunctionSelected(inputValue);
@@ -246,6 +196,8 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fate") {
+      handleOpenModal();
+      
       setHiddenCharacter(true);
       setHiddenAddCharacter(true);
       setHiddenAddExistingCharacter(true);
@@ -414,14 +366,6 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     }
-  };
-
-  const changeOdds = (event, inputValue) => {
-    setOddSelected(inputValue);
-  };
-
-  const changeYesNo = (event, inputValue) => {
-    setYesOrNoSelected(inputValue);
   };
   
   const changeBodies = (event, inputValue) => {
@@ -1075,50 +1019,6 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         
         setHistory(h => ([...h, logLoot(responseText)]));
       }
-    } else if (functionSelected === "Fate") {
-      let odd = "";
-
-      if (oddSelected === "Impossible") {
-        odd = "IM";
-      } else if (oddSelected === "Certainement pas") {
-        odd = "NW";
-      } else if (oddSelected === "Très improbable") {
-        odd = "VU";
-      } else if (oddSelected === "Improbable") {
-        odd = "UL";
-      } else if (oddSelected === "50/50 ou Pas sûr") {
-        odd = "NS";
-      } else if (oddSelected === "Probable") {
-        odd = "LI";
-      } else if (oddSelected === "Très probable") {
-        odd = "VL";
-      } else if (oddSelected === "Chose sûre") {
-        odd = "ST";
-      } else if (oddSelected === "Comme ça doit être") {
-        odd = "HB";
-      }
-      
-      let fateResponse = fateCheck(data.chaosFactor, odd, yesOrNoSelected);
-
-      let yesno = "";
-        
-      if (fateResponse.isYes === true) {
-        yesno = "OUI";
-      } else {
-        yesno = "NON"
-      }
-
-      if (fateResponse.isExceptional === true) {
-        yesno = yesno + " EXCEPTIONNEL"
-      }
-
-      if (fateResponse.randomEvent === true) {
-        let eventResponse = eventCheck();
-        
-        setHistory(h => ([...h, logFate(odd, data.chaosFactor, yesno + "Evénement aléatoire\n" + eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
-      } else {
-        setHistory(h => ([...h, logFate(odd, data.chaosFactor, yesno)]));
-      }
     } else if (functionSelected === "Plot") {
       if (subfonctionsPlotsSelected === "add" || subfonctionsPlotsSelected === "Ajouter une occurrence et / ou une intrigue") {
         if (subfonctionsAddPlotsSelected === "existing") {
@@ -1342,40 +1242,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
     <React.Fragment>
       <AppBar position="static">
         <Toolbar variant="dense">
-          <IconButton
-            edge="start"
-            color="inherit"
-            id="dices-button"
-            aria-label="menu"
-            aria-controls={open ? 'dices-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            sx={{ mr: 2 }}
-            onClick={handleClick}
-            >
-            <CasinoIcon />
-          </IconButton>
-          <Menu
-            id="dices-menu"
-            MenuListProps={{
-              'aria-labelledby': 'dices-button',
-            }}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            PaperProps={{
-              style: {
-                maxHeight: ITEM_HEIGHT * 4.5,
-                width: '20ch',
-              },
-            }}
-          >
-            {options.map((option, index) => (
-              <MenuItem key={option} selected={option === 'd20'} onClick={(event) => handleClickDices(event, index)}>
-                {option}
-              </MenuItem>
-            ))}
-          </Menu>
+          <RollsButton />
           <Autocomplete
             autoComplete
             autoSelect
@@ -1392,28 +1259,18 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         </Toolbar>
       </AppBar>
 
-      {!hiddenFate ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-odds"
-        options={odds}
-        defaultValue="Odds"
-        sx={{ width: 300 }}
-        onInputChange={changeOdds}
-        renderInput={(params) =>
-          <TextField {...params}
-          label="Choose an Odd"/>}
-      /> : null}
-
-      {!hiddenFate ? <FormControl>
-        <RadioGroup
-          name="radio-buttons-group-yesorno"
-          onChange={changeYesNo}>
-          <FormControlLabel value="Yes" control={<Radio />} label="Oui" />
-          <FormControlLabel value="No" control={<Radio />} label="Non" />
-        </RadioGroup>
-      </FormControl> : null}
+      {!hiddenFate ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-fate-label"
+          aria-describedby="modal-fate-description"
+        >
+          <Box sx={style}>
+            <Fate chaosFactor={data.chaosFactor} /> 
+          </Box>
+        </Modal>
+      : null}
 
       {!hiddenLoot ? <Autocomplete
         autoComplete
