@@ -90,13 +90,13 @@ const themeList = (data) => {
   }
 }
 
-const characterRandom = (data) => {
+const characterRandom = (charactersList) => {
   let characterDice = dice.die(100);
   let characterName = "";
 
-  for (let i = 0 ; i < data.charactersList.length ; i++) {
-    if (characterDice >= data.charactersList[i].value[0] && characterDice <= data.charactersList[i].value[1]) {
-      characterName = data.charactersList[i].name;
+  for (let i = 0 ; i < charactersList.length ; i++) {
+    if (characterDice >= charactersList[i].value[0] && characterDice <= charactersList[i].value[1]) {
+      characterName = charactersList[i].name;
     }
   }
 
@@ -145,11 +145,11 @@ const plotRandom = (data, add) => {
   }
 }
 
-const characterList = (data) => {
+const characterList = (charactersList) => {
   let characterNames = [];
   
-  for (let i = 0 ; i < data.charactersList.length ; i++) {
-    characterNames.push(data.charactersList[i].name);
+  for (let i = 0 ; i < charactersList.length ; i++) {
+    characterNames.push(charactersList[i].name);
   }
   
   return {
@@ -169,11 +169,11 @@ const plotList = (data) => {
   }
 }
 
-const characterOccurrences = (data, character) => {
+const characterOccurrences = (charactersList, character) => {
   let numberOf = 0;
   
-  for (let i = 0 ; i < data.charactersList.length ; i++) {
-    if (data.charactersList[i].name === character) {
+  for (let i = 0 ; i < charactersList.length ; i++) {
+    if (charactersList[i].name === character) {
       numberOf++;
     }
   }
