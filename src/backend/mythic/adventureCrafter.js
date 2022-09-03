@@ -105,31 +105,31 @@ const characterRandom = (charactersList) => {
   }
 }
 
-const plotRandom = (data, add) => {
+const plotRandom = (plotsList, add, currentPlot) => {
   let plotDice = dice.die(100);
   let plotName = "";
 
-  for (let i = 0 ; i < data.plotsList.length ; i++) {
-    if (plotDice >= data.plotsList[i].value[0] && plotDice <= data.plotsList[i].value[1]) {
-      plotName = data.plotsList[i].name;
+  for (let i = 0 ; i < plotsList.length ; i++) {
+    if (plotDice >= plotsList[i].value[0] && plotDice <= plotsList[i].value[1]) {
+      plotName = plotsList[i].name;
     }
   }
 
   if (add === true && (plotName !== "Nouvelle intrigue" && plotName !== "Choisissez l'intrigue la plus logique")) {
     let nbPlots = 0;
 
-    if (data.plotsList.find (plot => plot.name === plotName)) {
-      for (let i = 0 ; i < data.plotsList.length ; i++) {
-        if (data.plotsList[i].name === plotName) {
+    if (plotsList.find (plot => plot.name === plotName)) {
+      for (let i = 0 ; i < plotsList.length ; i++) {
+        if (plotsList[i].name === plotName) {
           nbPlots++;
         }
       }
     }
     
     if (nbPlots < 3) {
-      for (let i = 0 ; i < data.plotsList.length ; i++) {
-        if (data.plotsList[i].name === "Nouvelle intrigue" || data.plotsList[i].name === "Choisissez l'intrigue la plus logique") {
-          data.plotsList[i].name = plotName;
+      for (let i = 0 ; i < plotsList.length ; i++) {
+        if (plotsList[i].name === "Nouvelle intrigue" || plotsList[i].name === "Choisissez l'intrigue la plus logique") {
+          plotsList[i].name = plotName;
           break;
         }
       }
@@ -137,7 +137,7 @@ const plotRandom = (data, add) => {
   }
 
   if (add === true) {
-    data.currentPlot = plotName;
+    currentPlot = plotName;
   }
 
   return {
@@ -157,11 +157,11 @@ const characterList = (charactersList) => {
   }
 }
 
-const plotList = (data) => {
+const plotList = (plotsList) => {
   let plotNames = [];
   
-  for (let i = 0 ; i < data.plotsList.length ; i++) {
-    plotNames.push(data.plotsList[i].name);
+  for (let i = 0 ; i < plotsList.length ; i++) {
+    plotNames.push(plotsList[i].name);
   }
   
   return {
@@ -183,11 +183,11 @@ const characterOccurrences = (charactersList, character) => {
   }
 }
 
-const plotOccurrences = (data, plot) => {
+const plotOccurrences = (plotsList, plot) => {
   let numberOf = 0;
   
-  for (let i = 0 ; i < data.plotsList.length ; i++) {
-    if (data.plotsList[i].name === plot) {
+  for (let i = 0 ; i < plotsList.length ; i++) {
+    if (plotsList[i].name === plot) {
       numberOf++;
     }
   }

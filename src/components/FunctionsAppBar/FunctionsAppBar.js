@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Autocomplete, TextField, Button, AppBar, Toolbar, FormControl, RadioGroup, FormControlLabel, Radio, Modal, Box } from "@mui/material";
-import { useHistory, logMeaning, logRandomEvent, logPlot, logPlotPoints, logTheme } from "context/HistoryContext";
+import { useHistory, logMeaning, logRandomEvent, logPlotPoints, logTheme } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
 import eventCheck from "backend/mythic/eventCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
-import { themeCreation, themeList, plotRandom, plotList, plotOccurrences, plotAdd, plotUpdate, plotDelete, themeRandom, plotPoints, plotPointsRead, plotPointsUpdate } from "backend/mythic/adventureCrafter";
+import { themeCreation, themeList, themeRandom, plotPoints, plotPointsRead, plotPointsUpdate } from "backend/mythic/adventureCrafter";
 import RollsButton from 'components/RollsButton/RollsButton';
 import Fate from 'components/Fate/Fate';
 import Loot from 'components/Loot/Loot';
 import Character from 'components/Character/Character';
+import Plot from 'components/Plot/Plot';
 
 const style = {
   position: 'absolute',
@@ -35,17 +36,6 @@ const functions = [
   { label: 'Plot Points', id: 8 },
   { label: 'Theme', id: 9 }
 ];
-
-const subfonctionsPlots = [
-  { label: 'Ajouter une occurrence et / ou une intrigue', value: 'add' },
-  { label: "Liste d'intrigues", value: 'list' },
-  { label: 'Modifier une intrigue', value: 'update' },
-  { label: "Occurrences d'une intrigue", value: 'occurrence' },
-  { label: 'Sélectionner aléatoirement une intrigue', value: 'random' },
-  { label: "Supprimer une occurrence et / ou une intrigue", value: 'delete' }
-];
-
-let existingPlots = [];
 
 const subfonctionsPlotPoints = [
   { label: 'Génération des Plot Points', value: 'generation' },
@@ -82,22 +72,7 @@ export default function FunctionAppBar() {
   const [hiddenFate, setHiddenFate] = useState(true);
   const [hiddenLoot, setHiddenLoot] = useState(true);
   const [hiddenCharacter, setHiddenCharacter] = useState(true);
-   const [subfonctionsPlotsSelected, setSubfonctionsPlotsSelected] = useState(""); 
   const [hiddenPlot, setHiddenPlot] = useState(true);
-   const [subfonctionsAddPlotsSelected, setSubfonctionsAddPlotsSelected] = useState("");
-  const [hiddenAddPlot, setHiddenAddPlot] = useState(true);
-  const [subfonctionsAddExistingPlotsSelected, setSubfonctionsAddExistingPlotsSelected] = useState("");
-  const [hiddenAddExistingPlot, setHiddenAddExistingPlot] = useState(true);
-  const [subfonctionsAddNewPlotsSelected, setSubfonctionsAddNewPlotsSelected] = useState("");
-  const [hiddenAddNewPlot, setHiddenAddNewPlot] = useState(true);
-  const [subfonctionsOccurrencePlotsSelected, setSubfonctionsOccurrencePlotsSelected] = useState(""); 
-  const [hiddenOccurrencePlot, setHiddenOccurrencePlot] = useState(true);
-  const [subfonctionsUpdatePlotsSelected, setSubfonctionsUpdatePlotsSelected] = useState("");
-  const [hiddenUpdatePlot, setHiddenUpdatePlot] = useState(true);
-  const [subfonctionsUpdateNamePlotsSelected, setSubfonctionsUpdateNamePlotsSelected] = useState("");
-  const [hiddenUpdateNamePlot, setHiddenUpdateNamePlot] = useState(true);
-  const [subfonctionsDeletePlotsSelected, setSubfonctionsDeletePlotsSelected] = useState("");
-  const [hiddenDeletePlot, setHiddenDeletePlot] = useState(true);
   const [subfonctionsPlotPointsSelected, setSubfonctionsPlotPointsSelected] = useState(""); 
   const [hiddenPlotPoint, setHiddenPlotPoint] = useState(true);
   const [subfonctionsUpdatePlotPointsSelected, setSubfonctionsUpdatePlotPointsSelected] = useState("");
@@ -130,13 +105,6 @@ export default function FunctionAppBar() {
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
       setHiddenUpdatePlotPoints(true);
       setHiddenUpdateNeedsPlotPoints(true);
@@ -151,13 +119,6 @@ export default function FunctionAppBar() {
       setHiddenFate(false);
       setHiddenLoot(true);
       setHiddenPlot(true);
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
       setHiddenUpdatePlotPoints(true);
       setHiddenUpdateNeedsPlotPoints(true);
@@ -172,13 +133,6 @@ export default function FunctionAppBar() {
       setHiddenFate(true);
       setHiddenLoot(false);
       setHiddenPlot(true);
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
       setHiddenUpdatePlotPoints(true);
       setHiddenUpdateNeedsPlotPoints(true);
@@ -187,17 +141,12 @@ export default function FunctionAppBar() {
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     } else if (inputValue === "Plot") {
+      handleOpenModal();
+      
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(false);
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
       setHiddenUpdatePlotPoints(true);
       setHiddenUpdateNeedsPlotPoints(true);
@@ -210,13 +159,6 @@ export default function FunctionAppBar() {
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
       setHiddenPlotPoint(false);
       setHiddenUpdatePlotPoints(true);
       setHiddenUpdateNeedsPlotPoints(true);
@@ -229,13 +171,6 @@ export default function FunctionAppBar() {
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
       setHiddenUpdatePlotPoints(true);
       setHiddenUpdateNeedsPlotPoints(true);
@@ -248,13 +183,6 @@ export default function FunctionAppBar() {
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
       setHiddenPlotPoint(true);
       setHiddenUpdatePlotPoints(true);
       setHiddenUpdateNeedsPlotPoints(true);
@@ -263,136 +191,6 @@ export default function FunctionAppBar() {
       setHiddenCreationTheme(true);
       setHiddenManualCreationTheme(true);
     }
-  };
-
-  const changeSubfonctionsPlots = (event, inputValue) => {
-    setSubfonctionsPlotsSelected(inputValue);
-
-    existingPlots = [];
-
-    if (inputValue === 'add' || inputValue === 'Ajouter une occurrence et / ou une intrigue') {
-      setHiddenAddPlot(false);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
-    } else if (inputValue === 'occurrence' || inputValue === "Occurrences d'une intrigue") {
-      const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
-
-      for (let i = 0 ; i < uniquePlots.length ; i++) {
-        if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
-          existingPlots.push({
-            "label": uniquePlots[i],
-            "value": uniquePlots[i]
-          });
-        }
-      }
-
-      setHiddenOccurrencePlot(false);
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
-    } else if (inputValue === "update" || inputValue === "Modifier une intrigue") {
-      const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
-
-      for (let i = 0 ; i < uniquePlots.length ; i++) {
-        if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
-          existingPlots.push({
-            "label": uniquePlots[i],
-            "value": uniquePlots[i]
-          });
-        }
-      }
-      
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(false);
-      setHiddenUpdateNamePlot(false);
-      setHiddenDeletePlot(true);
-    } else if (inputValue === 'delete' || inputValue === "Supprimer une occurrence et / ou une intrigue") {
-      const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
-
-      for (let i = 0 ; i < uniquePlots.length ; i++) {
-        if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
-          existingPlots.push({
-            "label": uniquePlots[i],
-            "value": uniquePlots[i]
-          });
-        }
-      }
-      
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(false);
-    } else {
-      setHiddenAddPlot(true);
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(true);
-      setHiddenOccurrencePlot(true);
-      setHiddenUpdatePlot(true);
-      setHiddenUpdateNamePlot(true);
-      setHiddenDeletePlot(true);
-    }
-  };
-
-  const changeSubfonctionsAddPlots = (event, inputValue) => {
-    setSubfonctionsAddPlotsSelected(inputValue);
-
-    if (inputValue === "existing") {
-      const uniquePlots = [...new Set(data.plotsList.map(item => item.name))];
-
-      for (let i = 0 ; i < uniquePlots.length ; i++) {
-        if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
-          existingPlots.push({
-            "label": uniquePlots[i],
-            "value": uniquePlots[i]
-          });
-        }
-      }
-
-      setHiddenAddExistingPlot(false);
-      setHiddenAddNewPlot(true);
-    } else {
-      setHiddenAddExistingPlot(true);
-      setHiddenAddNewPlot(false);
-    }
-  };
-
-  const changeSubfonctionsAddExistingPlots = (event, inputValue) => {
-    setSubfonctionsAddExistingPlotsSelected(inputValue);
-  };
-
-  const changeSubfonctionsAddNewPlots = (event) => {
-    setSubfonctionsAddNewPlotsSelected(event.currentTarget.value);
-  };
-
-  const changeSubfonctionsOccurrencePlots = (event, inputValue) => {
-    setSubfonctionsOccurrencePlotsSelected(inputValue);
-  };
-
-  const changeSubfonctionsUpdatePlots = (event, inputValue) => {
-    setSubfonctionsUpdatePlotsSelected(inputValue);
-
-    setHiddenUpdateNamePlot(false);
-  };
-
-  const changeSubfonctionsUpdateNamePlots = (event, inputValue) => {
-    setSubfonctionsUpdateNamePlotsSelected(event.currentTarget.value);
-  };
-
-  const changeSubfonctionsDeletePlots = (event, inputValue) => {
-    setSubfonctionsDeletePlotsSelected(inputValue);
   };
 
   const changeSubfonctionsPlotPoints = (event, inputValue) => {
@@ -533,84 +331,6 @@ export default function FunctionAppBar() {
       let eventResponse = eventCheck();
 
       setHistory(h => ([...h, logRandomEvent(eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
-    } else if (functionSelected === "Plot") {
-      if (subfonctionsPlotsSelected === "add" || subfonctionsPlotsSelected === "Ajouter une occurrence et / ou une intrigue") {
-        if (subfonctionsAddPlotsSelected === "existing") {
-          let plotResponse = plotAdd(data.plotsList, subfonctionsAddExistingPlotsSelected);
-
-          if (plotResponse.full === false) {
-            firebase.updateDocument("helpers", id, {
-              "plotsList": plotResponse.plotsList
-            }).then(doc => {
-              setData(doc.data());
-            });
-
-            setHistory(h => ([...h, logPlot("Une occurrence de l'intrigue " + subfonctionsAddExistingPlotsSelected + " a été ajoutée à la liste des intrigues")]));
-          } else {
-            setHistory(h => ([...h, logPlot("Il y a déjà trois occurrences de cette intrigue dans la liste des intrigues")]));
-          }
-        } else {
-          let plotResponse = plotAdd(data.plotsList, subfonctionsAddNewPlotsSelected);
-
-          if (plotResponse.full === false) {
-            firebase.updateDocument("helpers", id, {
-              "plotsList": plotResponse.plotsList
-            }).then(doc => {
-              setData(doc.data());
-            });
-
-            setHistory(h => ([...h, logPlot("L'intrigue " + subfonctionsAddNewPlotsSelected + " a été ajoutée à la liste des intrigues")]));
-          } else {
-            setHistory(h => ([...h, logPlot("Il y a déjà trois occurrences de cette intrigue dans la liste des intrigues")]));
-          }
-        }
-      } else if (subfonctionsPlotsSelected === "list" || subfonctionsPlotsSelected === "Liste d'intrigues") {
-        let plotResponse = plotList(data);
-
-        let responseText = "";
-
-        for (let i = 0 ; i < plotResponse.names.length ; i++) {
-          responseText = responseText + (i + 1) + "- " + plotResponse.names[i];
-
-          if (i < plotResponse.names.length - 1) {
-            responseText = responseText + "\n";
-          }
-        }
-
-        setHistory(h => ([...h, logPlot(responseText)]));
-      } else if (subfonctionsPlotsSelected === "random" || subfonctionsPlotsSelected === "Sélectionner aléatoirement une intrigue") {
-        let plotResponse = plotRandom(data, false);
-
-        setHistory(h => ([...h, logPlot(plotResponse.name)]));
-      } else if (subfonctionsPlotsSelected === 'occurrence' || subfonctionsPlotsSelected === "Occurrences d'une intrigue") {
-        let plotResponse = plotOccurrences(data, subfonctionsOccurrencePlotsSelected);
-
-        setHistory(h => ([...h, logPlot("L'intrigue " + subfonctionsOccurrencePlotsSelected + " apparaît " + plotResponse.numberOf + " fois dans la liste des intrigues")]));
-      } else if (subfonctionsPlotsSelected === 'update' || subfonctionsPlotsSelected === 'Modifier une intrigue') {
-        let plotResponse = plotUpdate(data.plotsList, subfonctionsUpdatePlotsSelected, subfonctionsUpdateNamePlotsSelected);
-
-        firebase.updateDocument("helpers", id, {
-          "plotsList": plotResponse.plotsList
-        }).then(doc => {
-          setData(doc.data());
-        });
-
-        setHistory(h => ([...h, logPlot("L'intrigue " + subfonctionsUpdateNamePlotsSelected + " a été mise à jour")]));
-      } else if (subfonctionsPlotsSelected === 'delete' || subfonctionsPlotsSelected === "Supprimer une occurrence et / ou une intrigue") {
-        let plotResponse = plotDelete(data.plotsList, subfonctionsDeletePlotsSelected);
-
-        firebase.updateDocument("helpers", id, {
-          "plotsList": plotResponse.plotsList
-        }).then(doc => {
-          setData(doc.data());
-        });
-
-        if (plotResponse.empty === false) {
-          setHistory(h => ([...h, logPlot("Une occurrence de l'intrigue " + subfonctionsDeletePlotsSelected + " a été supprimée de la liste d'intrigues")]));
-        } else {
-          setHistory(h => ([...h, logPlot("La dernière occurrence de l'intrigue " + subfonctionsDeletePlotsSelected + " a été supprimée de la liste d'intrigues")]));
-        }
-      }
     } else if (functionSelected === "Plot Points") {
       if (subfonctionsPlotPointsSelected === "generation" || subfonctionsPlotPointsSelected === "Génération des Plot Points") {
         let plotPointsResponse = plotPoints(data.plotPoints, data.charactersList, data.plotsList, data.currentPlot, data.themes, data.archivedCharacters);
@@ -812,96 +532,18 @@ export default function FunctionAppBar() {
         </Modal>
       : null}
 
-      {!hiddenPlot ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-plots"
-        options={subfonctionsPlots}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeSubfonctionsPlots}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Choose a subfonction"/>}
-      /> : null}
-
-      {!hiddenAddPlot ? <FormControl>
-        <RadioGroup
-          name="radio-buttons-group-add-plot"
-          onChange={changeSubfonctionsAddPlots}>
-          <FormControlLabel value="existing" control={<Radio />} label="Intrigue existante" />
-          <FormControlLabel value="new" control={<Radio />} label="Nouvelle intrigue" />
-        </RadioGroup>
-      </FormControl> : null}
-
-      {!hiddenAddExistingPlot ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-occurrence-add-existing-plotd"
-        options={existingPlots}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeSubfonctionsAddExistingPlots}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Choose a plot"/>}
-      /> : null}
-
-      {!hiddenAddNewPlot ? <TextField
-        id="outlined-add-new-plot"
-        label="Write a plot"
-        variant="outlined"
-        onChange={changeSubfonctionsAddNewPlots} /> : null}
-
-      {!hiddenOccurrencePlot ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-occurrence-plots"
-        options={existingPlots}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeSubfonctionsOccurrencePlots}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Choose a plot"/>}
-      /> : null}
-
-      {!hiddenUpdatePlot ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-update-plots"
-        options={existingPlots}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeSubfonctionsUpdatePlots}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Choose a plot"/>}
-      /> : null}
-
-      {!hiddenUpdateNamePlot ? <TextField
-        id="outlined-update-plot"
-        label={subfonctionsUpdatePlotsSelected}
-        variant="outlined"
-        onChange={changeSubfonctionsUpdateNamePlots} /> : null}
-
-      {!hiddenDeletePlot ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-occurrence-delete-plots"
-        options={existingPlots}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeSubfonctionsDeletePlots}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Choose a plot"/>}
-      /> : null}
+      {!hiddenPlot ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-plot-label"
+          aria-describedby="modal-plot-description"
+        >
+          <Box sx={style}>
+            <Plot plotsList={data.plotsList} currentPlot={data.currentPlot} idHelper={id} /> 
+          </Box>
+        </Modal>
+      : null}
 
       {!hiddenPlotPoint ? <Autocomplete
         autoComplete
