@@ -112,7 +112,7 @@ export default function Plot(props) {
     setSubfonctionsUpdateNamePlotPointsSelected(inputValue);
   };
 
-  const clickPlotPoint = () => {
+  const clickLaunch = () => {
     if (subfonctionsPlotPointsSelected === "generation" || subfonctionsPlotPointsSelected === "Génération des Plot Points") {
       let plotPointsResponse = plotPoints(props.plotPoints, props.charactersList, props.plotsList, props.currentPlot, props.themes, props.archivedCharacters);
       let responseText = "";
@@ -245,8 +245,8 @@ export default function Plot(props) {
         
         <Button
           variant="contained"
-          onClick={clickPlotPoint}
-        >PlotPoint
+          onClick={clickLaunch}
+        >Launch
         </Button>
       </Stack>
     </React.Fragment>

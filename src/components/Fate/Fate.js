@@ -29,7 +29,7 @@ export default function Fate(props) {
     setYesOrNoSelected(inputValue);
   };
 
-  const clickFate = () => {
+  const clickLaunch = () => {
     let odd = "";
 
     if (oddSelected === "Impossible") {
@@ -107,8 +107,8 @@ export default function Fate(props) {
   
         <Button
           variant="contained"
-          onClick={clickFate}
-        >Fate
+          onClick={clickLaunch}
+        >Launch
         </Button>
       </Stack>
     </React.Fragment>

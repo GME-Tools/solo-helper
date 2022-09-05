@@ -27,7 +27,7 @@ export default function Loot(props) {
     setPlacesSelected(inputValue);
   };
 
-  const clickLoot = () => {
+  const clickLaunch = () => {
     let body = "";
 
     if (bodiesSelected === "Humanoïde non-aventurier sans sac, poches ...") {
@@ -106,8 +106,8 @@ export default function Loot(props) {
   
         <Button
           variant="contained"
-          onClick={clickLoot}
-        >Loot
+          onClick={clickLaunch}
+        >Launch
         </Button>
       </Stack>
     </React.Fragment>

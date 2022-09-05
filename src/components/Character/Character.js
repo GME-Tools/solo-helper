@@ -236,7 +236,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
     setSubfonctionsInformationCharactersSelected(inputValue);
   }
 
-  const clickCharacter = () => {
+  const clickLaunch = () => {
     if (subfonctionsCharactersSelected === "add" || subfonctionsCharactersSelected === "Ajouter une occurrence et / ou un personnage") {
       if (subfonctionsAddCharactersSelected === "existing") {
         let characterResponse = characterAdd(props.charactersList, subfonctionsAddExistingCharactersSelected);
@@ -503,8 +503,8 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   
         <Button
           variant="contained"
-          onClick={clickCharacter}
-        >Character
+          onClick={clickLaunch}
+        >Launch
         </Button>
       </Stack>
     </React.Fragment>

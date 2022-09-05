@@ -4,7 +4,7 @@ const plotPointsData = require('../../data/plotPoints');
 const needsRandom = require('./needsRandom');
 const generator = require('../generator');
 
-const themeCreation = (data, themesPlayer) => {
+const themeCreation = (themesList, themesPlayer) => {
   let themeName = "";
   let themeDescription = "";
   let themes = [];
@@ -21,7 +21,7 @@ const themeCreation = (data, themesPlayer) => {
     return themes.find(theme => theme.name === themeName);
   };
   
-  if (data.themes.length === 0) {
+  if (themesList.length === 0) {
     if (themesPlayer.length > 0) {
       for (let i = 0 ; i <= themesPlayer.length ; i++) {
         for (let j = 1 ; j <= Object.keys(adventureData.randomThemesTable).length ; j++) {
@@ -63,7 +63,7 @@ const themeCreation = (data, themesPlayer) => {
     themes[3].alternated = true;
     themes[4].alternated = false;
   } else {
-    themes = data.themes;
+    themes = themesList;
 
     isExisted = true;
   }
@@ -74,12 +74,12 @@ const themeCreation = (data, themesPlayer) => {
   }
 }
 
-const themeList = (data) => {
+const themeList = (themesList) => {
   let themes = [];
   let isExisted = false;
 
-  if (data.themes.length !== 0 && data.themes !== undefined) {
-    themes = data.themes;
+  if (themesList.length !== 0 && themesList !== undefined) {
+    themes = themesList;
 
     isExisted = true;
   }
@@ -90,29 +90,64 @@ const themeList = (data) => {
   }
 }
 
-const characterRandom = (charactersList) => {
-  let characterDice = dice.die(100);
+const characterRandom = (charactersList, isPlayer) => {
   let characterName = "";
+  let characterDice = 0;
 
-  for (let i = 0 ; i < charactersList.length ; i++) {
-    if (characterDice >= charactersList[i].value[0] && characterDice <= charactersList[i].value[1]) {
-      characterName = charactersList[i].name;
+  if (isPlayer === undefined) {
+    characterDice = dice.die(100);
+    
+    for (let i = 0 ; i < charactersList.length ; i++) {
+      if (characterDice >= charactersList[i].value[0] && characterDice <= charactersList[i].value[1]) {
+        characterName = charactersList[i].name;
+      }
     }
+  } else {
+    let charactersListFiltered = [];
+    let charactersListFilteredUnique = [];
+    
+    if (isPlayer === true) {
+      charactersListFiltered = charactersList.filter(character => character.player === true && character.player !== undefined);
+    } else {
+      charactersListFiltered = charactersList.filter(character => character.player === false && character.player !== undefined);
+    }
+
+    charactersListFilteredUnique = [...new Set(charactersListFiltered.map(item => item.name))];
+
+    characterDice = dice.die(charactersListFilteredUnique.length - 1);
+
+    characterName = charactersListFilteredUnique[characterDice];
   }
+  
 
   return {
     name: characterName
   }
 }
 
-const plotRandom = (plotsList, add, currentPlot) => {
-  let plotDice = dice.die(100);
+const plotRandom = (plotsList, isEvent, add, currentPlot) => {
+  let plotDice = 0;
   let plotName = "";
 
-  for (let i = 0 ; i < plotsList.length ; i++) {
-    if (plotDice >= plotsList[i].value[0] && plotDice <= plotsList[i].value[1]) {
-      plotName = plotsList[i].name;
+  if (isEvent === false) {
+    plotDice = dice.die(100);
+    
+    for (let i = 0 ; i < plotsList.length ; i++) {
+      if (plotDice >= plotsList[i].value[0] && plotDice <= plotsList[i].value[1]) {
+        plotName = plotsList[i].name;
+      }
     }
+  } else {
+    let plotsListFiltered = [];
+    let plotsListFilteredUnique = [];
+    
+    plotsListFiltered = plotsList.filter(plot => plot.name !== "Nouvelle intrigue" && plot.name !== "Choisissez l'intrigue la plus logique");
+
+    plotsListFilteredUnique = [...new Set(plotsListFiltered.map(item => item.name))];
+
+    plotDice = dice.die(plotsListFilteredUnique.length - 1);
+
+    plotName = plotsListFilteredUnique[plotDice];
   }
 
   if (add === true && (plotName !== "Nouvelle intrigue" && plotName !== "Choisissez l'intrigue la plus logique")) {

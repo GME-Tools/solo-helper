@@ -164,7 +164,7 @@ export default function Plot(props) {
     setSubfonctionsDeletePlotsSelected(inputValue);
   };
 
-  const clickPlot = () => {
+  const clickLaunch = () => {
     if (subfonctionsPlotsSelected === "add" || subfonctionsPlotsSelected === "Ajouter une occurrence et / ou une intrigue") {
       if (subfonctionsAddPlotsSelected === "existing") {
         let plotResponse = plotAdd(props.plotsList, subfonctionsAddExistingPlotsSelected);
@@ -210,7 +210,7 @@ export default function Plot(props) {
 
       setHistory(h => ([...h, logPlot(responseText)]));
     } else if (subfonctionsPlotsSelected === "random" || subfonctionsPlotsSelected === "Sélectionner aléatoirement une intrigue") {
-      let plotResponse = plotRandom(props.plotsList, false, props.currentPlot);
+      let plotResponse = plotRandom(props.plotsList, false, false, props.currentPlot);
 
       setHistory(h => ([...h, logPlot(plotResponse.name)]));
     } else if (subfonctionsPlotsSelected === 'occurrence' || subfonctionsPlotsSelected === "Occurrences d'une intrigue") {
@@ -344,8 +344,8 @@ export default function Plot(props) {
         
         <Button
           variant="contained"
-          onClick={clickPlot}
-        >Plot
+          onClick={clickLaunch}
+        >Launch
         </Button>
       </Stack>
     </React.Fragment>

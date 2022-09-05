@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Autocomplete, TextField, Button, AppBar, Toolbar, FormControl, RadioGroup, FormControlLabel, Radio, Modal, Box } from "@mui/material";
-import { useHistory, logMeaning, logRandomEvent, logTheme } from "context/HistoryContext";
+import { Autocomplete, TextField, Button, AppBar, Toolbar, Modal, Box } from "@mui/material";
+import { useHistory, logMeaning, logRandomEvent } from "context/HistoryContext";
 import { useFirebase } from "context/FirebaseContext";
 import eventCheck from "backend/mythic/eventCheck";
 import actionRoll from "backend/mythic/actionRoll";
 import descriptionRoll from "backend/mythic/descriptionRoll";
-import { themeCreation, themeList, themeRandom } from "backend/mythic/adventureCrafter";
 import RollsButton from 'components/RollsButton/RollsButton';
 import Fate from 'components/Fate/Fate';
 import Loot from 'components/Loot/Loot';
 import Character from 'components/Character/Character';
 import Plot from 'components/Plot/Plot';
 import PlotPoint from 'components/PlotPoint/PlotPoint';
+import Theme from 'components/Theme/Theme';
 
 const style = {
   position: 'absolute',
@@ -38,20 +38,6 @@ const functions = [
   { label: 'Theme', id: 9 }
 ];
 
-const subfonctionsThemes = [
-  { label: 'Création des thèmes', value: 'creation' },
-  { label: 'Liste des thèmes', value: 'list' },
-  { label: 'Sélectionner aléatoirement un thème', value: 'random' }
-];
-
-const themes = [
-  { label: 'ACTION', id: 1 },
-  { label: 'TENSION', id: 2 },
-  { label: 'MYSTÈRE', id: 3 },
-  { label: 'SOCIAL', id: 4 },
-  { label: 'PERSONNEL', id: 5 }
-];
-
 export default function FunctionAppBar() {
   const firebase = useFirebase();
   const [, setHistory] = useHistory();
@@ -65,16 +51,7 @@ export default function FunctionAppBar() {
   const [hiddenCharacter, setHiddenCharacter] = useState(true);
   const [hiddenPlot, setHiddenPlot] = useState(true);
   const [hiddenPlotPoint, setHiddenPlotPoint] = useState(true);
-  const [subfonctionsThemesSelected, setSubfonctionsThemesSelected] = useState(""); 
   const [hiddenTheme, setHiddenTheme] = useState(true);
-  const [creationThemesSelected, setCreationThemesSelected] = useState("");
-  const [hiddenCreationTheme, setHiddenCreationTheme] = useState(true);
-  const [manualCreationThemesSelected1, setManualCreationThemesSelected1] = useState("");
-  const [manualCreationThemesSelected2, setManualCreationThemesSelected2] = useState("");
-  const [manualCreationThemesSelected3, setManualCreationThemesSelected3] = useState("");
-  const [manualCreationThemesSelected4, setManualCreationThemesSelected4] = useState("");
-  const [manualCreationThemesSelected5, setManualCreationThemesSelected5] = useState("");
-  const [hiddenManualCreationTheme, setHiddenManualCreationTheme] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -91,8 +68,6 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenTheme(true);
-      setHiddenCreationTheme(true);
-      setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fate") {
       handleOpenModal();
       
@@ -102,8 +77,6 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenTheme(true);
-      setHiddenCreationTheme(true);
-      setHiddenManualCreationTheme(true);
     } else if (inputValue === "Fantasy Loot") {
       handleOpenModal();
       
@@ -113,8 +86,6 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenTheme(true);
-      setHiddenCreationTheme(true);
-      setHiddenManualCreationTheme(true);
     } else if (inputValue === "Plot") {
       handleOpenModal();
       
@@ -124,8 +95,6 @@ export default function FunctionAppBar() {
       setHiddenPlot(false);
       setHiddenPlotPoint(true);
       setHiddenTheme(true);
-      setHiddenCreationTheme(true);
-      setHiddenManualCreationTheme(true);
     } else if (inputValue === "Plot Points") {
       handleOpenModal();
       
@@ -135,17 +104,15 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(false);
       setHiddenTheme(true);
-      setHiddenCreationTheme(true);
-      setHiddenManualCreationTheme(true);
     } else if (inputValue === "Theme") {
+      handleOpenModal();
+      
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenTheme(false);
-      setHiddenCreationTheme(true);
-      setHiddenManualCreationTheme(true);
     } else {
       setHiddenCharacter(true);
       setHiddenFate(true);
@@ -153,50 +120,10 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenTheme(true);
-      setHiddenCreationTheme(true);
-      setHiddenManualCreationTheme(true);
     }
-  };
-
-  const changeSubfonctionsThemes = (event, inputValue) => {
-    setSubfonctionsThemesSelected(inputValue);
-
-    if (inputValue === "creation" || inputValue === "Création des thèmes") {
-      setHiddenCreationTheme(false);
-    }
-  };
-
-  const changeThemes = (event, inputValue) => {
-    setCreationThemesSelected(inputValue);
-
-    if (inputValue === "manual") {
-      setHiddenManualCreationTheme(false);
-    } else {
-      setHiddenManualCreationTheme(true);
-    }
-  };
-
-  const changeCreationThemes1 = (event, inputValue) => {
-    setManualCreationThemesSelected1(inputValue);
   };
   
-  const changeCreationThemes2 = (event, inputValue) => {
-    setManualCreationThemesSelected2(inputValue);
-  };
-
-  const changeCreationThemes3 = (event, inputValue) => {
-    setManualCreationThemesSelected3(inputValue);
-  };
-
-  const changeCreationThemes4 = (event, inputValue) => {
-    setManualCreationThemesSelected4(inputValue);
-  };
-
-  const changeCreationThemes5 = (event, inputValue) => {
-    setManualCreationThemesSelected5(inputValue);
-  };
-  
-  const clickDice = () => {
+  const clickLaunch = () => {
     if (functionSelected === "Action") {
       let actionResponse = actionRoll();
       
@@ -206,64 +133,12 @@ export default function FunctionAppBar() {
 
       setHistory(h => ([...h, logMeaning("Description", descriptionResponse.description1 + " / " + descriptionResponse.description2)]));
     } else if (functionSelected === "Event") {
-      let eventResponse = eventCheck();
+      let eventResponse = eventCheck(data.charactersList, data.plotsList, data.currentPlot);
 
-      setHistory(h => ([...h, logRandomEvent(eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
-    } else if (functionSelected === "Theme") {
-      if (subfonctionsThemesSelected === "creation" || subfonctionsThemesSelected === "Création des thèmes") {
-        let themeResponse;
-        
-        if (creationThemesSelected === "random") {
-          themeResponse = themeCreation(data, []);
-        } else {
-          let manualThemes = [manualCreationThemesSelected1, manualCreationThemesSelected2, manualCreationThemesSelected3, manualCreationThemesSelected4, manualCreationThemesSelected5];
-
-          themeResponse = themeCreation(data, manualThemes);
-        }
-
-        firebase.updateDocument("helpers", id, {
-          "themes": themeResponse.themes
-        }).then(doc => {
-          setData(doc.data());
-        });
-
-        let responseText = "";
-
-        for (let i = 0 ; i < themeResponse.themes.length ; i++) {
-          responseText = responseText + (i + 1) + "- " + themeResponse.themes[i].name;
-
-          if (i < themeResponse.themes.length - 1) {
-            responseText = responseText + "\n";
-          }
-        }
-
-        setHistory(h => ([...h, logTheme(responseText)]));
-      } else if (subfonctionsThemesSelected === "list" || subfonctionsThemesSelected === "Liste des thèmes") {
-        let themeResponse = themeList(data);
-
-        if (themeResponse.isExisted === true) {
-          let responseText = "";
-
-          for (let i = 0 ; i < themeResponse.themes.length ; i++) {
-            responseText = responseText + (i + 1) + "- " + themeResponse.themes[i].name;
-  
-            if (i < themeResponse.themes.length - 1) {
-              responseText = responseText + "\n";
-            }
-          }
-  
-          setHistory(h => ([...h, logTheme(responseText)]));
-        } else {
-          setHistory(h => ([...h, logTheme("La liste des thèmes n'a pas encore été créée pour cette campagne.")]));
-        }
-      } else if (subfonctionsThemesSelected === "random" || subfonctionsThemesSelected === "Sélectionner aléatoirement un thème") {
-        let themeResponse = themeRandom(data.themes);
-
-        if (themeResponse.isExisted === true) {
-          setHistory(h => ([...h, logTheme(themeResponse.themeName + " (" + themeResponse.themeDescription + ")")]));
-        } else {
-          setHistory(h => ([...h, logTheme("La liste des thèmes n'a pas encore été créée pour cette campagne")]));
-        }
+      if (eventResponse.eventFocusNeed === "Non") {
+        setHistory(h => ([...h, logRandomEvent(eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
+      } else {
+        setHistory(h => ([...h, logRandomEvent(eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ") - " + eventResponse.eventFocusNeed + "\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
       }
     }
   };
@@ -371,103 +246,23 @@ export default function FunctionAppBar() {
         </Modal>
       : null}
 
-      {!hiddenTheme ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-themes"
-        options={subfonctionsThemes}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeSubfonctionsThemes}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Choose a subfonction"/>}
-      /> : null}
-
-      {!hiddenCreationTheme ? <FormControl>
-        <RadioGroup
-          name="radio-buttons-group-themes"
-          onChange={changeThemes}>
-          <FormControlLabel value="random" control={<Radio />} label="Aléatoire" />
-          <FormControlLabel value="manual" control={<Radio />} label="Manuel" />
-        </RadioGroup>
-      </FormControl> : null}
-
-      {!hiddenManualCreationTheme ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-creation-themes-1"
-        options={themes}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeCreationThemes1}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Premier thème"/>}
-      /> : null}
-
-      {!hiddenManualCreationTheme ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-creation-themes-2"
-        options={themes}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeCreationThemes2}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Deuxième thème"/>}
-      /> : null}
-
-      {!hiddenManualCreationTheme ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-creation-themes-3"
-        options={themes}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeCreationThemes3}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Troisième thème"/>}
-      /> : null}
-
-      {!hiddenManualCreationTheme ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-creation-themes-4"
-        options={themes}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeCreationThemes4}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Quatrième thème"/>}
-      /> : null}
-
-      {!hiddenManualCreationTheme ? <Autocomplete
-        autoComplete
-        autoSelect
-        disablePortal
-        id="combo-box-creation-themes-5"
-        options={themes}
-        getOptionLabel={(option) => option.label}
-        sx={{ width: 300 }}
-        onInputChange={changeCreationThemes5}
-        renderInput={(params) =>
-        <TextField {...params}
-          label="Cinquième thème"/>}
-      /> : null}
+      {!hiddenTheme ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-theme-label"
+          aria-describedby="modal-theme-description"
+        >
+          <Box sx={style}>
+            <Theme themes={data.themes} idHelper={id} /> 
+          </Box>
+        </Modal>
+      : null}
 
       <Button
         variant="contained"
-        onClick={clickDice}
-      >Dice
+        onClick={clickLaunch}
+      >Launch
       </Button>
     </React.Fragment>
   )

@@ -1,7 +1,8 @@
 const dice = require('../dice');
 const eventData = require('../../data/event');
+const adventureCrafter = require('./adventureCrafter');
 
-const eventCheck = function() {
+const eventCheck = function(charactersList, plotsList, currentPlot) {
   let eventFocusName = "";
   let eventFocusDescription = "";
   let eventFocusNeed = "";
@@ -17,7 +18,14 @@ const eventCheck = function() {
     if (eventFocusRoll >= eventData.eventFocus[i].value[0] && eventFocusRoll <= eventData.eventFocus[i].value[1]) {
       eventFocusName = eventData.eventFocus[i].name;
       eventFocusDescription = eventData.eventFocus[i].description;
-      eventFocusNeed = eventData.eventFocus[i].need;
+
+      if (eventData.eventFocus[i].need === "PNJ") {
+        eventFocusNeed = adventureCrafter.characterRandom(charactersList, false).name;
+      } else if (eventData.eventFocus[i].need === "Joueur") {
+        eventFocusNeed = adventureCrafter.characterRandom(charactersList, true).name;
+      } else if (eventData.eventFocus[i].need === "Intrigue") {
+        eventFocusNeed = adventureCrafter.plotRandom(plotsList, true, false, "").name;
+      }
     }
   }
 
