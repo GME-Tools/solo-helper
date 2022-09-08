@@ -258,6 +258,8 @@ const characterAdd = (charactersList, characterName, isPlayer) => {
               charactersList[i].characterSpecialTraitDescription = charactersList[j].characterSpecialTraitDescription;
               charactersList[i].characterIdentityName = charactersList[j].characterIdentityName;
               charactersList[i].characterDescriptorsName = charactersList[j].characterDescriptorsName;
+              
+              charactersList[i].activatedDescriptors = charactersList[j].activatedDescriptors;
             }
           }
         } else {
@@ -277,6 +279,8 @@ const characterAdd = (charactersList, characterName, isPlayer) => {
           charactersList[i].characterSpecialTraitDescription = "";
           charactersList[i].characterIdentityName = [];
           charactersList[i].characterDescriptorsName = [];
+
+          charactersList[i].activatedDescriptors = 0;
         }
 
         break;
@@ -359,6 +363,7 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
   let characterSpecialTraitDescription = "";
   let characterIdentityName = [];
   let characterDescriptorsName = [];
+  let activatedDescriptors = 0;
   let empty = false;
   
   if (charactersList.find(character => character.name === characterName)) {
@@ -373,6 +378,8 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
         characterSpecialTraitDescription = charactersList[i].characterSpecialTraitDescription;
         characterIdentityName = charactersList[i].characterIdentityName;
         characterDescriptorsName = charactersList[i].characterDescriptorsName;
+
+        activatedDescriptors = charactersList[i].activatedDescriptors;
 
         charactersList[i].name = "Choisissez le personnage le plus logique";
         
@@ -390,7 +397,8 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
       "characterSpecialTraitName": characterSpecialTraitName,
       "characterSpecialTraitDescription": characterSpecialTraitDescription,
       "characterIdentityName": characterIdentityName,
-      "characterDescriptorsName": characterDescriptorsName
+      "characterDescriptorsName": characterDescriptorsName,
+      "activatedDescriptors": activatedDescriptors
     });
 
     empty = true;
@@ -476,6 +484,7 @@ const characterInformation = (charactersList, characterName) => {
   let characterSpecialTraitDescription = "";
   let characterIdentityName = [];
   let characterDescriptorsName = [];
+  let activatedDescriptors = 0;
   
   for (let i = 0 ; i < charactersList.length ; i++) {
     if (charactersList[i].name === characterName) {
@@ -487,6 +496,7 @@ const characterInformation = (charactersList, characterName) => {
       characterSpecialTraitDescription = charactersList[i].characterSpecialTraitDescription;
       characterIdentityName = charactersList[i].characterIdentityName;
       characterDescriptorsName = charactersList[i].characterDescriptorsName;
+      activatedDescriptors = charactersList[i].activatedDescriptors;
 
       break;
     }
@@ -500,7 +510,8 @@ const characterInformation = (charactersList, characterName) => {
     characterSpecialTraitName: characterSpecialTraitName,
     characterSpecialTraitDescription: characterSpecialTraitDescription,
     characterIdentityName: characterIdentityName,
-    characterDescriptorsName: characterDescriptorsName
+    characterDescriptorsName: characterDescriptorsName,
+    activatedDescriptors: activatedDescriptors
   }
 }
 
@@ -710,7 +721,7 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
   let characterName = "";
   let characterSpecialTrait = {};
   let characterIdentity = [];
-  let characterDescriptors = [];  
+  let characterDescriptors = [];
   
   if (plotPoints.length !== 0) {
     plotPoints.find(item => item.name === plotPoint).needs[need].name = generator.nameGenerator(randomNumber);
@@ -734,6 +745,8 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
       charactersList[i].characterSpecialTraitDescription = "";
       charactersList[i].characterIdentityName = [];
       charactersList[i].characterDescriptorsName = [];
+
+      charactersList[i].activatedDescriptors = 0;
 
       characterName = charactersList[i].name;
 

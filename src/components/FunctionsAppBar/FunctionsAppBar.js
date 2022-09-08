@@ -13,6 +13,7 @@ import Character from 'components/Character/Character';
 import Plot from 'components/Plot/Plot';
 import PlotPoint from 'components/PlotPoint/PlotPoint';
 import Theme from 'components/Theme/Theme';
+import Behavior from 'components/Behavior/Behavior';
 
 const style = {
   position: 'absolute',
@@ -28,14 +29,15 @@ const style = {
 
 const functions = [
   { label: 'Action', id: 1 },
-  { label: 'Character', id: 2 },
-  { label: 'Description', id: 3 },
-  { label: 'Event', id: 4 },
-  { label: 'Fantasy Loot', id: 5 },
-  { label: 'Fate', id: 6 },
-  { label: 'Plot', id: 7 },
-  { label: 'Plot Points', id: 8 },
-  { label: 'Theme', id: 9 }
+  { label: 'Behavior', id: 2 },
+  { label: 'Character', id: 3 },
+  { label: 'Description', id: 4 },
+  { label: 'Event', id: 5 },
+  { label: 'Fantasy Loot', id: 6 },
+  { label: 'Fate', id: 7 },
+  { label: 'Plot', id: 8 },
+  { label: 'Plot Points', id: 9 },
+  { label: 'Theme', id: 10 }
 ];
 
 export default function FunctionAppBar() {
@@ -52,6 +54,7 @@ export default function FunctionAppBar() {
   const [hiddenPlot, setHiddenPlot] = useState(true);
   const [hiddenPlotPoint, setHiddenPlotPoint] = useState(true);
   const [hiddenTheme, setHiddenTheme] = useState(true);
+  const [hiddenBehavior, setHiddenBehavior] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -59,9 +62,20 @@ export default function FunctionAppBar() {
   const changeFunctions = (event, inputValue) => {
     setFunctionSelected(inputValue);
               
-    if (inputValue === "Character") {
+    if (inputValue === "Behavior") {
       handleOpenModal();
-      
+
+      setHiddenBehavior(false);
+      setHiddenCharacter(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(true);
+      setHiddenPlotPoint(true);
+      setHiddenTheme(true);
+    } else if (inputValue === "Character") {
+      handleOpenModal();
+
+      setHiddenBehavior(true);
       setHiddenCharacter(false);
       setHiddenFate(true);
       setHiddenLoot(true);
@@ -70,7 +84,8 @@ export default function FunctionAppBar() {
       setHiddenTheme(true);
     } else if (inputValue === "Fate") {
       handleOpenModal();
-      
+
+      setHiddenBehavior(true);
       setHiddenCharacter(true);
       setHiddenFate(false);
       setHiddenLoot(true);
@@ -79,7 +94,8 @@ export default function FunctionAppBar() {
       setHiddenTheme(true);
     } else if (inputValue === "Fantasy Loot") {
       handleOpenModal();
-      
+
+      setHiddenBehavior(true);
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(false);
@@ -88,7 +104,8 @@ export default function FunctionAppBar() {
       setHiddenTheme(true);
     } else if (inputValue === "Plot") {
       handleOpenModal();
-      
+
+      setHiddenBehavior(true);
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
@@ -97,7 +114,8 @@ export default function FunctionAppBar() {
       setHiddenTheme(true);
     } else if (inputValue === "Plot Points") {
       handleOpenModal();
-      
+
+      setHiddenBehavior(true);
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
@@ -106,7 +124,8 @@ export default function FunctionAppBar() {
       setHiddenTheme(true);
     } else if (inputValue === "Theme") {
       handleOpenModal();
-      
+
+      setHiddenBehavior(true);
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
@@ -114,6 +133,7 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenTheme(false);
     } else {
+      setHiddenBehavior(true);
       setHiddenCharacter(true);
       setHiddenFate(true);
       setHiddenLoot(true);
@@ -255,6 +275,19 @@ export default function FunctionAppBar() {
         >
           <Box sx={style}>
             <Theme themes={data.themes} idHelper={id} /> 
+          </Box>
+        </Modal>
+      : null}
+
+      {!hiddenBehavior ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-behavior-label"
+          aria-describedby="modal-behavior-description"
+        >
+          <Box sx={style}>
+            <Behavior charactersList={data.charactersList} idHelper={id} /> 
           </Box>
         </Modal>
       : null}
