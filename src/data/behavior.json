@@ -19,7 +19,7 @@
       "modifier": 2
     },
     "4": {
-      "value": [16,28],
+      "value": [16,30],
       "name": "Agressif",
       "description": "Le personnage agit avec la plus grande urgence et intensité",
       "modifier": 4

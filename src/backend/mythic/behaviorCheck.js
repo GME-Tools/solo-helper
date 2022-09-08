@@ -1,5 +1,5 @@
-// const dice = require('../dice');
-// const behaviorData = require('../../data/behavior');
+const dice = require('../dice');
+const behaviorData = require('../../data/behavior');
 // const detailData = require('../../data/detail');
 // const eventData = require('../../data/event');
 
@@ -17,8 +17,7 @@ const behaviorDescriptors = (charactersList, name, activatedDescriptors) => {
   }
 }  
 
-/* const behaviorDisposition = (campaignID, name, campaign) => {
-  let isExisted = false;
+const behaviorDisposition = (charactersList, name) => {
   let activatedDescriptors = 0;
   let dispositionName = "";
   let dispositionDescription = "";
@@ -27,12 +26,10 @@ const behaviorDescriptors = (charactersList, name, activatedDescriptors) => {
   const disposition1 = dice.die(10);
   const disposition2 = dice.die(10);
 
-  if (campaign[0].characters.find(character => character.name === name)) {
-    for(let i = 0 ; i < campaign[0].characters.length ; i++) {
-      if (campaign[0].characters[i].name === name) {
-        activatedDescriptors = campaign[0].characters[i].activatedDescriptors;
-
-        isExisted = true;
+  if (charactersList.find(character => character.name === name)) {
+    for(let i = 0 ; i < charactersList.length ; i++) {
+      if (charactersList[i].name === name) {
+        activatedDescriptors = charactersList[i].activatedDescriptors;
       }
     }
   }
@@ -47,27 +44,23 @@ const behaviorDescriptors = (charactersList, name, activatedDescriptors) => {
     }
   }
 
-  if (campaign[0].characters.find(character => character.name === name)) {
-    for(let i = 0 ; i < campaign[0].characters.length ; i++) {
-      if (campaign[0].characters[i].name === name) {
-        campaign[0].characters[i].dispositionName = dispositionName;
-        campaign[0].characters[i].dispositionModifier = dispositionModifier;
-        campaign[0].characters[i].dispositionScore = sum;
+  if (charactersList.find(character => character.name === name)) {
+    for (let i = 0 ; i < charactersList.length ; i++) {
+      if (charactersList[i].name === name) {
+        charactersList[i].dispositionName = dispositionName;
+        charactersList[i].dispositionModifier = dispositionModifier;
+        charactersList[i].dispositionScore = sum;
       }
     }
   }
 
-  campaign[0].save(function (err) {
-    if (err) return handleError(err);
-  });
-
   return {
+    charactersList: charactersList,
     dispositionName: dispositionName,
     dispositionDescription: dispositionDescription,
-    dispositionModifier: dispositionModifier,
-    isExisted: isExisted
+    dispositionModifier: dispositionModifier
   }
-} */
+}
 
 /* const behaviorAction = (campaignID, name, campaign) => {
   let isExisted = false;
@@ -267,7 +260,7 @@ const behaviorDescriptors = (charactersList, name, activatedDescriptors) => {
 
 module.exports = {
   "behaviorDescriptors": behaviorDescriptors,
-  // behaviorDisposition": behaviorDisposition,
+  "behaviorDisposition": behaviorDisposition,
   // "behaviorAction": behaviorAction,
   // "behaviorTheme": behaviorTheme
 };
