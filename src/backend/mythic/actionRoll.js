@@ -15,3 +15,4 @@ const actionCheck = function() {
 }
 
 module.exports = actionCheck;
+exports.actionCheck = actionCheck;

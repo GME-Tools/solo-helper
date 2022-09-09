@@ -287,7 +287,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-behavior-description"
         >
           <Box sx={style}>
-            <Behavior charactersList={data.charactersList} idHelper={id} /> 
+            <Behavior charactersList={data.charactersList} plotsList={data.plotsList} currentPlot={data.currentPlot} idHelper={id} />
           </Box>
         </Modal>
       : null}

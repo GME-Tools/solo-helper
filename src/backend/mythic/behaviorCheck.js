@@ -1,7 +1,10 @@
 const dice = require('../dice');
 const behaviorData = require('../../data/behavior');
-// const detailData = require('../../data/detail');
-// const eventData = require('../../data/event');
+const detailData = require('../../data/detail');
+const eventData = require('../../data/event');
+const actionRoll = require('./actionRoll');
+const descriptionRoll = require('./descriptionRoll');
+const adventureCrafter = require('./adventureCrafter');
 
 const behaviorDescriptors = (charactersList, name, activatedDescriptors) => {
   if (charactersList.find(character => character.name === name)) {
@@ -47,9 +50,12 @@ const behaviorDisposition = (charactersList, name) => {
   if (charactersList.find(character => character.name === name)) {
     for (let i = 0 ; i < charactersList.length ; i++) {
       if (charactersList[i].name === name) {
-        charactersList[i].dispositionName = dispositionName;
-        charactersList[i].dispositionModifier = dispositionModifier;
-        charactersList[i].dispositionScore = sum;
+        charactersList[i].disposition = {
+          dispositionName: dispositionName,
+          dispositionDescription: dispositionDescription,
+          dispositionModifier: dispositionModifier,
+          dispositionScore: sum
+        };
       }
     }
   }
@@ -62,52 +68,47 @@ const behaviorDisposition = (charactersList, name) => {
   }
 }
 
-/* const behaviorAction = (campaignID, name, campaign) => {
-  let isExisted = false;
-  let resultat = "";
+const behaviorAction = (charactersList, name, plotsList, currentPlot) => {
+  let newDisposition = false;
   const action1 = dice.die(10);
   let dispositionModifier = 0;
-  let action1Name = "";
-  let action1Description = "";
-  let action1ModifierDisposition = 0;
-  let action1ModifierAction = 0;
+  let actionName = "";
+  let actionDescription = "";
+  let actionModifierDisposition = 0;
+  let actionModifierAction = 0;
   let action1Action2 = false;
   let dispositionScore = 0;
   let dispositionName = "";
   let dispositionDescription = "";
-  let action2Name = "";
-  let action2Description = "";
-  let action2Need = [];
+  let actionNeed = [];
   let descriptor = "";
   let actionDescriptionDescriptor = "";
 
-  if (campaign[0].characters.find(character => character.name === name)) {
-    for(let i = 0 ; i < campaign[0].characters.length ; i++) {
-      if (campaign[0].characters[i].name === name) {
-        dispositionModifier = campaign[0].characters[i].dispositionModifier;
-        dispositionScore = campaign[0].characters[i].dispositionScore;
+  if (charactersList.find(character => character.name === name)) {
+    for(let i = 0 ; i < charactersList.length ; i++) {
+      if (charactersList[i].name === name) {
+        dispositionModifier = charactersList[i].disposition.dispositionModifier;
+        dispositionScore = charactersList[i].disposition.dispositionScore;
       }
     }
-
-    isExisted = true;
   }
 
   const sum = action1 + dispositionModifier;
 
   for (let i = 1 ; i <= Object.keys(behaviorData.actionTable1).length ; i++) {
     if (sum >= behaviorData.actionTable1[i].value[0] && sum <= behaviorData.actionTable1[i].value[1]) {
-      action1Name = behaviorData.actionTable1[i].name;
-      action1Description = behaviorData.actionTable1[i].description;
-      action1ModifierDisposition = behaviorData.actionTable1[i].modifierDisposition;
-      action1ModifierAction = behaviorData.actionTable1[i].modifierAction;
+      actionName = behaviorData.actionTable1[i].name;
+      actionDescription = behaviorData.actionTable1[i].description;
+      actionModifierDisposition = behaviorData.actionTable1[i].modifierDisposition;
+      actionModifierAction = behaviorData.actionTable1[i].modifierAction;
       action1Action2 = behaviorData.actionTable1[i].action2;
     }
   }
 
-  if (action1ModifierDisposition !== 0) {
-    dispositionScore = dispositionScore + action1ModifierDisposition;
+  if (actionModifierDisposition !== 0) {
+    dispositionScore = dispositionScore + actionModifierDisposition;
 
-    resultat = "nouvelle disposition";
+    newDisposition = true;
     
     for (let i = 1 ; i <= Object.keys(behaviorData.disposition).length ; i++) {
       if (dispositionScore >= behaviorData.disposition[i].value[0] && dispositionScore <= behaviorData.disposition[i].value[1]) {
@@ -117,115 +118,106 @@ const behaviorDisposition = (charactersList, name) => {
       }
     }
 
-    if (campaign[0].characters.find(character => character.name === name)) {
-      for(let i = 0 ; i < campaign[0].characters.length ; i++) {
-        if (campaign[0].characters[i].name === name) {
-          campaign[0].characters[i].dispositionName = dispositionName;
-          campaign[0].characters[i].dispositionModifier = dispositionModifier;
-          campaign[0].characters[i].dispositionScore = dispositionScore;
+    if (charactersList.find(character => character.name === name)) {
+      for(let i = 0 ; i < charactersList.length ; i++) {
+        if (charactersList[i].name === name) {
+          charactersList[i].disposition.dispositionName = dispositionName;
+          charactersList[i].disposition.dispositionModifier = dispositionModifier;
+          charactersList[i].disposition.dispositionScore = dispositionScore;
         }
       }
     }
-
-    campaign[0].save(function (err) {
-      if (err) {
-        console.log(err);
-        return handleError(err);
-      }
-    });
-
   } else if (action1Action2 === true) {
-    resultat = "action2";
-
-    if (campaign[0].characters.find(character => character.name === name)) {
-      for(let i = 0 ; i < campaign[0].characters.length ; i++) {
-        if (campaign[0].characters[i].name === name) {
-          campaign[0].characters[i].action1ModifierAction = action1ModifierAction;
-        }
-      }
-    }
-
     const action2Dice1 = dice.die(10);
     const action2Dice2 = dice.die(10);
 
-    const sumAction2 = action2Dice1 + action2Dice2 + dispositionModifier + action1ModifierAction;
+    const sumAction2 = action2Dice1 + action2Dice2 + dispositionModifier + actionModifierAction;
 
     for (let i = 1 ; i <= Object.keys(behaviorData.actionTable2).length ; i++) {
       if (sumAction2 >= behaviorData.actionTable2[i].value[0] && sumAction2 <= behaviorData.actionTable2[i].value[1]) {
-        action2Name = behaviorData.actionTable2[i].name;
-        action2Description = behaviorData.actionTable2[i].description;
+        actionName = behaviorData.actionTable2[i].name;
+        actionDescription = behaviorData.actionTable2[i].description;
 
         for (let j = 0 ; j < behaviorData.actionTable2[i].need.length ; j++) {
-          action2Need[j] = behaviorData.actionTable2[i].need[j];
+          actionNeed[j] = behaviorData.actionTable2[i].need[j];
         }
       }
     }
 
-    if (action2Need.includes("descripteur")) {
-      const descriptorRandom = dice.die(3);
-
-      if (descriptorRandom === 1) {
-        descriptor = "identity";
-      } else if (descriptorRandom === 2) {
-        descriptor = "personality";
-      } else {
-        descriptor = "activity";
-      }
-
-      let actionDescriptionDescriptor1 = dice.die(100);
-      let actionDescriptionDescriptor2 = dice.die(100);
-
-      if (descriptor === "identity" || descriptor === "personality") {
-        actionDescriptionDescriptor = detailData.descriptionTable1[actionDescriptionDescriptor1].name + " - " + detailData.descriptionTable2[actionDescriptionDescriptor2].name;
-      } else if (descriptor === "activity") {
-        actionDescriptionDescriptor = eventData.eventAction[actionDescriptionDescriptor1].name + " - " + eventData.eventSubject[actionDescriptionDescriptor2].name;
-      }
-
-      if (campaign[0].characters.find(character => character.name === name)) {
-        for(let i = 0 ; i < campaign[0].characters.length ; i++) {
-          if (campaign[0].characters[i].name === name) {
-            if (campaign[0].characters[i][descriptor].length !== 3) {
-              campaign[0].characters[i][descriptor].push(actionDescriptionDescriptor);
-
-              campaign[0].characters[i][descriptor][0] = "2";
-            } else {
-              if (campaign[0].characters[i][descriptor][0] === "1") {
-                campaign[0].characters[i][descriptor][0] = "2";
+    for (let j = 0 ; j < actionNeed.length ; j++) {
+      if (actionNeed[j] === "descripteur") {
+        const descriptorRandom = dice.die(3);
+  
+        if (descriptorRandom === 1) {
+          descriptor = "identity";
+        } else if (descriptorRandom === 2) {
+          descriptor = "personality";
+        } else {
+          descriptor = "activity";
+        }
+  
+        let actionDescriptionDescriptor1 = dice.die(100);
+        let actionDescriptionDescriptor2 = dice.die(100);
+  
+        if (descriptor === "identity" || descriptor === "personality") {
+          actionDescriptionDescriptor = detailData.descriptionTable1[actionDescriptionDescriptor1].name + " - " + detailData.descriptionTable2[actionDescriptionDescriptor2].name;
+        } else if (descriptor === "activity") {
+          actionDescriptionDescriptor = eventData.eventAction[actionDescriptionDescriptor1].name + " - " + eventData.eventSubject[actionDescriptionDescriptor2].name;
+        }
+  
+        if (charactersList.find(character => character.name === name)) {
+          for(let i = 0 ; i < charactersList.length ; i++) {
+            if (charactersList[i].name === name) {
+              if (charactersList[i].descriptors[descriptor].length !== 3) {
+                charactersList[i].descriptors[descriptor].push(actionDescriptionDescriptor);
+  
+                charactersList[i].descriptors[descriptor][0] = "2";
               } else {
-                campaign[0].characters[i][descriptor][0] = "1";
+                if (charactersList[i].descriptors[descriptor][0] === "1") {
+                  charactersList[i].descriptors[descriptor][0] = "2";
+                } else {
+                  charactersList[i].descriptors[descriptor][0] = "1";
+                }
               }
             }
           }
         }
+      } else if (actionNeed[j] === "action") {
+        actionNeed[j] = actionRoll();
+      } else if (actionNeed[j] === "description") {
+        actionNeed[j] = descriptionRoll();
+      } else if (actionNeed[j] === "joueur") {
+        actionNeed[j] = adventureCrafter.characterRandom(charactersList, true).name;
+      } else if (actionNeed[j] === "intrigue") {
+        actionNeed[j] = adventureCrafter.plotRandom(plotsList, false, false, currentPlot).name;
       }
     }
+  }
 
-    campaign[0].save(function (err) {
-      if (err) {
-        console.log(err);
-        return handleError(err);
+  if (charactersList.find(character => character.name === name)) {
+    for(let i = 0 ; i < charactersList.length ; i++) {
+      if (charactersList[i].name === name) {
+        charactersList[i].action = {
+          actionName: actionName,
+          actionDescription: actionDescription,
+          actionNeed: actionNeed
+        };
       }
-    });
-
+    }
   }
 
   return {
-    action1Name: action1Name,
-    action1ModifierDisposition: action1ModifierDisposition,
-    action1Description: action1Description,
-    dispositionScore: dispositionScore,
+    actionName: actionName,
+    actionDescription: actionDescription,
+    actionNeed: actionNeed,
     dispositionName: dispositionName,
-    dispositionModifier: dispositionModifier,
     dispositionDescription: dispositionDescription,
-    action2Name: action2Name,
-    action2Description: action2Description,
-    action2Need: action2Need,
     descriptor: descriptor,
     actionDescriptionDescriptor: actionDescriptionDescriptor,
-    resultat: resultat,
-    isExisted: isExisted
+    newDisposition: newDisposition,
+    charactersList: charactersList
   }
-} */
+}
 
 /* const behaviorTheme = (campaignID, theme, campaign) => {
   let isExisted = false;
@@ -261,6 +253,6 @@ const behaviorDisposition = (charactersList, name) => {
 module.exports = {
   "behaviorDescriptors": behaviorDescriptors,
   "behaviorDisposition": behaviorDisposition,
-  // "behaviorAction": behaviorAction,
+  "behaviorAction": behaviorAction,
   // "behaviorTheme": behaviorTheme
 };

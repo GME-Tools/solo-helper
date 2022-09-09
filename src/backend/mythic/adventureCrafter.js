@@ -261,22 +261,20 @@ const characterAdd = (charactersList, characterName, isPlayer) => {
               
               charactersList[i].activatedDescriptors = charactersList[j].activatedDescriptors;
 
-              charactersList[i].dispositionName = charactersList[j].dispositionName;
-              charactersList[i].dispositionModifier = charactersList[j].dispositionModifier;
-              charactersList[i].dispositionScore = charactersList[j].dispositionScore;
+              charactersList[i].disposition = charactersList[j].disposition;
+              charactersList[i].descriptors = charactersList[j].descriptors;
+              charactersList[i].action = charactersList[j].action;
             }
           }
-        } else {
-          let travel = {
+        } else {     
+          charactersList[i].name = characterName;
+          charactersList[i].player = isPlayer;
+          charactersList[i].travel = {
             "travelMode": "Pieds",
             "KMPerDay": 38,
             "KMPerDay2": 48,
             "comments": "si 48 = -5 pénalité à la perception passive",
-          }
-        
-          charactersList[i].name = characterName;
-          charactersList[i].player = isPlayer;
-          charactersList[i].travel = travel;
+          };
           charactersList[i].piecesOr = 100;
 
           charactersList[i].characterSpecialTraitName = "";
@@ -286,9 +284,22 @@ const characterAdd = (charactersList, characterName, isPlayer) => {
 
           charactersList[i].activatedDescriptors = 0;
 
-          charactersList[i].dispositionName = "";
-          charactersList[i].dispositionModifier = 0;
-          charactersList[i].dispositionScore = 0;
+          charactersList[i].disposition = {
+            "dispositionName": "",
+            "dispositionDescription": "",
+            "dispositionModifier": 0,
+            "dispositionScore": 0
+          };
+          charactersList[i].descriptors = {
+            "activity": "",
+            "identity": "",
+            "personality": ""
+          };
+          charactersList[i].action = {
+            "actionName": "",
+            "actionDescription": "",
+            "actionNeed": []
+          };
         }
 
         break;
@@ -365,16 +376,16 @@ const plotUpdate = (plotsList, plotOld, plotNew) => {
 const characterDelete = (charactersList, archivedCharacters, characterName) => {
   let name = "";
   let player = false;
-  let travel = [];
+  let travel = {};
   let piecesOr = 0;
   let characterSpecialTraitName = "";
   let characterSpecialTraitDescription = "";
   let characterIdentityName = [];
   let characterDescriptorsName = [];
   let activatedDescriptors = 0;
-  let dispositionName = "";
-  let dispositionModifier = 0;
-  let dispositionScore = 0;
+  let disposition = {};
+  let descriptors = {};
+  let action = {};
   let empty = false;
   
   if (charactersList.find(character => character.name === characterName)) {
@@ -392,9 +403,9 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
 
         activatedDescriptors = charactersList[i].activatedDescriptors;
 
-        dispositionName = charactersList[i].dispositionName;
-        dispositionModifier = charactersList[i].dispositionModifier;
-        dispositionScore = charactersList[i].dispositionScore;
+        disposition = charactersList[i].disposition;
+        descriptors = charactersList[i].descriptors;
+        action = charactersList[i].action;
 
         charactersList[i].name = "Choisissez le personnage le plus logique";
         
@@ -414,9 +425,9 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
       "characterIdentityName": characterIdentityName,
       "characterDescriptorsName": characterDescriptorsName,
       "activatedDescriptors": activatedDescriptors,
-      "dispositionName": dispositionName,
-      "dispositionModifier": dispositionModifier,
-      "dispositionScore": dispositionScore
+      "disposition": disposition,
+      "descriptors": descriptors,
+      "action": action
     });
 
     empty = true;
@@ -496,16 +507,16 @@ const themeRandom = (themes) => {
 const characterInformation = (charactersList, characterName) => {
   let name = "";
   let player = false;
-  let travel = [];
+  let travel = {};
   let piecesOr = 0;
   let characterSpecialTraitName = "";
   let characterSpecialTraitDescription = "";
   let characterIdentityName = [];
   let characterDescriptorsName = [];
   let activatedDescriptors = 0;
-  let dispositionName = "";
-  let dispositionModifier = 0;
-  let dispositionScore = 0;
+  let disposition = {};
+  let descriptors = {};
+  let action = {};
   
   for (let i = 0 ; i < charactersList.length ; i++) {
     if (charactersList[i].name === characterName) {
@@ -518,9 +529,9 @@ const characterInformation = (charactersList, characterName) => {
       characterIdentityName = charactersList[i].characterIdentityName;
       characterDescriptorsName = charactersList[i].characterDescriptorsName;
       activatedDescriptors = charactersList[i].activatedDescriptors;
-      dispositionName = charactersList[i].dispositionName;
-      dispositionModifier = charactersList[i].dispositionModifier;
-      dispositionScore = charactersList[i].dispositionScore;
+      disposition = charactersList[i].disposition;
+      descriptors = charactersList[i].descriptors;
+      action = charactersList[i].action;
 
       break;
     }
@@ -536,9 +547,9 @@ const characterInformation = (charactersList, characterName) => {
     characterIdentityName: characterIdentityName,
     characterDescriptorsName: characterDescriptorsName,
     activatedDescriptors: activatedDescriptors,
-    dispositionName: dispositionName,
-    dispositionModifier: dispositionModifier,
-    dispositionScore: dispositionScore
+    disposition: disposition,
+    descriptors: descriptors,
+    action: action
   }
 }
 
@@ -756,16 +767,14 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
 
   for (let i = 0 ; i < charactersList.length ; i++) {
     if (charactersList[i].name === "Nouveau personnage" || charactersList[i].name === "Choisissez le personnage le plus logique") {
-      let travel = {
+      charactersList[i].name = generator.nameGenerator(randomNumber);
+      charactersList[i].player = false;
+      charactersList[i].travel = {
         "travelMode": "Pieds",
         "KMPerDay": 38,
         "KMPerDay2": 48,
         "comments": "si 48 = -5 pénalité à la perception passive",
-      }
-    
-      charactersList[i].name = generator.nameGenerator(randomNumber);
-      charactersList[i].player = false;
-      charactersList[i].travel = travel;
+      };
       charactersList[i].piecesOr = 100;
 
       charactersList[i].characterSpecialTraitName = "";
@@ -775,9 +784,22 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
 
       charactersList[i].activatedDescriptors = 0;
       
-      charactersList[i].dispositionName = "";
-      charactersList[i].dispositionModifier = 0;
-      charactersList[i].dispositionScore = 0;
+      charactersList[i].disposition = {
+        "dispositionName": "",
+        "dispositionDescription": "",
+        "dispositionModifier": 0,
+        "dispositionScore": 0
+      };
+      charactersList[i].descriptors = {
+        "activity": "",
+        "identity": "",
+        "personality": ""
+      };
+      charactersList[i].action = {
+        "actionName": "",
+        "actionDescription": "",
+        "actionNeed": []
+      };
 
       characterName = charactersList[i].name;
 

@@ -15,3 +15,4 @@ const descriptionCheck = function() {
 }
 
 module.exports = descriptionCheck;
+exports.descriptionCheck = descriptionCheck;

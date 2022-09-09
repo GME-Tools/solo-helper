@@ -1,7 +1,6 @@
 const dice = require('../dice');
 const adventureCrafter = require('./adventureCrafter');
 
-
 const needsRandom = (plotPoints, charactersList, plotsList, currentPlot, archivedCharacters) => {
   let nbPlayer = 0;
   let characterName = "";

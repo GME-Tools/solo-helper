@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { useFirebase } from "context/FirebaseContext";
 import { Autocomplete, TextField, Button, Stack } from "@mui/material";
 import { useHistory, logBehavior } from "context/HistoryContext";
-import { behaviorDescriptors, behaviorDisposition } from "backend/mythic/behaviorCheck";
+import { behaviorDescriptors, behaviorDisposition, behaviorAction } from "backend/mythic/behaviorCheck";
 
 const subfonctionsBehavior = [
   { label: 'Mettre à jour le bonus des descripteurs activés', value: 'activatedDescriptors' },
-  { label: "Générer la disposition d'un Personnage", value: 'disposition' }
+  { label: "Générer la disposition d'un Personnage", value: 'disposition' },
+  { label: "Générer l'action d'un Personnage", value: 'action' }
 ];
 
 let existingCharacters = [];
@@ -31,6 +32,8 @@ export default function Behavior(props) {
   const [hiddenBehaviorActivatedDescriptorsNumbers, setHiddenBehaviorActivatedDescriptorsNumbers] = useState(true);
   const [subfonctionsBehaviorDispositionSelected, setSubfonctionsBehaviorDispositionSelected] = useState("");
   const [hiddenBehaviorDisposition, setHiddenBehaviorDisposition] = useState(true);
+  const [subfonctionsBehaviorActionSelected, setSubfonctionsBehaviorActionSelected] = useState("");
+  const [hiddenBehaviorAction, setHiddenBehaviorAction] = useState(true);
 
   const changeSubfonctionsBehavior = (event, inputValue) => {
     setSubfonctionsBehaviorSelected(inputValue);
@@ -50,6 +53,7 @@ export default function Behavior(props) {
       setHiddenBehaviorActivatedDescriptorsCharacters(false);
       setHiddenBehaviorActivatedDescriptorsNumbers(true);
       setHiddenBehaviorDisposition(true);
+      setHiddenBehaviorAction(true);
     } else if (inputValue === 'disposition' || inputValue === "Générer la disposition d'un Personnage") {
       const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
 
@@ -65,10 +69,28 @@ export default function Behavior(props) {
       setHiddenBehaviorActivatedDescriptorsCharacters(true);
       setHiddenBehaviorActivatedDescriptorsNumbers(true);
       setHiddenBehaviorDisposition(false);
+      setHiddenBehaviorAction(true);
+    } else if (inputValue === 'action' || inputValue === "Générer l'action d'un Personnage") {
+      const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
+
+      for (let i = 0 ; i < uniqueCharacters.length ; i++) {
+        if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
+          existingCharacters.push({
+            "label": uniqueCharacters[i],
+            "value": uniqueCharacters[i]
+          });
+        }
+      }
+      
+      setHiddenBehaviorActivatedDescriptorsCharacters(true);
+      setHiddenBehaviorActivatedDescriptorsNumbers(true);
+      setHiddenBehaviorDisposition(true);
+      setHiddenBehaviorAction(false);
     } else {
       setHiddenBehaviorActivatedDescriptorsCharacters(true);
       setHiddenBehaviorActivatedDescriptorsNumbers(true);
       setHiddenBehaviorDisposition(true);
+      setHiddenBehaviorAction(true);
     }
   };
 
@@ -84,6 +106,10 @@ export default function Behavior(props) {
 
   const changeSubfonctionsDisposition = (event, inputValue) => {
     setSubfonctionsBehaviorDispositionSelected(inputValue);
+  }
+
+  const changeSubfonctionsAction = (event, inputValue) => {
+    setSubfonctionsBehaviorActionSelected(inputValue);
   }
 
   const clickLaunch = () => {
@@ -107,6 +133,34 @@ export default function Behavior(props) {
       });
 
       setHistory(h => ([...h, logBehavior(behaviorResponse.dispositionName + " (" + behaviorResponse.dispositionDescription + ")")]));
+    } else if (subfonctionsBehaviorSelected === 'action' || subfonctionsBehaviorSelected === "Générer l'action d'un Personnage") {
+      let need = "";
+      
+      let behaviorResponse = behaviorAction(props.charactersList, subfonctionsBehaviorActionSelected, props.plotsList, props.currentPlot);
+
+      firebase.updateDocument("helpers", props.idHelper, {
+        "charactersList": behaviorResponse.charactersList
+      /* }).then(doc => {
+          setData(doc.data()); */
+      });
+
+      for (let i = 0 ; i < behaviorResponse.actionNeed.length ; i++) {
+        need = need + behaviorResponse.actionNeed[i];
+
+        if (i < behaviorResponse.actionNeed.length - 1) {
+          need = need + "\n";
+        }
+      }
+
+      setHistory(h => ([...h, logBehavior(behaviorResponse.actionName + " (" + behaviorResponse.actionDescription + ") - " + need)]));
+
+      if (behaviorResponse.newDisposition === true) {
+        setHistory(h => ([...h, logBehavior("Nouvelle disposition de " + subfonctionsBehaviorActionSelected + " : " + behaviorResponse.dispositionName + " (" + behaviorResponse.dispositionDescription + ")")]));
+      }
+
+      if (behaviorResponse.descriptor !== "") {
+        setHistory(h => ([...h, logBehavior("Nouveau descripteur pour " + subfonctionsBehaviorActionSelected + " : " + behaviorResponse.descriptor + " (" + behaviorResponse.actionDescriptionDescriptor + ")")]));
+      }
     }
   }
   
@@ -168,6 +222,20 @@ export default function Behavior(props) {
           getOptionLabel={(option) => option.label}
           sx={{ width: 300 }}
           onInputChange={changeSubfonctionsDisposition}
+          renderInput={(params) =>
+          <TextField {...params}
+            label="Choose a character"/>}
+        /> : null}
+
+        {!hiddenBehaviorAction ? <Autocomplete
+          autoComplete
+          autoSelect
+          disablePortal
+          id="combo-box-behavior-action"
+          options={existingCharacters}
+          getOptionLabel={(option) => option.label}
+          sx={{ width: 300 }}
+          onInputChange={changeSubfonctionsAction}
           renderInput={(params) =>
           <TextField {...params}
             label="Choose a character"/>}
