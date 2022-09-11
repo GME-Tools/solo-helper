@@ -4,7 +4,7 @@ const plotPointsData = require('../../data/plotPoints');
 const needsRandom = require('./needsRandom');
 const generator = require('../generator');
 
-const themeCreation = (themesList, themesPlayer) => {
+export const themeCreation = (themesList, themesPlayer) => {
   let themeName = "";
   let themeDescription = "";
   let themes = [];
@@ -74,7 +74,7 @@ const themeCreation = (themesList, themesPlayer) => {
   }
 }
 
-const themeList = (themesList) => {
+export const themeList = (themesList) => {
   let themes = [];
   let isExisted = false;
 
@@ -90,7 +90,7 @@ const themeList = (themesList) => {
   }
 }
 
-const characterRandom = (charactersList, isPlayer) => {
+export const characterRandom = (charactersList, isPlayer) => {
   let characterName = "";
   let characterDice = 0;
 
@@ -125,7 +125,7 @@ const characterRandom = (charactersList, isPlayer) => {
   }
 }
 
-const plotRandom = (plotsList, isEvent, add, currentPlot) => {
+export const plotRandom = (plotsList, isEvent, add, currentPlot) => {
   let plotDice = 0;
   let plotName = "";
 
@@ -180,7 +180,7 @@ const plotRandom = (plotsList, isEvent, add, currentPlot) => {
   }
 }
 
-const characterList = (charactersList) => {
+export const characterList = (charactersList) => {
   let characterNames = [];
   
   for (let i = 0 ; i < charactersList.length ; i++) {
@@ -192,7 +192,7 @@ const characterList = (charactersList) => {
   }
 }
 
-const plotList = (plotsList) => {
+export const plotList = (plotsList) => {
   let plotNames = [];
   
   for (let i = 0 ; i < plotsList.length ; i++) {
@@ -204,7 +204,7 @@ const plotList = (plotsList) => {
   }
 }
 
-const characterOccurrences = (charactersList, character) => {
+export const characterOccurrences = (charactersList, character) => {
   let numberOf = 0;
   
   for (let i = 0 ; i < charactersList.length ; i++) {
@@ -218,7 +218,7 @@ const characterOccurrences = (charactersList, character) => {
   }
 }
 
-const plotOccurrences = (plotsList, plot) => {
+export const plotOccurrences = (plotsList, plot) => {
   let numberOf = 0;
   
   for (let i = 0 ; i < plotsList.length ; i++) {
@@ -232,7 +232,7 @@ const plotOccurrences = (plotsList, plot) => {
   }
 }
 
-const characterAdd = (charactersList, characterName, isPlayer) => {
+export const characterAdd = (charactersList, characterName, isPlayer) => {
   let nbCharacters = 0;
   let full = false;
 
@@ -315,7 +315,7 @@ const characterAdd = (charactersList, characterName, isPlayer) => {
   }
 }
 
-const plotAdd = (plotsList, plotName) => {
+export const plotAdd = (plotsList, plotName) => {
   let nbPlots = 0;
   let full = false;
 
@@ -344,7 +344,7 @@ const plotAdd = (plotsList, plotName) => {
   }
 }
 
-const characterUpdate = (charactersList, nameOld, nameNew, isPlayer) => {
+export const characterUpdate = (charactersList, nameOld, nameNew, isPlayer) => {
   if (charactersList.find(character => character.name === nameOld)) {
     for(let i = 0 ; i < charactersList.length ; i++) {
       if (charactersList[i].name === nameOld) {
@@ -359,7 +359,7 @@ const characterUpdate = (charactersList, nameOld, nameNew, isPlayer) => {
   }
 }
 
-const plotUpdate = (plotsList, plotOld, plotNew) => {
+export const plotUpdate = (plotsList, plotOld, plotNew) => {
   if (plotsList.find(plot => plot.name === plotOld)) {
     for(let i = 0 ; i < plotsList.length ; i++) {
       if (plotsList[i].name === plotOld) {
@@ -373,7 +373,7 @@ const plotUpdate = (plotsList, plotOld, plotNew) => {
   }
 }
 
-const characterDelete = (charactersList, archivedCharacters, characterName) => {
+export const characterDelete = (charactersList, archivedCharacters, characterName) => {
   let name = "";
   let player = false;
   let travel = {};
@@ -440,7 +440,7 @@ const characterDelete = (charactersList, archivedCharacters, characterName) => {
   }
 }
 
-const plotDelete = (plotsList, plotName) => {
+export const plotDelete = (plotsList, plotName) => {
   let empty = false;
   
   if (plotsList.find(plot => plot.name === plotName)) {
@@ -463,7 +463,7 @@ const plotDelete = (plotsList, plotName) => {
   }
 }
 
-const themeRandom = (themes) => {
+export const themeRandom = (themes) => {
   let themeName = "";
   let themeDescription = "";
   let themeDice = dice.die(10);
@@ -504,7 +504,7 @@ const themeRandom = (themes) => {
   }
 }
 
-const characterInformation = (charactersList, characterName) => {
+export const characterInformation = (charactersList, characterName) => {
   let name = "";
   let player = false;
   let travel = {};
@@ -553,7 +553,7 @@ const characterInformation = (charactersList, characterName) => {
   }
 }
 
-const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, archivedCharacters) => {
+export const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, archivedCharacters) => {
   let plotPointsName = [];
   let plotPointsDescription = [];
   let plotPointsNeeds = [];
@@ -725,7 +725,7 @@ const plotPoints = (plotPoints, charactersList, plotsList, currentPlot, themes, 
   }
 }
 
-const plotPointsRead = (plotPoints) => {
+export const plotPointsRead = (plotPoints) => {
   let plotPointsName = [];
   let plotPointsDescription = [];
   let plotPointsNeeds = [];
@@ -743,7 +743,7 @@ const plotPointsRead = (plotPoints) => {
   }
 }
 
-const plotPointsUpdate = (plotPoints, plotPoint, need, newNeed) => {
+export const plotPointsUpdate = (plotPoints, plotPoint, need, newNeed) => {
   plotPoints.find(item => item.name === plotPoint).needs.find(item => item.name === need).name = newNeed;
   
   return {
@@ -751,7 +751,7 @@ const plotPointsUpdate = (plotPoints, plotPoint, need, newNeed) => {
   }
 }
 
-const characterCreation = (charactersList, plotPoints, plotPoint, need, name) => {
+export const characterCreation = (charactersList, plotPoints, plotPoint, need, name) => {
   let characterSpecialTraitDice = dice.die(100);
   let characterIdentityDice = dice.die(100);
   let characterDescriptorsDice = dice.die(100);
@@ -879,28 +879,3 @@ const characterCreation = (charactersList, plotPoints, plotPoint, need, name) =>
     characterDescriptors: characterDescriptors
   }
 }
-
-module.exports = {
-  "themeCreation": themeCreation,
-  "themeList": themeList,
-  "characterRandom": characterRandom,
-  "plotRandom": plotRandom,
-  "characterList": characterList,
-  "plotList": plotList,
-  "characterOccurrences": characterOccurrences,
-  "plotOccurrences": plotOccurrences,
-  "characterAdd": characterAdd,
-  "plotAdd": plotAdd,
-  "characterUpdate": characterUpdate,
-  "plotUpdate": plotUpdate,
-  "characterDelete": characterDelete,
-  "plotDelete": plotDelete,
-  "themeRandom": themeRandom,
-  "characterInformation": characterInformation,
-  "plotPoints": plotPoints,
-  "plotPointsRead": plotPointsRead,
-  "plotPointsUpdate": plotPointsUpdate,
-  "characterCreation": characterCreation
-};
-
-exports.characterCreation = characterCreation;
