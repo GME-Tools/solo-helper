@@ -219,40 +219,8 @@ const behaviorAction = (charactersList, name, plotsList, currentPlot) => {
   }
 }
 
-/* const behaviorTheme = (campaignID, theme, campaign) => {
-  let isExisted = false;
-  let isModified = false;
-  let sTheme = "";
-
-  if (theme !== "") {
-    campaign[0].theme = theme;
-
-    isModified = true;
-
-    campaign[0].save(function (err) {
-      if (err) return handleError(err);
-    });
-
-    return {
-      isModified: isModified
-    }
-  } else {
-    sTheme = campaign[0].theme;
-
-    if (sTheme !== undefined) {
-      isExisted = true;
-    }
-
-    return {
-      theme: sTheme,
-      isExisted: isExisted
-    }
-  }
-} */
-
 module.exports = {
   "behaviorDescriptors": behaviorDescriptors,
   "behaviorDisposition": behaviorDisposition,
-  "behaviorAction": behaviorAction,
-  // "behaviorTheme": behaviorTheme
+  "behaviorAction": behaviorAction
 };

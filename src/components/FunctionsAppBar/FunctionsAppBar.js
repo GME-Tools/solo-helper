@@ -14,6 +14,7 @@ import Plot from 'components/Plot/Plot';
 import PlotPoint from 'components/PlotPoint/PlotPoint';
 import Theme from 'components/Theme/Theme';
 import Behavior from 'components/Behavior/Behavior';
+import detailCheck from 'backend/mythic/detailCheck';
 
 const style = {
   position: 'absolute',
@@ -32,12 +33,13 @@ const functions = [
   { label: 'Behavior', id: 2 },
   { label: 'Character', id: 3 },
   { label: 'Description', id: 4 },
-  { label: 'Event', id: 5 },
-  { label: 'Fantasy Loot', id: 6 },
-  { label: 'Fate', id: 7 },
-  { label: 'Plot', id: 8 },
-  { label: 'Plot Points', id: 9 },
-  { label: 'Theme', id: 10 }
+  { label: 'Detail', id: 5 },
+  { label: 'Event', id: 6 },
+  { label: 'Fantasy Loot', id: 7 },
+  { label: 'Fate', id: 8 },
+  { label: 'Plot', id: 9 },
+  { label: 'Plot Points', id: 10 },
+  { label: 'Theme', id: 11 }
 ];
 
 export default function FunctionAppBar() {
@@ -152,6 +154,10 @@ export default function FunctionAppBar() {
       let descriptionResponse = descriptionRoll();
 
       setHistory(h => ([...h, logMeaning("Description", descriptionResponse.description1 + " / " + descriptionResponse.description2)]));
+    } else if (functionSelected === "Detail") {
+      let detailResponse = detailCheck(data.chaosFactor, data.charactersList, data.plotsList, data.currentPlot);
+
+      setHistory(h => ([...h, logMeaning("Detail", detailResponse.detailName + " (" + detailResponse.detailDescription + ") - " + detailResponse.detailNeed)]));
     } else if (functionSelected === "Event") {
       let eventResponse = eventCheck(data.charactersList, data.plotsList, data.currentPlot);
 
