@@ -15,6 +15,8 @@ import PlotPoint from 'components/PlotPoint/PlotPoint';
 import Theme from 'components/Theme/Theme';
 import Behavior from 'components/Behavior/Behavior';
 import detailCheck from 'backend/mythic/detailCheck';
+import Statistic from 'components/Statistic/Statistic';
+import Creature from 'components/Creature/Creature';
 
 const style = {
   position: 'absolute',
@@ -32,14 +34,16 @@ const functions = [
   { label: 'Action', id: 1 },
   { label: 'Behavior', id: 2 },
   { label: 'Character', id: 3 },
-  { label: 'Description', id: 4 },
-  { label: 'Detail', id: 5 },
-  { label: 'Event', id: 6 },
-  { label: 'Fantasy Loot', id: 7 },
-  { label: 'Fate', id: 8 },
-  { label: 'Plot', id: 9 },
-  { label: 'Plot Points', id: 10 },
-  { label: 'Theme', id: 11 }
+  { label: 'Creature', id: 4 },
+  { label: 'Description', id: 5 },
+  { label: 'Detail', id: 6 },
+  { label: 'Event', id: 7 },
+  { label: 'Fantasy Loot', id: 8 },
+  { label: 'Fate', id: 9 },
+  { label: 'Plot', id: 10 },
+  { label: 'Plot Points', id: 11 },
+  { label: 'Statistic', id: 12 },
+  { label: 'Theme', id: 13 }
 ];
 
 export default function FunctionAppBar() {
@@ -57,6 +61,8 @@ export default function FunctionAppBar() {
   const [hiddenPlotPoint, setHiddenPlotPoint] = useState(true);
   const [hiddenTheme, setHiddenTheme] = useState(true);
   const [hiddenBehavior, setHiddenBehavior] = useState(true);
+  const [hiddenStatistic, setHiddenStatistic] = useState(true);
+  const [hiddenCreature, setHiddenCreature] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -69,78 +75,118 @@ export default function FunctionAppBar() {
 
       setHiddenBehavior(false);
       setHiddenCharacter(true);
+      setHiddenCreature(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
       setHiddenTheme(true);
     } else if (inputValue === "Character") {
       handleOpenModal();
 
       setHiddenBehavior(true);
       setHiddenCharacter(false);
+      setHiddenCreature(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
+      setHiddenTheme(true);
+    } else if (inputValue === "Creature") {
+      handleOpenModal();
+
+      setHiddenBehavior(true);
+      setHiddenCharacter(true);
+      setHiddenCreature(false);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(true);
+      setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
       setHiddenTheme(true);
     } else if (inputValue === "Fate") {
       handleOpenModal();
 
       setHiddenBehavior(true);
       setHiddenCharacter(true);
+      setHiddenCreature(true);
       setHiddenFate(false);
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
       setHiddenTheme(true);
     } else if (inputValue === "Fantasy Loot") {
       handleOpenModal();
 
       setHiddenBehavior(true);
       setHiddenCharacter(true);
+      setHiddenCreature(true);
       setHiddenFate(true);
       setHiddenLoot(false);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
       setHiddenTheme(true);
     } else if (inputValue === "Plot") {
       handleOpenModal();
 
       setHiddenBehavior(true);
       setHiddenCharacter(true);
+      setHiddenCreature(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(false);
       setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
       setHiddenTheme(true);
     } else if (inputValue === "Plot Points") {
       handleOpenModal();
 
       setHiddenBehavior(true);
       setHiddenCharacter(true);
+      setHiddenCreature(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(false);
+      setHiddenStatistic(true);
+      setHiddenTheme(true);
+    } else if (inputValue === "Statistic") {
+      handleOpenModal();
+
+      setHiddenBehavior(true);
+      setHiddenCharacter(true);
+      setHiddenCreature(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(true);
+      setHiddenPlotPoint(true);
+      setHiddenStatistic(false);
       setHiddenTheme(true);
     } else if (inputValue === "Theme") {
       handleOpenModal();
 
       setHiddenBehavior(true);
       setHiddenCharacter(true);
+      setHiddenCreature(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
       setHiddenTheme(false);
     } else {
       setHiddenBehavior(true);
       setHiddenCharacter(true);
+      setHiddenCreature(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
       setHiddenTheme(true);
     }
   };
@@ -294,6 +340,32 @@ export default function FunctionAppBar() {
         >
           <Box sx={style}>
             <Behavior charactersList={data.charactersList} plotsList={data.plotsList} currentPlot={data.currentPlot} idHelper={id} />
+          </Box>
+        </Modal>
+      : null}
+
+      {!hiddenStatistic ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-statistic-label"
+          aria-describedby="modal-statistic-description"
+        >
+          <Box sx={style}>
+            <Statistic />
+          </Box>
+        </Modal>
+      : null}
+
+      {!hiddenCreature ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-creature-label"
+          aria-describedby="modal-creature-description"
+        >
+          <Box sx={style}>
+            <Creature data={data} />
           </Box>
         </Modal>
       : null}

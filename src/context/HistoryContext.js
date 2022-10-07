@@ -61,6 +61,18 @@ export const logBehavior = (result) => ({
   result: result
 });
 
+export const logStatistic = (result) => ({
+  emoji: <span style={{lineHeight: 1}}>📊</span>,
+  command: "Statistique",
+  result: result
+});
+
+export const logCreature = (result) => ({
+  emoji: <span style={{lineHeight: 1}}>🧜‍♂️</span>,
+  command: "Créature",
+  result: result
+});
+
 const data = [
   {
     emoji: <span style={{lineHeight: 1}}>🎲</span>,
