@@ -153,8 +153,10 @@ export default function HelpersList() {
           "name": "Choisissez l'intrigue la plus logique" }
       ],
       plotPoints:[],
+      season: "",
       theme: "",
-      themes: []
+      themes: [],
+      weather: ""
     });
     setNewUuid(uid);
   }

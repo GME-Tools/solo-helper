@@ -1,0 +1,64 @@
+{
+  "season": {
+    "1": {
+      "value": [1,1],
+      "name": "Eté"
+    },
+    "2": {
+      "value": [2,2],
+      "name": "Automne"
+    },
+    "3": {
+      "value": [3,3],
+      "name": "Hiver"
+    },
+    "4": {
+      "value": [4,4],
+      "name": "Printemps"
+    }
+  },
+  "weather": {
+    "1": {
+      "value": [-5,1],
+      "Eté": "Froid inhabituel pour la saison",
+      "Automne": "Neige fondue ou Blizzard",
+      "Hiver": "Beaucoup de neige",
+      "Printemps": "Neige fondue ou Blizzard"
+    },
+    "2": {
+      "value": [2,4],
+      "Eté": "Pluvieux",
+      "Automne": "Pluvieux",
+      "Hiver": "Tempête de neige",
+      "Printemps": "Pluie"
+    },
+    "3": {
+      "value": [5,8],
+      "Eté": "Couvert",
+      "Automne": "Pluie légère",
+      "Hiver": "Pluie",
+      "Printemps": "Couvert"
+    },
+    "4": {
+      "value": [9,11],
+      "Eté": "Clair, Chaud",
+      "Automne": "Couvert",
+      "Hiver": "Couvert",
+      "Printemps": "Ciel clair"
+    },
+    "5": {
+      "value": [12,18],
+      "Eté": "Clair, Très chaud",
+      "Automne": "Ciel clair",
+      "Hiver": "Ciel clair",
+      "Printemps": "Chaud"
+    },
+    "6": {
+      "value": [19,25],
+      "Eté": "Très très chaud",
+      "Automne": "Très chaud",
+      "Hiver": "Chaleur inhabituelle pour la saison",
+      "Printemps": "Très chaud"
+    }
+  }
+}

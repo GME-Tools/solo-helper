@@ -17,6 +17,7 @@ import Behavior from 'components/Behavior/Behavior';
 import detailCheck from 'backend/mythic/detailCheck';
 import Statistic from 'components/Statistic/Statistic';
 import Creature from 'components/Creature/Creature';
+import Weather from 'components/Weather/Weather';
 
 const style = {
   position: 'absolute',
@@ -43,7 +44,8 @@ const functions = [
   { label: 'Plot', id: 10 },
   { label: 'Plot Points', id: 11 },
   { label: 'Statistic', id: 12 },
-  { label: 'Theme', id: 13 }
+  { label: 'Theme', id: 13 },
+  { label: 'Weather', id: 14 }
 ];
 
 export default function FunctionAppBar() {
@@ -63,6 +65,7 @@ export default function FunctionAppBar() {
   const [hiddenBehavior, setHiddenBehavior] = useState(true);
   const [hiddenStatistic, setHiddenStatistic] = useState(true);
   const [hiddenCreature, setHiddenCreature] = useState(true);
+  const [hiddenWeather, setHiddenWeather] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -82,6 +85,7 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
+      setHiddenWeather(true);
     } else if (inputValue === "Character") {
       handleOpenModal();
 
@@ -94,6 +98,7 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
+      setHiddenWeather(true);
     } else if (inputValue === "Creature") {
       handleOpenModal();
 
@@ -106,6 +111,7 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
+      setHiddenWeather(true);
     } else if (inputValue === "Fate") {
       handleOpenModal();
 
@@ -118,6 +124,7 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
+      setHiddenWeather(true);
     } else if (inputValue === "Fantasy Loot") {
       handleOpenModal();
 
@@ -130,6 +137,7 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
+      setHiddenWeather(true);
     } else if (inputValue === "Plot") {
       handleOpenModal();
 
@@ -142,6 +150,7 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
+      setHiddenWeather(true);
     } else if (inputValue === "Plot Points") {
       handleOpenModal();
 
@@ -154,6 +163,7 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(false);
       setHiddenStatistic(true);
       setHiddenTheme(true);
+      setHiddenWeather(true);
     } else if (inputValue === "Statistic") {
       handleOpenModal();
 
@@ -166,6 +176,7 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenStatistic(false);
       setHiddenTheme(true);
+      setHiddenWeather(true);
     } else if (inputValue === "Theme") {
       handleOpenModal();
 
@@ -178,6 +189,20 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenStatistic(true);
       setHiddenTheme(false);
+      setHiddenWeather(true);
+    } else if (inputValue === "Weather") {
+      handleOpenModal();
+
+      setHiddenBehavior(true);
+      setHiddenCharacter(true);
+      setHiddenCreature(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(true);
+      setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
+      setHiddenTheme(true);
+      setHiddenWeather(false);
     } else {
       setHiddenBehavior(true);
       setHiddenCharacter(true);
@@ -188,8 +213,13 @@ export default function FunctionAppBar() {
       setHiddenPlotPoint(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
+      setHiddenWeather(true);
     }
   };
+
+  const updateData = data => {
+    setData(data);
+  }
   
   const clickLaunch = () => {
     if (functionSelected === "Action") {
@@ -366,6 +396,19 @@ export default function FunctionAppBar() {
         >
           <Box sx={style}>
             <Creature data={data} />
+          </Box>
+        </Modal>
+      : null}
+
+      {!hiddenWeather ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-weather-label"
+          aria-describedby="modal-weather-description"
+        >
+          <Box sx={style}>
+            <Weather idHelper={id} data={data} updateData={updateData} />
           </Box>
         </Modal>
       : null}

@@ -73,6 +73,12 @@ export const logCreature = (result) => ({
   result: result
 });
 
+export const logWeather = (result) => ({
+  emoji: <span style={{lineHeight: 1}}>🌨</span>,
+  command: "Météo",
+  result: result
+});
+
 const data = [
   {
     emoji: <span style={{lineHeight: 1}}>🎲</span>,
