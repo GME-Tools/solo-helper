@@ -31,10 +31,10 @@ export default function Plot(props) {
     existingPlotPoints = [];
     
     if (inputValue === "update" || inputValue === "Modifier un Plot Point") {
-      const uniquePlotPoints = [...new Set(props.plotPoints.map(item => item.name))];
+      const uniquePlotPoints = [...new Set(props.data.plotPoints.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlotPoints.length ; i++) {
-        if (props.plotPoints[i].needs[0].name !== "Non") {
+        if (props.data.plotPoints[i].needs[0].name !== "Non") {
           existingPlotPoints.push({
             "label": uniquePlotPoints[i],
             "value": uniquePlotPoints[i]
@@ -59,8 +59,8 @@ export default function Plot(props) {
 
     let uniqueNeedsPlotPoints = [];
     
-    for (let i = 0 ; i < props.plotPoints.find(item => item.name === inputValue).needs.length ; i++) {
-      uniqueNeedsPlotPoints.push(props.plotPoints.find(item => item.name === inputValue).needs[i]);
+    for (let i = 0 ; i < props.data.plotPoints.find(item => item.name === inputValue).needs.length ; i++) {
+      uniqueNeedsPlotPoints.push(props.data.plotPoints.find(item => item.name === inputValue).needs[i]);
     }
 
     for (let i = 0 ; i < uniqueNeedsPlotPoints.length ; i++) {
@@ -81,8 +81,8 @@ export default function Plot(props) {
 
     let uniqueCharactersPlots = [];
 
-    if (props.plotPoints.find(item => item.name === subfonctionsUpdatePlotPointsSelected).needs.find(item => item.name === inputValue).type === "Personnage") {
-      uniqueCharactersPlots = [...new Set(props.charactersList.map(item => item.name))];
+    if (props.data.plotPoints.find(item => item.name === subfonctionsUpdatePlotPointsSelected).needs.find(item => item.name === inputValue).type === "Personnage") {
+      uniqueCharactersPlots = [...new Set(props.data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharactersPlots.length ; i++) {
         if (uniqueCharactersPlots[i] !== "Nouveau personnage" && uniqueCharactersPlots[i] !== "Choisissez le personnage le plus logique") {
@@ -92,8 +92,8 @@ export default function Plot(props) {
           });
         }
       }
-    } else if (props.plotPoints.find(item => item.name === subfonctionsUpdatePlotPointsSelected).needs.find(item => item.name === inputValue).type === "Intrigue") {
-      uniqueCharactersPlots = [...new Set(props.plotsList.map(item => item.name))];
+    } else if (props.data.plotPoints.find(item => item.name === subfonctionsUpdatePlotPointsSelected).needs.find(item => item.name === inputValue).type === "Intrigue") {
+      uniqueCharactersPlots = [...new Set(props.data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharactersPlots.length ; i++) {
         if (uniqueCharactersPlots[i] !== "Nouvelle intrigue" && uniqueCharactersPlots[i] !== "Choisissez l'intrigue la plus logique") {
@@ -114,7 +114,7 @@ export default function Plot(props) {
 
   const clickLaunch = () => {
     if (subfonctionsPlotPointsSelected === "generation" || subfonctionsPlotPointsSelected === "Génération des Plot Points") {
-      let plotPointsResponse = plotPoints(props.plotPoints, props.charactersList, props.plotsList, props.currentPlot, props.themes, props.archivedCharacters);
+      let plotPointsResponse = plotPoints(props.data.plotPoints, props.data.charactersList, props.data.plotsList, props.data.currentPlot, props.data.themes, props.data.archivedCharacters);
       let responseText = "";
 
       firebase.updateDocument("helpers", props.idHelper, {
@@ -123,9 +123,13 @@ export default function Plot(props) {
         "plotsList":  plotPointsResponse.plotPointsList.plotsList,
         "currentPlot":  plotPointsResponse.plotPointsList.currentPlot,
         "archivedCharacters":  plotPointsResponse.plotPointsList.archivedCharacters
-      /* }).then(doc => { 
-        setData(doc.data()); */
       });
+
+      props.data.plotPoints = plotPointsResponse.plotPointsList.plotPoints;
+      props.data.charactersList = plotPointsResponse.plotPointsList.charactersList;
+      props.data.plotsList = plotPointsResponse.plotPointsList.plotsList;
+      props.data.currentPlot = plotPointsResponse.plotPointsList.currentPlot;
+      props.data.archivedCharacters = plotPointsResponse.plotPointsList.archivedCharacters;
 
       for (let i = 0 ; i < plotPointsResponse.plotPointsList.plotPoints.length ; i++) {
         responseText = responseText + (i + 1) + "- " + plotPointsResponse.plotPointsList.plotPoints[i].name;
@@ -137,7 +141,7 @@ export default function Plot(props) {
 
       setHistory(h => ([...h, logPlotPoints(responseText)]));
     } else if (subfonctionsPlotPointsSelected === "list" || subfonctionsPlotPointsSelected === "Liste des Plot Points") {
-      let plotPointsResponse = plotPointsRead(props.plotPoints);
+      let plotPointsResponse = plotPointsRead(props.data.plotPoints);
       let responseText = "";
       let needsText = "";
 
@@ -167,16 +171,18 @@ export default function Plot(props) {
       
       setHistory(h => ([...h, logPlotPoints(responseText)]));
     } else if (subfonctionsPlotPointsSelected === "update" || subfonctionsPlotPointsSelected === "Modifier un Plot Point") {
-      let plotPointsResponse = plotPointsUpdate(props.plotPoints, subfonctionsUpdatePlotPointsSelected, subfonctionsUpdateNeedsPlotPointsSelected, subfonctionsUpdateNamePlotPointsSelected);
+      let plotPointsResponse = plotPointsUpdate(props.data.plotPoints, subfonctionsUpdatePlotPointsSelected, subfonctionsUpdateNeedsPlotPointsSelected, subfonctionsUpdateNamePlotPointsSelected);
 
       firebase.updateDocument("helpers", props.idHelper, {
         "plotPoints": plotPointsResponse.plotPoints
-      /* }).then(doc => {
-        setData(doc.data()); */
       });
+
+      props.data.plotPoints = plotPointsResponse.plotPoints;
 
       setHistory(h => ([...h, logPlotPoints(subfonctionsUpdateNeedsPlotPointsSelected + " a été remplacé par " + subfonctionsUpdateNamePlotPointsSelected)]));
     }
+
+    props.updateData(props.data);
   }
   
   return (

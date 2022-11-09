@@ -291,7 +291,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-fate-description"
         >
           <Box sx={style}>
-            <Fate chaosFactor={data.chaosFactor} /> 
+            <Fate data={data} updateData={updateData} /> 
           </Box>
         </Modal>
       : null}
@@ -304,7 +304,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-loot-description"
         >
           <Box sx={style}>
-            <Loot inventory={data.inventory} idHelper={id} /> 
+            <Loot idHelper={id} data={data} updateData={updateData} /> 
           </Box>
         </Modal>
       : null}
@@ -317,7 +317,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-character-description"
         >
           <Box sx={style}>
-            <Character charactersList={data.charactersList} archivedCharacters={data.archivedCharacters} idHelper={id} /> 
+            <Character idHelper={id} data={data} updateData={updateData} /> 
           </Box>
         </Modal>
       : null}
@@ -330,7 +330,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-plot-description"
         >
           <Box sx={style}>
-            <Plot plotsList={data.plotsList} currentPlot={data.currentPlot} idHelper={id} /> 
+            <Plot idHelper={id} data={data} updateData={updateData} /> 
           </Box>
         </Modal>
       : null}
@@ -343,7 +343,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-plotPoint-description"
         >
           <Box sx={style}>
-            <PlotPoint plotPoints={data.plotPoints} charactersList={data.charactersList} plotsList={data.plotsList} currentPlot={data.currentPlot} themes={data.themes} archivedCharacters={data.archivedCharacters} idHelper={id} /> 
+            <PlotPoint idHelper={id} data={data} updateData={updateData} /> 
           </Box>
         </Modal>
       : null}
@@ -356,7 +356,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-theme-description"
         >
           <Box sx={style}>
-            <Theme themes={data.themes} idHelper={id} /> 
+            <Theme idHelper={id} data={data} updateData={updateData} /> 
           </Box>
         </Modal>
       : null}
@@ -369,7 +369,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-behavior-description"
         >
           <Box sx={style}>
-            <Behavior charactersList={data.charactersList} plotsList={data.plotsList} currentPlot={data.currentPlot} idHelper={id} />
+            <Behavior idHelper={id} data={data} updateData={updateData} />
           </Box>
         </Modal>
       : null}
@@ -382,7 +382,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-statistic-description"
         >
           <Box sx={style}>
-            <Statistic />
+            <Statistic data={data} updateData={updateData} />
           </Box>
         </Modal>
       : null}
@@ -395,7 +395,7 @@ export default function FunctionAppBar() {
           aria-describedby="modal-creature-description"
         >
           <Box sx={style}>
-            <Creature data={data} />
+            <Creature data={data} updateData={updateData} />
           </Box>
         </Modal>
       : null}

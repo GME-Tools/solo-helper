@@ -39,7 +39,7 @@ export default function Behavior(props) {
     setSubfonctionsBehaviorSelected(inputValue);
 
     if (inputValue === 'activatedDescriptors' || inputValue === 'Mettre à jour le bonus des descripteurs activés') {
-      const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
+      const uniqueCharacters = [...new Set(props.data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
         if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
@@ -55,7 +55,7 @@ export default function Behavior(props) {
       setHiddenBehaviorDisposition(true);
       setHiddenBehaviorAction(true);
     } else if (inputValue === 'disposition' || inputValue === "Générer la disposition d'un Personnage") {
-      const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
+      const uniqueCharacters = [...new Set(props.data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
         if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
@@ -71,7 +71,7 @@ export default function Behavior(props) {
       setHiddenBehaviorDisposition(false);
       setHiddenBehaviorAction(true);
     } else if (inputValue === 'action' || inputValue === "Générer l'action d'un Personnage") {
-      const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
+      const uniqueCharacters = [...new Set(props.data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
         if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
@@ -114,35 +114,35 @@ export default function Behavior(props) {
 
   const clickLaunch = () => {
     if (subfonctionsBehaviorSelected === "activatedDescriptors" || subfonctionsBehaviorSelected === "Mettre à jour le bonus des descripteurs activés") {
-      let behaviorResponse = behaviorDescriptors(props.charactersList, subfonctionsBehaviorActivatedDescriptorsCharactersSelected, subfonctionsBehaviorActivatedDescriptorsNumbersSelected);
+      let behaviorResponse = behaviorDescriptors(props.data.charactersList, subfonctionsBehaviorActivatedDescriptorsCharactersSelected, subfonctionsBehaviorActivatedDescriptorsNumbersSelected);
 
       firebase.updateDocument("helpers", props.idHelper, {
         "charactersList": behaviorResponse.charactersList
-      /* }).then(doc => {
-          setData(doc.data()); */
       });
+
+      props.data.charactersList = behaviorResponse.charactersList;
 
       setHistory(h => ([...h, logBehavior("Le bonus des descripteurs activés pour " + subfonctionsBehaviorActivatedDescriptorsCharactersSelected + " est maintenant de " + subfonctionsBehaviorActivatedDescriptorsNumbersSelected)]));
     } else if (subfonctionsBehaviorSelected === 'disposition' || subfonctionsBehaviorSelected === "Générer la disposition d'un Personnage") {
-      let behaviorResponse = behaviorDisposition(props.charactersList, subfonctionsBehaviorDispositionSelected);
+      let behaviorResponse = behaviorDisposition(props.data.charactersList, subfonctionsBehaviorDispositionSelected);
 
       firebase.updateDocument("helpers", props.idHelper, {
         "charactersList": behaviorResponse.charactersList
-      /* }).then(doc => {
-          setData(doc.data()); */
       });
+
+      props.data.charactersList = behaviorResponse.charactersList;
 
       setHistory(h => ([...h, logBehavior(behaviorResponse.dispositionName + " (" + behaviorResponse.dispositionDescription + ")")]));
     } else if (subfonctionsBehaviorSelected === 'action' || subfonctionsBehaviorSelected === "Générer l'action d'un Personnage") {
       let need = "";
       
-      let behaviorResponse = behaviorAction(props.charactersList, subfonctionsBehaviorActionSelected, props.plotsList, props.currentPlot);
+      let behaviorResponse = behaviorAction(props.data.charactersList, subfonctionsBehaviorActionSelected, props.data.plotsList, props.data.currentPlot);
 
       firebase.updateDocument("helpers", props.idHelper, {
         "charactersList": behaviorResponse.charactersList
-      /* }).then(doc => {
-          setData(doc.data()); */
       });
+
+      props.data.charactersList = behaviorResponse.charactersList;
 
       for (let i = 0 ; i < behaviorResponse.actionNeed.length ; i++) {
         need = need + behaviorResponse.actionNeed[i];
@@ -162,6 +162,8 @@ export default function Behavior(props) {
         setHistory(h => ([...h, logBehavior("Nouveau descripteur pour " + subfonctionsBehaviorActionSelected + " : " + behaviorResponse.descriptor + " (" + behaviorResponse.actionDescriptionDescriptor + ")")]));
       }
     }
+
+    props.updateData(props.data);
   }
   
   return (

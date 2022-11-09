@@ -52,7 +52,7 @@ export default function Fate(props) {
       odd = "HB";
     }
     
-    let fateResponse = fateCheck(props.chaosFactor, odd, yesOrNoSelected);
+    let fateResponse = fateCheck(props.data.chaosFactor, odd, yesOrNoSelected);
 
     let yesno = "";
       
@@ -69,9 +69,9 @@ export default function Fate(props) {
     if (fateResponse.randomEvent === true) {
       let eventResponse = eventCheck();
       
-      setHistory(h => ([...h, logFate(odd, props.chaosFactor, yesno + "Evénement aléatoire\n" + eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
+      setHistory(h => ([...h, logFate(odd, props.data.chaosFactor, yesno + "Evénement aléatoire\n" + eventResponse.eventFocusName + " (" + eventResponse.eventFocusDescription + ")\n\n" + eventResponse.eventAction + " / " + eventResponse.eventSubject)]));
     } else {
-      setHistory(h => ([...h, logFate(odd, props.chaosFactor, yesno)]));
+      setHistory(h => ([...h, logFate(odd, props.data.chaosFactor, yesno)]));
     }
   }
   

@@ -44,17 +44,13 @@ export default function Loot(props) {
       body = "lo";
     }
 
-    let fantasyLootResponse = fantasyLootGenerator(props.inventory, body, placesSelected);
+    let fantasyLootResponse = fantasyLootGenerator(props.data.inventory, body, placesSelected);
 
     firebase.updateDocument("helpers", props.idHelper, {
       "inventory": fantasyLootResponse.inventory
     });
-
-    /* firebase.updateDocument("helpers", props.idHelper, {
-      "inventory": fantasyLootResponse.inventory
-    }).then(doc => {
-      setData(doc.data());
-    }); */
+    
+    props.data.inventory = fantasyLootResponse.inventory;
 
     let responseText = "";
 
@@ -71,6 +67,8 @@ export default function Loot(props) {
       
       setHistory(h => ([...h, logLoot(responseText)]));
     }
+
+    props.updateData(props.data);
   }
   
   return (

@@ -58,7 +58,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenDeleteCharacter(true);
       setHiddenInformationCharacter(true);
     } else if (inputValue === 'occurrence' || inputValue === "Occurrences d'un personnage") {
-      const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
+      const uniqueCharacters = [...new Set(props.data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
         if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
@@ -79,7 +79,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenDeleteCharacter(true);
       setHiddenInformationCharacter(true);
     } else if (inputValue === 'update' || inputValue === "Modifier un personnage") {
-      const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
+      const uniqueCharacters = [...new Set(props.data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
         if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
@@ -100,7 +100,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenDeleteCharacter(true);
       setHiddenInformationCharacter(true);
     } else if (inputValue === 'delete' || inputValue === "Supprimer une occurrence et / ou un personnage") {
-      const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
+      const uniqueCharacters = [...new Set(props.data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
         if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
@@ -121,7 +121,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       setHiddenUpdatePlayerCharacter(true);
       setHiddenInformationCharacter(true);
     } else if (inputValue === 'information' || inputValue === "Informations sur un personnage") {
-      const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
+      const uniqueCharacters = [...new Set(props.data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
         if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
@@ -158,7 +158,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
     setSubfonctionsAddCharactersSelected(inputValue);
 
     if (inputValue === "existing") {
-      const uniqueCharacters = [...new Set(props.charactersList.map(item => item.name))];
+      const uniqueCharacters = [...new Set(props.data.charactersList.map(item => item.name))];
 
       for (let i = 0 ; i < uniqueCharacters.length ; i++) {
         if (uniqueCharacters[i] !== "Nouveau personnage" && uniqueCharacters[i] !== "Choisissez le personnage le plus logique") {
@@ -196,10 +196,10 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const changeSubfonctionsUpdateCharacters = (event, inputValue) => {
     setSubfonctionsUpdateCharactersSelected(inputValue);
 
-    if (props.charactersList.find(character => character.name === inputValue)) {
-      for (let i = 0 ; i < props.charactersList.length ; i++) {
-        if (props.charactersList[i].name === inputValue) {
-          if (props.charactersList[i].player === false) {
+    if (props.data.charactersList.find(character => character.name === inputValue)) {
+      for (let i = 0 ; i < props.data.charactersList.length ; i++) {
+        if (props.data.charactersList[i].name === inputValue) {
+          if (props.data.charactersList[i].player === false) {
             updatePlayer = "npc";
           } else {
             updatePlayer = "player";
@@ -239,14 +239,14 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
   const clickLaunch = () => {
     if (subfonctionsCharactersSelected === "add" || subfonctionsCharactersSelected === "Ajouter une occurrence et / ou un personnage") {
       if (subfonctionsAddCharactersSelected === "existing") {
-        let characterResponse = characterAdd(props.charactersList, subfonctionsAddExistingCharactersSelected);
+        let characterResponse = characterAdd(props.data.charactersList, subfonctionsAddExistingCharactersSelected);
 
         if (characterResponse.full === false) {
           firebase.updateDocument("helpers", props.idHelper, {
             "charactersList": characterResponse.charactersList
-          /* }).then(doc => {
-            setData(doc.data()); */
           });
+
+          props.data.charactersList = characterResponse.charactersList;
 
           setHistory(h => ([...h, logCharacter("Une occurrence du personnage " + subfonctionsAddExistingCharactersSelected + " a été ajoutée à la liste de personnages")]));
         } else {
@@ -259,14 +259,14 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
           isPlayer = true;
         }
         
-        let characterResponse = characterAdd(props.charactersList, subfonctionsAddNewNameCharactersSelected, isPlayer);
+        let characterResponse = characterAdd(props.data.charactersList, subfonctionsAddNewNameCharactersSelected, isPlayer);
 
         if (characterResponse.full === false) {
           firebase.updateDocument("helpers", props.idHelper, {
             "charactersList": characterResponse.charactersList
-          /* }).then(doc => {
-            setData(doc.data()); */
           });
+
+          props.data.charactersList = characterResponse.charactersList;
 
           setHistory(h => ([...h, logCharacter("Le personnage " + subfonctionsAddNewNameCharactersSelected + " a été ajouté à la liste de personnages")]));
         } else {
@@ -277,13 +277,13 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
       let characterIdentityText = "";
       let characterDescriptorsText = "";
       
-      let characterResponse = characterCreation(props.charactersList, [], "", 0, "");
+      let characterResponse = characterCreation(props.data.charactersList, [], "", 0, "");
 
       firebase.updateDocument("helpers", props.idHelper, {
         "charactersList": characterResponse.charactersList
-      /* }).then(doc => {
-        setData(doc.data()); */
       });
+
+      props.data.charactersList = characterResponse.charactersList;
 
       for (let i = 0 ; i < characterResponse.characterIdentity.length ; i++) {
         characterIdentityText = characterIdentityText + characterResponse.characterIdentity[i];
@@ -303,7 +303,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
 
       setHistory(h => ([...h, logCharacter("Le personnage " + characterResponse.characterName + " a été créé avec les caractéristiques suivantes (" + characterResponse.characterSpecialTrait.characterSpecialTraitName + " - " + characterIdentityText + " - " + characterDescriptorsText + ")")]));
     } else if (subfonctionsCharactersSelected === "list" || subfonctionsCharactersSelected === "Liste de personnages") {
-      let characterResponse = characterList(props.charactersList);
+      let characterResponse = characterList(props.data.charactersList);
 
       let responseText = "";
 
@@ -317,11 +317,11 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
 
       setHistory(h => ([...h, logCharacter(responseText)]));
     } else if (subfonctionsCharactersSelected === "random" || subfonctionsCharactersSelected === "Sélectionner aléatoirement un personnage") {
-      let characterResponse = characterRandom(props.charactersList);
+      let characterResponse = characterRandom(props.data.charactersList);
 
       setHistory(h => ([...h, logCharacter(characterResponse.name)]));
     } else if (subfonctionsCharactersSelected === 'occurrence' || subfonctionsCharactersSelected === "Occurrences d'un personnage") {
-      let characterResponse = characterOccurrences(props.charactersList, subfonctionsOccurrenceCharactersSelected);
+      let characterResponse = characterOccurrences(props.data.charactersList, subfonctionsOccurrenceCharactersSelected);
 
       setHistory(h => ([...h, logCharacter("Le personnage " + subfonctionsOccurrenceCharactersSelected + " apparaît " + characterResponse.numberOf + " fois dans la liste des personnages")]));
     } else if (subfonctionsCharactersSelected === "update" || subfonctionsCharactersSelected === "Modifier un personnage") {
@@ -331,24 +331,25 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
         isPlayer = true;
       }
       
-      let characterResponse = characterUpdate(props.charactersList, subfonctionsUpdateCharactersSelected, subfonctionsUpdateNameCharactersSelected, isPlayer);
+      let characterResponse = characterUpdate(props.data.charactersList, subfonctionsUpdateCharactersSelected, subfonctionsUpdateNameCharactersSelected, isPlayer);
 
       firebase.updateDocument("helpers", props.idHelper, {
         "charactersList": characterResponse.charactersList
-      /* }).then(doc => {
-        setData(doc.data()); */
       });
+
+      props.data.charactersList = characterResponse.charactersList;
 
       setHistory(h => ([...h, logCharacter("Le personnage " + subfonctionsUpdateNameCharactersSelected + " a été mis à jour")]));
     } else if (subfonctionsCharactersSelected === 'delete' || subfonctionsCharactersSelected === "Supprimer une occurrence et / ou un personnage") {
-      let characterResponse = characterDelete(props.charactersList, props.archivedCharacters, subfonctionsDeleteCharactersSelected);
+      let characterResponse = characterDelete(props.data.charactersList, props.data.archivedCharacters, subfonctionsDeleteCharactersSelected);
 
       firebase.updateDocument("helpers", props.idHelper, {
         "charactersList": characterResponse.charactersList,
         "archivedCharacters": characterResponse.archivedCharacters
-      /* }).then(doc => {
-        setData(doc.data()); */
       });
+
+      props.data.charactersList = characterResponse.charactersList;
+      props.data.archivedCharacters = characterResponse.archivedCharacters;
 
       if (characterResponse.empty === false) {
         setHistory(h => ([...h, logCharacter("Une occurrence du personnage " + subfonctionsDeleteCharactersSelected + " a été supprimée de la liste de personnages")]));
@@ -358,7 +359,7 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
     } else if (subfonctionsCharactersSelected === 'information' || subfonctionsCharactersSelected === "Informations sur un personnage") {
       let player = "";
       
-      let characterResponse = characterInformation(props.charactersList, subfonctionsInformationCharactersSelected);
+      let characterResponse = characterInformation(props.data.charactersList, subfonctionsInformationCharactersSelected);
 
       if (characterResponse.player === true) {
         player = "Joueur";
@@ -368,6 +369,8 @@ const [subfonctionsAddNewPlayerCharactersSelected, setSubfonctionsAddNewPlayerCh
 
       setHistory(h => ([...h, logCharacter("Nom : " + characterResponse.name + " (" + player + ") / Pièces d'or : " + characterResponse.piecesOr + " / Mode de déplacement : " + characterResponse.travel.travelMode)]));
     }
+
+    props.updateData(props.data);
   }
   
   return (

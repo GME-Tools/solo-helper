@@ -77,18 +77,18 @@ export default function Theme(props) {
       let themeResponse;
       
       if (creationThemesSelected === "random") {
-        themeResponse = themeCreation(props.themes, []);
+        themeResponse = themeCreation(props.data.themes, []);
       } else {
         let manualThemes = [manualCreationThemesSelected1, manualCreationThemesSelected2, manualCreationThemesSelected3, manualCreationThemesSelected4, manualCreationThemesSelected5];
 
-        themeResponse = themeCreation(props.themes, manualThemes);
+        themeResponse = themeCreation(props.data.themes, manualThemes);
       }
 
       firebase.updateDocument("helpers", props.idHelper, {
         "themes": themeResponse.themes
-      /* }).then(doc => {
-        setData(doc.data()); */
       });
+
+      props.data.themes = themeResponse.themes;
 
       let responseText = "";
 
@@ -102,7 +102,7 @@ export default function Theme(props) {
 
       setHistory(h => ([...h, logTheme(responseText)]));
     } else if (subfonctionsThemesSelected === "list" || subfonctionsThemesSelected === "Liste des thèmes") {
-      let themeResponse = themeList(props.themes);
+      let themeResponse = themeList(props.data.themes);
 
       if (themeResponse.isExisted === true) {
         let responseText = "";
@@ -120,7 +120,7 @@ export default function Theme(props) {
         setHistory(h => ([...h, logTheme("La liste des thèmes n'a pas encore été créée pour cette campagne.")]));
       }
     } else if (subfonctionsThemesSelected === "random" || subfonctionsThemesSelected === "Sélectionner aléatoirement un thème") {
-      let themeResponse = themeRandom(props.themes);
+      let themeResponse = themeRandom(props.data.themes);
 
       if (themeResponse.isExisted === true) {
         setHistory(h => ([...h, logTheme(themeResponse.themeName + " (" + themeResponse.themeDescription + ")")]));
@@ -128,6 +128,8 @@ export default function Theme(props) {
         setHistory(h => ([...h, logTheme("La liste des thèmes n'a pas encore été créée pour cette campagne")]));
       }
     }
+
+    props.updateData(props.data);
   }
   
   return (

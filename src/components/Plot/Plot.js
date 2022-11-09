@@ -48,7 +48,7 @@ export default function Plot(props) {
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
     } else if (inputValue === 'occurrence' || inputValue === "Occurrences d'une intrigue") {
-      const uniquePlots = [...new Set(props.plotsList.map(item => item.name))];
+      const uniquePlots = [...new Set(props.data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
         if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
@@ -67,7 +67,7 @@ export default function Plot(props) {
       setHiddenUpdateNamePlot(true);
       setHiddenDeletePlot(true);
     } else if (inputValue === "update" || inputValue === "Modifier une intrigue") {
-      const uniquePlots = [...new Set(props.plotsList.map(item => item.name))];
+      const uniquePlots = [...new Set(props.data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
         if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
@@ -86,7 +86,7 @@ export default function Plot(props) {
       setHiddenUpdateNamePlot(false);
       setHiddenDeletePlot(true);
     } else if (inputValue === 'delete' || inputValue === "Supprimer une occurrence et / ou une intrigue") {
-      const uniquePlots = [...new Set(props.plotsList.map(item => item.name))];
+      const uniquePlots = [...new Set(props.data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
         if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
@@ -119,7 +119,7 @@ export default function Plot(props) {
     setSubfonctionsAddPlotsSelected(inputValue);
 
     if (inputValue === "existing") {
-      const uniquePlots = [...new Set(props.plotsList.map(item => item.name))];
+      const uniquePlots = [...new Set(props.data.plotsList.map(item => item.name))];
 
       for (let i = 0 ; i < uniquePlots.length ; i++) {
         if (uniquePlots[i] !== "Nouvelle intrigue" && uniquePlots[i] !== "Choisissez l'intrigue la plus logique") {
@@ -167,28 +167,28 @@ export default function Plot(props) {
   const clickLaunch = () => {
     if (subfonctionsPlotsSelected === "add" || subfonctionsPlotsSelected === "Ajouter une occurrence et / ou une intrigue") {
       if (subfonctionsAddPlotsSelected === "existing") {
-        let plotResponse = plotAdd(props.plotsList, subfonctionsAddExistingPlotsSelected);
+        let plotResponse = plotAdd(props.data.plotsList, subfonctionsAddExistingPlotsSelected);
 
         if (plotResponse.full === false) {
           firebase.updateDocument("helpers", props.idHelper, {
             "plotsList": plotResponse.plotsList
-          /* }).then(doc => {
-            setData(doc.data()); */
           });
+
+          props.data.plotsList = plotResponse.plotsList;
 
           setHistory(h => ([...h, logPlot("Une occurrence de l'intrigue " + subfonctionsAddExistingPlotsSelected + " a été ajoutée à la liste des intrigues")]));
         } else {
           setHistory(h => ([...h, logPlot("Il y a déjà trois occurrences de cette intrigue dans la liste des intrigues")]));
         }
       } else {
-        let plotResponse = plotAdd(props.plotsList, subfonctionsAddNewPlotsSelected);
+        let plotResponse = plotAdd(props.data.plotsList, subfonctionsAddNewPlotsSelected);
 
         if (plotResponse.full === false) {
           firebase.updateDocument("helpers", props.idHelper, {
             "plotsList": plotResponse.plotsList
-          /* }).then(doc => {
-            setData(doc.data()); */
           });
+
+          props.data.plotsList = plotResponse.plotsList;
 
           setHistory(h => ([...h, logPlot("L'intrigue " + subfonctionsAddNewPlotsSelected + " a été ajoutée à la liste des intrigues")]));
         } else {
@@ -196,7 +196,7 @@ export default function Plot(props) {
         }
       }
     } else if (subfonctionsPlotsSelected === "list" || subfonctionsPlotsSelected === "Liste d'intrigues") {
-      let plotResponse = plotList(props.plotsList);
+      let plotResponse = plotList(props.data.plotsList);
 
       let responseText = "";
 
@@ -210,31 +210,31 @@ export default function Plot(props) {
 
       setHistory(h => ([...h, logPlot(responseText)]));
     } else if (subfonctionsPlotsSelected === "random" || subfonctionsPlotsSelected === "Sélectionner aléatoirement une intrigue") {
-      let plotResponse = plotRandom(props.plotsList, false, false, props.currentPlot);
+      let plotResponse = plotRandom(props.data.plotsList, false, false, props.data.currentPlot);
 
       setHistory(h => ([...h, logPlot(plotResponse.name)]));
     } else if (subfonctionsPlotsSelected === 'occurrence' || subfonctionsPlotsSelected === "Occurrences d'une intrigue") {
-      let plotResponse = plotOccurrences(props.plotsList, subfonctionsOccurrencePlotsSelected);
+      let plotResponse = plotOccurrences(props.data.plotsList, subfonctionsOccurrencePlotsSelected);
 
       setHistory(h => ([...h, logPlot("L'intrigue " + subfonctionsOccurrencePlotsSelected + " apparaît " + plotResponse.numberOf + " fois dans la liste des intrigues")]));
     } else if (subfonctionsPlotsSelected === 'update' || subfonctionsPlotsSelected === 'Modifier une intrigue') {
-      let plotResponse = plotUpdate(props.plotsList, subfonctionsUpdatePlotsSelected, subfonctionsUpdateNamePlotsSelected);
+      let plotResponse = plotUpdate(props.data.plotsList, subfonctionsUpdatePlotsSelected, subfonctionsUpdateNamePlotsSelected);
 
       firebase.updateDocument("helpers", props.idHelper, {
         "plotsList": plotResponse.plotsList
-      /* }).then(doc => {
-        setData(doc.data()); */
       });
+
+      props.data.plotsList = plotResponse.plotsList;
 
       setHistory(h => ([...h, logPlot("L'intrigue " + subfonctionsUpdateNamePlotsSelected + " a été mise à jour")]));
     } else if (subfonctionsPlotsSelected === 'delete' || subfonctionsPlotsSelected === "Supprimer une occurrence et / ou une intrigue") {
-      let plotResponse = plotDelete(props.plotsList, subfonctionsDeletePlotsSelected);
+      let plotResponse = plotDelete(props.data.plotsList, subfonctionsDeletePlotsSelected);
 
       firebase.updateDocument("helpers", props.idHelper, {
         "plotsList": plotResponse.plotsList
-      /* }).then(doc => {
-        setData(doc.data()); */
       });
+
+      props.data.plotsList = plotResponse.plotsList;
 
       if (plotResponse.empty === false) {
         setHistory(h => ([...h, logPlot("Une occurrence de l'intrigue " + subfonctionsDeletePlotsSelected + " a été supprimée de la liste d'intrigues")]));
@@ -242,6 +242,8 @@ export default function Plot(props) {
         setHistory(h => ([...h, logPlot("La dernière occurrence de l'intrigue " + subfonctionsDeletePlotsSelected + " a été supprimée de la liste d'intrigues")]));
       }
     }
+
+    props.updateData(props.data);
   }
   
   return (
