@@ -24,13 +24,13 @@ const setCamping = function(weather, terrain) {
     bivouacSuccess = true;
   }
 
-  if (campaign[0].weather.includes("Neige") || campaign[0].weather.includes("neige")) {
+  if (weather.includes("Neige") || weather.includes("neige")) {
     bivouacRoll = dice.die(20);
 
     if (bivouacRoll < dcBivouac) {
       bivouacSuccess = false;
     }
-  } else if (campaign[0].weather.includes("Pluvieux") || campaign[0].weather.includes("Pluie")) {
+  } else if (weather.includes("Pluvieux") || weather.includes("Pluie")) {
     bivouacRoll = dice.die(20);
 
     if (bivouacRoll < dcBivouac) {
@@ -75,19 +75,6 @@ const setCamping = function(weather, terrain) {
       }
     }
   }
-
-  if (campaign[0].camping === undefined || campaign[0].camping.length === 0) {
-    campaign[0].camping = [];
-    campaign[0].camping.push({"findCamping": findCamping, "bivouacSuccess": bivouacSuccess, "disturbanceName": disturbanceName});
-  } else {
-    campaign[0].camping[0].findCamping = findCamping;
-    campaign[0].camping[0].bivouacSuccess = bivouacSuccess;
-    campaign[0].camping[0].disturbanceName = disturbanceName;
-  }
-
-  campaign[0].save(function (err) {
-    if (err) return handleError(err);
-  });
 
   return {
     findCamping: findCamping,

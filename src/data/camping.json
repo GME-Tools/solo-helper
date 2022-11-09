@@ -1,42 +1,42 @@
 {
   "findCamping": {
     "1": {
-      "terrain": "forêt",
+      "terrain": "Forêt",
       "dcCamping": 6,
       "dcBivouac": 6
     },
     "2": {
-      "terrain": "côtier",
+      "terrain": "Côtier",
       "dcCamping": 8,
       "dcBivouac": 8
     },
     "3": {
-      "terrain": "désert",
+      "terrain": "Désert",
       "dcCamping": 8,
       "dcBivouac": 14
     },
     "4": {
-      "terrain": "prairie",
+      "terrain": "Prairie",
       "dcCamping": 8,
       "dcBivouac": 10
     },
     "5": {
-      "terrain": "collines",
+      "terrain": "Collines",
       "dcCamping": 6,
       "dcBivouac": 8
     },
     "6": {
-      "terrain": "souterrain",
+      "terrain": "Souterrain",
       "dcCamping": 10,
       "dcBivouac": 1
     },
     "7": {
-      "terrain": "marais",
+      "terrain": "Marais",
       "dcCamping": 12,
       "dcBivouac": 8
     },
     "8": {
-      "terrain": "montagne - steppes glacées",
+      "terrain": "Montagne - Steppes glacées",
       "dcCamping": 14,
       "dcBivouac": 12
     }

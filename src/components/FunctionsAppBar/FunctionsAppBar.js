@@ -18,6 +18,7 @@ import detailCheck from 'backend/mythic/detailCheck';
 import Statistic from 'components/Statistic/Statistic';
 import Creature from 'components/Creature/Creature';
 import Weather from 'components/Weather/Weather';
+import Camping from 'components/Camping/Camping';
 
 const style = {
   position: 'absolute',
@@ -34,18 +35,19 @@ const style = {
 const functions = [
   { label: 'Action', id: 1 },
   { label: 'Behavior', id: 2 },
-  { label: 'Character', id: 3 },
-  { label: 'Creature', id: 4 },
-  { label: 'Description', id: 5 },
-  { label: 'Detail', id: 6 },
-  { label: 'Event', id: 7 },
-  { label: 'Fantasy Loot', id: 8 },
-  { label: 'Fate', id: 9 },
-  { label: 'Plot', id: 10 },
-  { label: 'Plot Points', id: 11 },
-  { label: 'Statistic', id: 12 },
-  { label: 'Theme', id: 13 },
-  { label: 'Weather', id: 14 }
+  { label: 'Camping', id: 3 },
+  { label: 'Character', id: 4 },
+  { label: 'Creature', id: 5 },
+  { label: 'Description', id: 6 },
+  { label: 'Detail', id: 7 },
+  { label: 'Event', id: 8 },
+  { label: 'Fantasy Loot', id: 9 },
+  { label: 'Fate', id: 10 },
+  { label: 'Plot', id: 11 },
+  { label: 'Plot Points', id: 12 },
+  { label: 'Statistic', id: 13 },
+  { label: 'Theme', id: 14 },
+  { label: 'Weather', id: 15 }
 ];
 
 export default function FunctionAppBar() {
@@ -66,6 +68,7 @@ export default function FunctionAppBar() {
   const [hiddenStatistic, setHiddenStatistic] = useState(true);
   const [hiddenCreature, setHiddenCreature] = useState(true);
   const [hiddenWeather, setHiddenWeather] = useState(true);
+  const [hiddenCamping, setHiddenCamping] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -77,6 +80,21 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(false);
+      setHiddenCamping(true);
+      setHiddenCharacter(true);
+      setHiddenCreature(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(true);
+      setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
+      setHiddenTheme(true);
+      setHiddenWeather(true);
+    } else if (inputValue === "Camping") {
+      handleOpenModal();
+
+      setHiddenBehavior(true);
+      setHiddenCamping(false);
       setHiddenCharacter(true);
       setHiddenCreature(true);
       setHiddenFate(true);
@@ -90,6 +108,7 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(false);
       setHiddenCreature(true);
       setHiddenFate(true);
@@ -103,6 +122,7 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(false);
       setHiddenFate(true);
@@ -116,6 +136,7 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
       setHiddenFate(false);
@@ -129,6 +150,7 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
       setHiddenFate(true);
@@ -142,6 +164,7 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
       setHiddenFate(true);
@@ -155,6 +178,7 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
       setHiddenFate(true);
@@ -168,6 +192,7 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
       setHiddenFate(true);
@@ -181,6 +206,7 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
       setHiddenFate(true);
@@ -194,6 +220,7 @@ export default function FunctionAppBar() {
       handleOpenModal();
 
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
       setHiddenFate(true);
@@ -205,6 +232,7 @@ export default function FunctionAppBar() {
       setHiddenWeather(false);
     } else {
       setHiddenBehavior(true);
+      setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
       setHiddenFate(true);
@@ -409,6 +437,19 @@ export default function FunctionAppBar() {
         >
           <Box sx={style}>
             <Weather idHelper={id} data={data} updateData={updateData} />
+          </Box>
+        </Modal>
+      : null}
+
+      {!hiddenCamping ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-camping-label"
+          aria-describedby="modal-camping-description"
+        >
+          <Box sx={style}>
+            <Camping idHelper={id} data={data} updateData={updateData} />
           </Box>
         </Modal>
       : null}
