@@ -74,7 +74,7 @@ export const logCreature = (result) => ({
 });
 
 export const logWeather = (result) => ({
-  emoji: <span style={{lineHeight: 1}}>🌨</span>,
+  emoji: <span style={{lineHeight: 1}}>⛈</span>,
   command: "Météo",
   result: result
 });
@@ -82,6 +82,12 @@ export const logWeather = (result) => ({
 export const logCamping = (result) => ({
   emoji: <span style={{lineHeight: 1}}>🏕</span>,
   command: "Camping",
+  result: result
+});
+
+export const logEncounters = (result) => ({
+  emoji: <span style={{lineHeight: 1}}>⚔</span>,
+  command: "Rencontres",
   result: result
 });
 

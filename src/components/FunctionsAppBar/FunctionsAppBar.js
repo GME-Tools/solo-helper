@@ -19,6 +19,7 @@ import Statistic from 'components/Statistic/Statistic';
 import Creature from 'components/Creature/Creature';
 import Weather from 'components/Weather/Weather';
 import Camping from 'components/Camping/Camping';
+import Encounters from 'components/Encounters/Encounters';
 
 const style = {
   position: 'absolute',
@@ -40,14 +41,15 @@ const functions = [
   { label: 'Creature', id: 5 },
   { label: 'Description', id: 6 },
   { label: 'Detail', id: 7 },
-  { label: 'Event', id: 8 },
-  { label: 'Fantasy Loot', id: 9 },
-  { label: 'Fate', id: 10 },
-  { label: 'Plot', id: 11 },
-  { label: 'Plot Points', id: 12 },
-  { label: 'Statistic', id: 13 },
-  { label: 'Theme', id: 14 },
-  { label: 'Weather', id: 15 }
+  { label: 'Encounters', id: 8 },
+  { label: 'Event', id: 9 },
+  { label: 'Fantasy Loot', id: 10 },
+  { label: 'Fate', id: 11 },
+  { label: 'Plot', id: 12 },
+  { label: 'Plot Points', id: 13 },
+  { label: 'Statistic', id: 14 },
+  { label: 'Theme', id: 15 },
+  { label: 'Weather', id: 16 }
 ];
 
 export default function FunctionAppBar() {
@@ -69,6 +71,7 @@ export default function FunctionAppBar() {
   const [hiddenCreature, setHiddenCreature] = useState(true);
   const [hiddenWeather, setHiddenWeather] = useState(true);
   const [hiddenCamping, setHiddenCamping] = useState(true);
+  const [hiddenEncounters, setHiddenEncounters] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -83,6 +86,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -97,6 +101,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(false);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -111,6 +116,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(false);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -125,6 +131,22 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(false);
+      setHiddenEncounters(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(true);
+      setHiddenPlotPoint(true);
+      setHiddenStatistic(true);
+      setHiddenTheme(true);
+      setHiddenWeather(true);
+    } else if (inputValue === "Encounters") {
+      handleOpenModal();
+
+      setHiddenBehavior(true);
+      setHiddenCamping(true);
+      setHiddenCharacter(true);
+      setHiddenCreature(true);
+      setHiddenEncounters(false);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -139,6 +161,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(false);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -153,6 +176,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(false);
       setHiddenPlot(true);
@@ -167,6 +191,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(false);
@@ -181,6 +206,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -195,6 +221,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -209,6 +236,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -223,6 +251,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -235,6 +264,7 @@ export default function FunctionAppBar() {
       setHiddenCamping(true);
       setHiddenCharacter(true);
       setHiddenCreature(true);
+      setHiddenEncounters(true);
       setHiddenFate(true);
       setHiddenLoot(true);
       setHiddenPlot(true);
@@ -450,6 +480,19 @@ export default function FunctionAppBar() {
         >
           <Box sx={style}>
             <Camping idHelper={id} data={data} updateData={updateData} />
+          </Box>
+        </Modal>
+      : null}
+
+      {!hiddenEncounters ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-encounters-label"
+          aria-describedby="modal-encounters-description"
+        >
+          <Box sx={style}>
+            <Encounters idHelper={id} data={data} updateData={updateData} />
           </Box>
         </Modal>
       : null}
