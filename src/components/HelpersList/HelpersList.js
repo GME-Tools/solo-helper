@@ -152,7 +152,8 @@ export default function HelpersList() {
         { "value": [97,100],
           "name": "Choisissez l'intrigue la plus logique" }
       ],
-      plotPoints:[],
+      plotPoints: [],
+      quests: [],
       season: "",
       theme: "",
       themes: [],

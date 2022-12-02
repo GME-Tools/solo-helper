@@ -20,6 +20,7 @@ import Creature from 'components/Creature/Creature';
 import Weather from 'components/Weather/Weather';
 import Camping from 'components/Camping/Camping';
 import Encounters from 'components/Encounters/Encounters';
+import Quest from 'components/Quest/Quest';
 
 const style = {
   position: 'absolute',
@@ -47,9 +48,10 @@ const functions = [
   { label: 'Fate', id: 11 },
   { label: 'Plot', id: 12 },
   { label: 'Plot Points', id: 13 },
-  { label: 'Statistic', id: 14 },
-  { label: 'Theme', id: 15 },
-  { label: 'Weather', id: 16 }
+  { label: 'Quest', id: 14 },
+  { label: 'Statistic', id: 15 },
+  { label: 'Theme', id: 16 },
+  { label: 'Weather', id: 17 }
 ];
 
 export default function FunctionAppBar() {
@@ -72,6 +74,7 @@ export default function FunctionAppBar() {
   const [hiddenWeather, setHiddenWeather] = useState(true);
   const [hiddenCamping, setHiddenCamping] = useState(true);
   const [hiddenEncounters, setHiddenEncounters] = useState(true);
+  const [hiddenQuest, setHiddenQuest] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -91,6 +94,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -106,6 +110,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -121,6 +126,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -136,6 +142,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -151,6 +158,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -166,6 +174,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -181,6 +190,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(false);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -196,6 +206,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(false);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -211,6 +222,23 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(false);
+      setHiddenQuest(true);
+      setHiddenStatistic(true);
+      setHiddenTheme(true);
+      setHiddenWeather(true);
+    } else if (inputValue === "Quest") {
+      handleOpenModal();
+
+      setHiddenBehavior(true);
+      setHiddenCamping(true);
+      setHiddenCharacter(true);
+      setHiddenCreature(true);
+      setHiddenEncounters(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(true);
+      setHiddenPlotPoint(true);
+      setHiddenQuest(false);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -226,6 +254,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(false);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -241,6 +270,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(false);
       setHiddenWeather(true);
@@ -256,6 +286,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(false);
@@ -269,6 +300,7 @@ export default function FunctionAppBar() {
       setHiddenLoot(true);
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
+      setHiddenQuest(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -493,6 +525,19 @@ export default function FunctionAppBar() {
         >
           <Box sx={style}>
             <Encounters idHelper={id} data={data} updateData={updateData} />
+          </Box>
+        </Modal>
+      : null}
+
+      {!hiddenQuest ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-quest-label"
+          aria-describedby="modal-quest-description"
+        >
+          <Box sx={style}>
+            <Quest idHelper={id} data={data} updateData={updateData} />
           </Box>
         </Modal>
       : null}
