@@ -66,4 +66,32 @@ const unmarkedSettlements = function(density) {
   }
 }
 
+const readSettlements = function(settlementsData) {
+  let settlement = {
+    "settlementsName": "",
+    "settlementsPopulation": 0,
+    "settlementsType": ""
+  };
+  let settlements = [];
+
+  for (let i = 0 ; i < settlementsData.length ; i++) {
+    settlement = {
+      "settlementsName": "",
+      "settlementsPopulation": 0,
+      "settlementsType": ""
+    };
+    
+    settlement.settlementsName = settlementsData[i].settlementsName;
+    settlement.settlementsPopulation = settlementsData[i].settlementsPopulation;
+    settlement.settlementsType = settlementsData[i].settlementsType;
+
+    settlements.push(settlement);
+  }
+
+  return {
+    settlements: settlements
+  }
+}
+
 exports.unmarkedSettlements = unmarkedSettlements;
+exports.readSettlements = readSettlements;
