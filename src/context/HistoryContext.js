@@ -97,6 +97,12 @@ export const logQuest = (result) => ({
   result: result
 });
 
+export const logSettlements = (result) => ({
+  emoji: <span style={{lineHeight: 1}}>🏙</span>,
+  command: "Quête",
+  result: result
+});
+
 const data = [
   {
     emoji: <span style={{lineHeight: 1}}>🎲</span>,

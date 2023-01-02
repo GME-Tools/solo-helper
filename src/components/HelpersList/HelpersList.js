@@ -155,6 +155,7 @@ export default function HelpersList() {
       plotPoints: [],
       quests: [],
       season: "",
+      settlements: [],
       theme: "",
       themes: [],
       weather: ""

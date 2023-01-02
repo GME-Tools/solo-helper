@@ -21,6 +21,7 @@ import Weather from 'components/Weather/Weather';
 import Camping from 'components/Camping/Camping';
 import Encounters from 'components/Encounters/Encounters';
 import Quest from 'components/Quest/Quest';
+import Settlements from 'components/Settlements/Settlements';
 
 const style = {
   position: 'absolute',
@@ -49,9 +50,10 @@ const functions = [
   { label: 'Plot', id: 12 },
   { label: 'Plot Points', id: 13 },
   { label: 'Quest', id: 14 },
-  { label: 'Statistic', id: 15 },
-  { label: 'Theme', id: 16 },
-  { label: 'Weather', id: 17 }
+  { label: 'Settlements', id: 15 },
+  { label: 'Statistic', id: 16 },
+  { label: 'Theme', id: 17 },
+  { label: 'Weather', id: 18 }
 ];
 
 export default function FunctionAppBar() {
@@ -75,6 +77,7 @@ export default function FunctionAppBar() {
   const [hiddenCamping, setHiddenCamping] = useState(true);
   const [hiddenEncounters, setHiddenEncounters] = useState(true);
   const [hiddenQuest, setHiddenQuest] = useState(true);
+  const [hiddenSettlements, setHiddenSettlements] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -95,6 +98,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -111,6 +115,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -127,6 +132,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -143,6 +149,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -159,6 +166,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -175,6 +183,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -191,6 +200,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -207,6 +217,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(false);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -223,6 +234,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(false);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -239,6 +251,24 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(false);
+      setHiddenSettlements(true);
+      setHiddenStatistic(true);
+      setHiddenTheme(true);
+      setHiddenWeather(true);
+    } else if (inputValue === "Settlements") {
+      handleOpenModal();
+
+      setHiddenBehavior(true);
+      setHiddenCamping(true);
+      setHiddenCharacter(true);
+      setHiddenCreature(true);
+      setHiddenEncounters(true);
+      setHiddenFate(true);
+      setHiddenLoot(true);
+      setHiddenPlot(true);
+      setHiddenPlotPoint(true);
+      setHiddenQuest(true);
+      setHiddenSettlements(false);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -255,6 +285,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(false);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -271,6 +302,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(false);
       setHiddenWeather(true);
@@ -287,6 +319,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(false);
@@ -301,6 +334,7 @@ export default function FunctionAppBar() {
       setHiddenPlot(true);
       setHiddenPlotPoint(true);
       setHiddenQuest(true);
+      setHiddenSettlements(true);
       setHiddenStatistic(true);
       setHiddenTheme(true);
       setHiddenWeather(true);
@@ -538,6 +572,19 @@ export default function FunctionAppBar() {
         >
           <Box sx={style}>
             <Quest idHelper={id} data={data} updateData={updateData} />
+          </Box>
+        </Modal>
+      : null}
+
+      {!hiddenSettlements ?
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-settlements-label"
+          aria-describedby="modal-settlements-description"
+        >
+          <Box sx={style}>
+            <Settlements idHelper={id} data={data} updateData={updateData} />
           </Box>
         </Modal>
       : null}

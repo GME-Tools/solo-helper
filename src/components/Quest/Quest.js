@@ -63,15 +63,15 @@ export default function Quest(props) {
     if (subfonctionsQuestSelected === 'createQuest' || subfonctionsQuestSelected === 'Créer une quête') {
       let questResponse = createQuest();
 
-      let quest = [{
+      let quest = {
         "questProblem": questResponse.questProblem,
         "questResultant": questResponse.questResultant,
         "questSource": questResponse.questSource,
         "questDone": false
-      }];
+      };
 
       let quests = props.data.quests;
-      quests.push(quest[0]);
+      quests.push(quest);
 
       firebase.updateDocument("helpers", props.idHelper, {
         "quests": quests
