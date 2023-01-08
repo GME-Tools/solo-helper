@@ -14,12 +14,26 @@ export default makeStyles(theme => ({
     displaychip: {
         height: "100%",
         textAlign: "left",
-        padding: "5px"
+        padding: "5px",
+        overflowWrap: 'break-word',
+        whiteSpace: 'normal',
+        textOverflow: 'clip',
     },
     displaytitle: {
         fontWeight: "800"
     },
     reactEmoji: {
         lineHeight: 1
+    },
+    labelcontainer: {
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    pchip: {
+        overflowWrap: 'break-word',
+        whiteSpace: 'normal',
+        textOverflow: 'clip'
     }
+
 }));

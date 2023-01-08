@@ -17,9 +17,11 @@ export default function Display() {
                     className={classes.displaychip}
                     avatar={item.emoji}
                     label={
-                        <div>
-                            <Typography className={classes.displaytitle} variant="body1">{item.command}</Typography>
-                            {item.result}
+                        <div className={classes.labelcontainer}>
+                            <div className={classes.pchip}>
+                                <Typography className={classes.displaytitle} variant="body1">{item.command}</Typography>
+                                {item.result}
+                            </div>
                         </div>
                     }
                 />
@@ -27,4 +29,3 @@ export default function Display() {
         </div>
     )
 }
-
