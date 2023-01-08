@@ -4,10 +4,13 @@ const dice = require('../dice');
 /* Utilisez le tableau ci-dessous pour déterminer la météo d'un jour ou d'une nuit en particulier. Là où le temps donne l'option Chaud, si le jet est vers le bas de la plage, il fait chaud. Si c'est plus haut, il fait très chaud. Les résultats évoluent vers le haut. Ajuster selon le terrain aussi. Si c'est dans un désert => +5, si c'est dans montagnes ou steppes glacées => -5 */
 
 
-const seasonSet = (season) => {
+const seasonSet = (season, weather) => {
   let seasonDice = dice.die(4);
+  let weatherDice = dice.die(20);
   let seasonName = "";
   let seasonURL = "";
+  let weatherName = "";
+  let weatherURL = "";
   
   if (season !== "auto") {
     seasonName = season;
@@ -19,10 +22,19 @@ const seasonSet = (season) => {
       }
     }
   }
+
+  for (let i = 1 ; i <= Object.keys(weatherData.weather).length ; i++) {
+    if (weatherDice >= weatherData.weather[i].value[0] && weatherDice <= weatherData.weather[i].value[1]) {
+      weatherName = weatherData.weather[i][seasonName].name;
+      weatherURL = weatherData.weather[i][seasonName].url;
+    }
+  }
   
   return {
     seasonName: seasonName,
-    seasonURL: seasonURL
+    seasonURL: seasonURL, 
+    weatherName: weatherName,
+    weatherURL: weatherURL
   }
 }
 
@@ -50,12 +62,13 @@ const weatherRandom = (weather, season, modifier) => {
   if (weather !== "auto") {
     weatherName = weather;
   } else {
-    if (season !== undefined && season !== "") {
+    if (season.name !== undefined && season.name !== "") {
       for (let i = 1 ; i <= Object.keys(weatherData.weather).length ; i++) {
         if (weatherDice >= weatherData.weather[i].value[0] && weatherDice <= weatherData.weather[i].value[1]) {
-          weatherName = weatherData.weather[i][season].name;
-          weatherURL = weatherData.weather[i][season].url;
-          seasonName = season;
+          weatherName = weatherData.weather[i][season.name].name;
+          weatherURL = weatherData.weather[i][season.name].url;
+          seasonName = season.name;
+          seasonURL = season.url;
         }
       }
     } else {

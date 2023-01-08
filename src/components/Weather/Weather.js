@@ -88,18 +88,25 @@ export default function Weather(props) {
 
   const clickLaunch = () => {
     if (subfonctionsWeatherSelected === 'createSeason' || subfonctionsWeatherSelected === 'Générer / Créer la saison') {
-      let weatherResponse = seasonSet(updateSeasonSelected);
+      let weatherResponse = seasonSet(updateSeasonSelected, props.data.weather);
 
       let season = {
         "name": weatherResponse.seasonName, 
         "url": weatherResponse.seasonURL
-      }
+      };
+
+      let weather = {
+        "name": weatherResponse.weatherName, 
+        "url": weatherResponse.weatherURL
+      };
 
       firebase.updateDocument("helpers", props.idHelper, {
-        "season": season
+        "season": season,
+        "weather": weather
       });
 
       props.data.season = season;
+      props.data.weather = weather;
         
       setHistory(h => ([...h, logWeather("La saison actuelle est : " + weatherResponse.seasonName)]));
     } else if (subfonctionsWeatherSelected === 'readSeason' || subfonctionsWeatherSelected === 'Connaître la saison') {
@@ -107,7 +114,7 @@ export default function Weather(props) {
         
       setHistory(h => ([...h, logWeather("La saison actuelle est : " + weatherResponse.season)]));
     } else if (subfonctionsWeatherSelected === 'createWeather' || subfonctionsWeatherSelected === 'Générer / Créer la météo') {
-      let weatherResponse = weatherRandom(updateWeatherSelected, props.data.season.name, "");
+      let weatherResponse = weatherRandom(updateWeatherSelected, props.data.season, "");
 
       console.log(weatherResponse);
 
