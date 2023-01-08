@@ -7,6 +7,7 @@ const dice = require('../dice');
 const seasonSet = (season) => {
   let seasonDice = dice.die(4);
   let seasonName = "";
+  let seasonURL = "";
   
   if (season !== "auto") {
     seasonName = season;
@@ -14,12 +15,14 @@ const seasonSet = (season) => {
     for (let i = 1 ; i <= Object.keys(weatherData.season).length ; i++) {
       if (seasonDice >= weatherData.season[i].value[0] && seasonDice <= weatherData.season[i].value[1]) {
         seasonName = weatherData.season[i].name;
+        seasonURL = weatherData.season[i].url;
       }
     }
   }
   
   return {
-    season: seasonName
+    seasonName: seasonName,
+    seasonURL: seasonURL
   }
 }
 
@@ -35,6 +38,8 @@ const weatherRandom = (weather, season, modifier) => {
   let weatherDice = dice.die(20);
   let weatherName = "";
   let seasonName = "";
+  let weatherURL = "";
+  let seasonURL = "";
 
   if (modifier === "froid") {
     weatherDice = weatherDice - 5;
@@ -45,10 +50,11 @@ const weatherRandom = (weather, season, modifier) => {
   if (weather !== "auto") {
     weatherName = weather;
   } else {
-    if (season !== undefined) {
+    if (season !== undefined && season !== "") {
       for (let i = 1 ; i <= Object.keys(weatherData.weather).length ; i++) {
         if (weatherDice >= weatherData.weather[i].value[0] && weatherDice <= weatherData.weather[i].value[1]) {
-          weatherName = weatherData.weather[i][season];
+          weatherName = weatherData.weather[i][season].name;
+          weatherURL = weatherData.weather[i][season].url;
           seasonName = season;
         }
       }
@@ -58,20 +64,24 @@ const weatherRandom = (weather, season, modifier) => {
       for (let i = 1 ; i <= Object.keys(weatherData.season).length ; i++) {
         if (seasonDice >= weatherData.season[i].value[0] && seasonDice <= weatherData.season[i].value[1]) {
           seasonName = weatherData.season[i].name;
+          seasonURL = weatherData.season[i].url;
         }
       }
   
       for (let i = 1 ; i <= Object.keys(weatherData.weather).length ; i++) {
         if (weatherDice >= weatherData.weather[i].value[0] && weatherDice <= weatherData.weather[i].value[1]) {
-          weatherName = weatherData.weather[i][season];
+          weatherName = weatherData.weather[i][seasonName].name;
+          weatherURL = weatherData.weather[i][seasonName].url;
         }
       }
     }
   }
   
   return {
-    season: seasonName,
-    weather: weatherName
+    seasonName: seasonName,
+    seasonURL: seasonURL, 
+    weatherName: weatherName, 
+    weatherURL: weatherURL
   }
 }
 

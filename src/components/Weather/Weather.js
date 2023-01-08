@@ -90,29 +90,48 @@ export default function Weather(props) {
     if (subfonctionsWeatherSelected === 'createSeason' || subfonctionsWeatherSelected === 'Générer / Créer la saison') {
       let weatherResponse = seasonSet(updateSeasonSelected);
 
+      let season = {
+        "name": weatherResponse.seasonName, 
+        "url": weatherResponse.seasonURL
+      }
+
       firebase.updateDocument("helpers", props.idHelper, {
-        "season": weatherResponse.season
+        "season": season
       });
 
-      props.data.season = weatherResponse.season;
+      props.data.season = season;
         
-      setHistory(h => ([...h, logWeather("La saison actuelle est : " + weatherResponse.season)]));
+      setHistory(h => ([...h, logWeather("La saison actuelle est : " + weatherResponse.seasonName)]));
     } else if (subfonctionsWeatherSelected === 'readSeason' || subfonctionsWeatherSelected === 'Connaître la saison') {
-      let weatherResponse = seasonRead(props.data.season);
+      let weatherResponse = seasonRead(props.data.season.name);
         
       setHistory(h => ([...h, logWeather("La saison actuelle est : " + weatherResponse.season)]));
     } else if (subfonctionsWeatherSelected === 'createWeather' || subfonctionsWeatherSelected === 'Générer / Créer la météo') {
-      let weatherResponse = weatherRandom(updateWeatherSelected, props.data.season, "");
+      let weatherResponse = weatherRandom(updateWeatherSelected, props.data.season.name, "");
+
+      console.log(weatherResponse);
+
+      let season = {
+        "name": weatherResponse.seasonName, 
+        "url": weatherResponse.seasonURL
+      };
+
+      let weather = {
+        "name": weatherResponse.weatherName, 
+        "url": weatherResponse.weatherURL
+      };
 
       firebase.updateDocument("helpers", props.idHelper, {
-        "weather": weatherResponse.weather
+        "season": season, 
+        "weather": weather
       });
 
-      props.data.weather = weatherResponse.weather;
+      props.data.season = season;
+      props.data.weather = weather;
         
-      setHistory(h => ([...h, logWeather("La météo actuelle est : " + weatherResponse.weather)]));
+      setHistory(h => ([...h, logWeather("La météo actuelle est : " + weatherResponse.weatherName)]));
     } else if (subfonctionsWeatherSelected === 'readWeather' || subfonctionsWeatherSelected === 'Connaître la météo') {
-      let weatherResponse = weatherRead(props.data.season, props.data.weather);
+      let weatherResponse = weatherRead(props.data.season.name, props.data.weather.name);
         
       setHistory(h => ([...h, logWeather("La météo actuelle est : " + weatherResponse.weather)]));
     }

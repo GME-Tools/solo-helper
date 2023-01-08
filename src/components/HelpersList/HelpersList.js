@@ -154,11 +154,17 @@ export default function HelpersList() {
       ],
       plotPoints: [],
       quests: [],
-      season: "",
+      season: {
+        "name": "", 
+        "url": ""
+      }, 
       settlements: [],
       theme: "",
       themes: [],
-      weather: ""
+      weather: {
+        "name": "", 
+        "url": ""
+      }
     });
     setNewUuid(uid);
   }
